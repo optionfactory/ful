@@ -1,0 +1,59 @@
+<html>
+    <head>
+        <title>title</title>
+        <script src="../dist/ful.iife.js"></script>
+        <style>
+            [data-ref=container] > ol > li.active {
+                display: block;
+            }
+            [data-ref=container] > ol > li {
+                display: none;
+            }
+            
+            [data-ref=container] > section {
+                display: none;
+            }
+            [data-ref=container] > section.current {
+                display: block;
+            }
+            
+        </style>
+    </head>
+    <body>
+
+        <div data-ref="container">
+            <ol>
+                <li class="active">1</li>
+                <li>2</li>
+                <li>3</li>
+            </ol>
+            <section class="current">
+                CARD 1
+                <button data-ref="next">next</button>
+            </section>
+            <section>
+                CARD 2
+                <button data-ref="prev">prev</button>
+            </section>
+        </div>
+        <script>
+            const b = new ful.Bindings({});
+            const w = new ful.Wizard(document.querySelector('[data-ref=container]'));
+            ful.Dom.query('[data-ref="next"]').on('click', () => w.next());
+            ful.Dom.query('[data-ref="prev"]').on('click', () => w.prev());
+        </script>
+        
+        <div data-ref="inputs">
+            An input
+            <input type="text" value="123">
+            <input type="text" value="12341" data-pattern="asd">
+        </div>
+
+        <script>
+            ful.Dom.query('[data-ref="inputs"]').on({type: 'change', selector: '[data-pattern]'}, (evt) => {
+                console.log("matches");
+            });
+        </script>
+    </body>
+</html>
+

@@ -1,0 +1,25 @@
+{
+    "name": "ful",
+    "version": "0.1",
+    "keywords": [
+        "ui",
+        "browser"
+    ],
+    "license": "MIT",
+    "author": "rferranti",
+    "contributors": [],
+    "main": "index.mjs",
+    "scripts": {
+        "clean": "rimraf dist && npm prune",
+        "initialize": "npm install",
+        "test": "mocha --recursive -R spec",
+        "package": "npx rollup --config rollup.conf.js"
+    },
+    "devDependencies": {
+        "@rollup/plugin-node-resolve": "^13.3.0",
+        "jsdom": "^20.0.0",
+        "mocha": "^9.2.2",
+        "rollup-plugin-terser": "7.0.2",
+        "terser": ">=5.14.2"
+    }
+}
