@@ -269,7 +269,7 @@ var ful = (function (exports) {
             return new Failure(status, Failure.parseProblems(status, text));
         }
         constructor(status, problems) {
-            super(problems.join(","));
+            super(JSON.stringify(problems));
             this.name = `Failure:${status}`;
             this.status = status;
             this.problems = problems;
