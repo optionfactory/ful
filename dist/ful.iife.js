@@ -172,7 +172,8 @@ var ful = (function (exports) {
         getValues() {
             return this.bindings.getValues(this.el);
         }
-        setErrors(errors, scrollFirstErrorIntoView) {
+        setErrors(errors, scrollFirstErrorIntoView, context) {
+            
             this.clearErrors();
             errors
                     .map(this.mapError ? this.mapError : (e) => e)
@@ -248,6 +249,33 @@ var ful = (function (exports) {
         }
     }
 
+    class Failure extends Error {
+        problems;
+
+        static parseProblems(status, text) {
+            const def = [{
+                    type: "GENERIC_PROBLEM",
+                    context: null,
+                    reason: `${status}: ${text}`,
+                    details: null
+                }];
+            try {
+                return text ? [JSON.parse(text)] : def;
+            } catch (e) {
+                return def;
+            }
+        }
+        static fromResponse(status, text) {
+            return new Failure(status, Failure.parseProblems(status, text));
+        }
+        constructor(status, problems) {
+            super(problems.join(","));
+            this.name = `Failure:${status}`;
+            this.status = status;
+            this.problems = problems;
+        }
+    }
+
     class HttpClientBuilder {
         interceptors;
         constructor() {
@@ -261,9 +289,9 @@ var ful = (function (exports) {
             this.interceptors.push(new CsrfTokenInterceptor());
             return this;
         }
-        withRedirectOnUnauthorized(redirectUri){
+        withRedirectOnUnauthorized(redirectUri) {
             this.interceptors.push(new RedirectOnUnauthorizedInterceptor(redirectUri));
-            return this;        
+            return this;
         }
         withInterceptors(...interceptors) {
             this.interceptors.push(...interceptors);
@@ -285,16 +313,63 @@ var ful = (function (exports) {
         }
         async fetch(resource, options) {
 
-            const request = this.interceptors.reduce(async (req, interceptor) => {
+            const is = this.interceptors.concat(options.interceptors || []);
+
+            const request = await is.reduce(async (req, interceptor) => {
                 return !interceptor.before ? req : await interceptor.before(req);
             }, {resource, options});
 
             const response = await fetch(request.resource, request.options);
 
-            return this.interceptors.reduce(async (res, interceptor) => {
+            return await is.reduce(async (res, interceptor) => {
                 return !interceptor.after ? res : await interceptor.after(request, res);
             }, response);
 
+        }
+        async json(resource, options) {
+            try {
+                const response = await this.fetch(resource, options);
+                if (!response.ok) {
+                    const message = await response.text();
+                    throw Failure.fromResponse(response.status, message);
+                }
+                const text = await response.text();
+                return text ? JSON.parse(text) : undefined;
+            } catch (e) {
+                if (e instanceof Failure) {
+                    throw e;
+                }
+                throw new Failure(0, [{
+                        type: "CONNECTION_PROBLEM",
+                        context: null,
+                        reason: e.message,
+                        details: null
+                    }]);
+            }
+        }
+        async form(resource, options, uiOptions) {
+            const ui = uiOptions || {};
+            ui.buttons?.forEach(el => {
+                el.setAttribute("disabled", "disabled");
+                if (ui.loader) {
+                    el.dataset['oldContent'] = el.innerHTML;
+                    el.innerHTML = ui.loader;
+                }
+            });
+            try {
+                const r = await this.json(resource, options);
+                ui.form?.clearErrors();
+                return r;
+            } catch (e) {
+                ui.form?.setErrors(e.problems);
+                throw e;
+            } finally {
+                ui.buttons?.forEach(el => {
+                    el.removeAttribute("disabled");
+                    el.innerHTML = el.dataset['oldContent'];
+                    delete el.dataset['oldContent'];
+                });
+            }
         }
     }
 
@@ -655,6 +730,7 @@ var ful = (function (exports) {
     exports.AuthorizationCodeFlowSession = AuthorizationCodeFlowSession;
     exports.Base64 = Base64;
     exports.Bindings = Bindings;
+    exports.Failure = Failure;
     exports.Form = Form;
     exports.HttpClient = HttpClient;
     exports.LocalStorage = LocalStorage;
