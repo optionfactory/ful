@@ -26,7 +26,8 @@ class Form {
     getValues() {
         return this.bindings.getValues(this.el);
     }
-    setErrors(errors, scrollFirstErrorIntoView) {
+    setErrors(errors, scrollFirstErrorIntoView, context) {
+        
         this.clearErrors();
         errors
                 .map(this.mapError ? this.mapError : (e) => e)
@@ -67,12 +68,6 @@ class Form {
 /*
 export function forms() {
 }
-
-forms.redirectOn401 = function (e) {
-    if (e.status === 401 || e.status === 403) {
-        window.location.href = "/";
-    }
-};
 
 forms.dropContext = function (context) {
     return function (e) {
