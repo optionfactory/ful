@@ -54,7 +54,7 @@ class Wizard {
         });                
         const currentSection = this.el.querySelector('section.current');
         currentSection?.classList.remove("current");
-        const nthSection = this.el.querySelector(`section:nth-child('${+n}')`);
+        const nthSection = this.el.querySelector(`section:nth-child(${+n})`);
         nthSection.classList.add('current');
         this.el.dispatchEvent(new CustomEvent('wizard:activate', {
             bubbles: true, 
