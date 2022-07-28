@@ -312,19 +312,23 @@ var ful = (function (exports) {
             this.interceptors = interceptors || [];
         }
         async fetch(resource, options) {
-
             const is = this.interceptors.concat(options.interceptors || []);
-
-            const request = await is.reduce(async (req, interceptor) => {
-                return !interceptor.before ? req : await interceptor.before(req);
-            }, {resource, options});
-
+            const request = {resource, options};
+            await is.forEach(async (i) => {
+                if (!i.before) {
+                    return;
+                }
+                await i.before(request);
+            });
             const response = await fetch(request.resource, request.options);
+            await is.forEach(async (i) => {
+                if (!i.after) {
+                    return;
+                }
+                await i.after(request, response);
+            });
 
-            return await is.reduce(async (res, interceptor) => {
-                return !interceptor.after ? res : await interceptor.after(request, res);
-            }, response);
-
+            return response;
         }
         async json(resource, options) {
             try {
