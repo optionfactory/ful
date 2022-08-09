@@ -144,11 +144,11 @@ class Base64 {
 /* global Infinity, CSS */
 
 class Form {
-    
+
     static DEFAULT_FIELD_CONTAINER_SELECTOR = 'label';
     static DEFAULT_ERROR_CLASS = 'has-error';
     static DEFAULT_HIDE_CLASS = 'd-none';
-    
+
     el;
     bindings;
     globalErrorsEl;
@@ -159,7 +159,7 @@ class Form {
         this.el = el;
         this.bindings = bindings;
         this.globalErrorsEl = globalErrorsEl;
-        this.fieldContainerSelector = fieldContainerSelector !== undefined ? fieldContainerSelector : Form.DEFAULT_FIELD_CONTAINER_SELECTOR ;
+        this.fieldContainerSelector = fieldContainerSelector !== undefined ? fieldContainerSelector : Form.DEFAULT_FIELD_CONTAINER_SELECTOR;
         this.errorClass = errorClass || Form.DEFAULT_ERROR_CLASS;
         this.hideClass = hideClass || Form.DEFAULT_HIDE_CLASS;
     }
@@ -170,14 +170,14 @@ class Form {
         return this.bindings.getValues(this.el);
     }
     setErrors(errors, scrollFirstErrorIntoView, context) {
-        
+
         this.clearErrors();
         errors
                 .map(this.mapError ? this.mapError : (e) => e)
                 .filter((e) => e.type === 'FIELD_ERROR' || e.type === 'INVALID_FORMAT')
                 .forEach((e) => {
                     const name = e.context.replace("[", ".").replace("].", ".");
-                    Array.from(document.querySelectorAll(this.el, `[name='${CSS.escape(name)}']`))
+                    Array.from(this.el.querySelectorAll(`[name='${CSS.escape(name)}']`))
                             .map(el => this.fieldContainerSelector ? el.closest(this.fieldContainerSelector) : el)
                             .filter(el => el !== null)
                             .forEach(label => {
@@ -187,7 +187,7 @@ class Form {
                 });
         if (this.globalErrorsEl) {
             const globalErrors = errors.filter((e) => e.type !== 'FIELD_ERROR' && e.type !== 'INVALID_FORMAT');
-            this.globalErrorsEl.innerHTML = globalErrors.join("\n");
+            this.globalErrorsEl.innerHTML = globalErrors.map(e => e.reason).join("\n");
             if (globalErrors.length !== 0) {
                 this.globalErrorsEl.classList.remove(this.hideClass);
             }
@@ -203,9 +203,11 @@ class Form {
         }
     }
     clearErrors() {
-        this.el.all('.${CSS.escape(this.errorClass)}').forEach(l => l.classList.remove(this.errorClass));
-        this.globalErrorsEl.innerHTML = '';
-        this.globalErrorsEl.classList.add(this.hideClass);
+        this.el.querySelectorAll(`.${CSS.escape(this.errorClass)}`).forEach(l => l.classList.remove(this.errorClass));
+        if (this.globalErrorsEl) {
+            this.globalErrorsEl.innerHTML = '';
+            this.globalErrorsEl.classList.add(this.hideClass);
+        }
     }
 }
 
@@ -663,67 +665,70 @@ const timing = {
 class Wizard {
     constructor(el) {
         this.el = el;
-        this.progress = [...el.querySelectorAll('header,ol,ul')];
-        
+        this.progress = [...el.children].filter(e => e.matches("header,ol,ul"));
+
         this.progress.forEach(p => {
-            const current = p.querySelector(':scope > .active');
-            if (current === null){
-                p.children[0].classList.add('active');
+            const children = [...p.children];
+            const current = children.filter(e => e.matches(".active"))[0];
+            if (current === undefined && children.length > 0) {
+                children[0].classList.add('active');
             }
         });
         if (this.el.querySelector('section.current') === null) {
             const firstSection = this.el.querySelector('section:first-of-type');
-            if(firstSection !== null){
+            if (firstSection !== null) {
                 firstSection.classList.add('current');
             }
         }
     }
     next() {
         this.progress.forEach(p => {
-            const current = p.querySelector(':scope > .active');
-            current.classList.remove('active');
-            current.nextElementSibling.classList.add('active');
+            const children = [...p.children];
+            const current = children.filter(e => e.matches(".active"))[0];
+            current?.classList.remove('active');
+            current?.nextElementSibling?.classList.add('active');
         });
         const currentSection = this.el.querySelector('section.current');
         currentSection.classList.remove("current");
         currentSection.nextElementSibling.classList.add('current');
-        
+
         this.el.dispatchEvent(new CustomEvent('wizard:activate', {
-            bubbles: true, 
+            bubbles: true,
             cancelable: true
         }));
-        
+
     }
     prev() {
         this.progress.forEach(p => {
-            const current = p.querySelector(':scope > .active');
-            current.classList.remove('active');
-            current.previousElementSibling.classList.add('active');
-        });        
+            const children = [...p.children];
+            const current = children.filter(e => e.matches(".active"))[0];
+            current?.classList.remove('active');
+            current?.previousElementSibling?.classList.add('active');
+        });
         const currentSection = this.el.querySelector('section.current');
         currentSection.classList.remove("current");
-        currentSection.previousElementSibling.classList.add('current');        
+        currentSection.previousElementSibling.classList.add('current');
         this.el.dispatchEvent(new CustomEvent('wizard:activate', {
-            bubbles: true, 
+            bubbles: true,
             cancelable: true
         }));
     }
     moveTo = function (n) {
         this.progress.forEach(p => {
-            const current = p.querySelector(':scope > .active');
+            const children = [...p.children];
+            const current = children.filter(e => e.matches(".active"))[0];
             current?.classList.remove('active');
-            p.children[+n].classList.add('active');
-        });                
+            p.children[+n]?.classList.add('active');
+        });
         const currentSection = this.el.querySelector('section.current');
         currentSection?.classList.remove("current");
         const nthSection = this.el.querySelector(`section:nth-child('${+n}')`);
         nthSection.classList.add('current');
         this.el.dispatchEvent(new CustomEvent('wizard:activate', {
-            bubbles: true, 
+            bubbles: true,
             cancelable: true
         }));
-    };
-
+    }
 }
 
 export { AuthorizationCodeFlow, AuthorizationCodeFlowInterceptor, AuthorizationCodeFlowSession, Base64, Bindings, Failure, Form, HttpClient, LocalStorage, SessionStorage, Wizard, timing };
