@@ -1,11 +1,11 @@
 /* global Infinity, CSS */
 
 class Form {
-    
+
     static DEFAULT_FIELD_CONTAINER_SELECTOR = 'label';
     static DEFAULT_ERROR_CLASS = 'has-error';
     static DEFAULT_HIDE_CLASS = 'd-none';
-    
+
     el;
     bindings;
     globalErrorsEl;
@@ -16,7 +16,7 @@ class Form {
         this.el = el;
         this.bindings = bindings;
         this.globalErrorsEl = globalErrorsEl;
-        this.fieldContainerSelector = fieldContainerSelector !== undefined ? fieldContainerSelector : Form.DEFAULT_FIELD_CONTAINER_SELECTOR ;
+        this.fieldContainerSelector = fieldContainerSelector !== undefined ? fieldContainerSelector : Form.DEFAULT_FIELD_CONTAINER_SELECTOR;
         this.errorClass = errorClass || Form.DEFAULT_ERROR_CLASS;
         this.hideClass = hideClass || Form.DEFAULT_HIDE_CLASS;
     }
@@ -27,14 +27,14 @@ class Form {
         return this.bindings.getValues(this.el);
     }
     setErrors(errors, scrollFirstErrorIntoView, context) {
-        
+
         this.clearErrors();
         errors
                 .map(this.mapError ? this.mapError : (e) => e)
                 .filter((e) => e.type === 'FIELD_ERROR' || e.type === 'INVALID_FORMAT')
                 .forEach((e) => {
                     const name = e.context.replace("[", ".").replace("].", ".");
-                    Array.from(document.querySelectorAll(this.el, `[name='${CSS.escape(name)}']`))
+                    Array.from(this.el.querySelectorAll(`[name='${CSS.escape(name)}']`))
                             .map(el => this.fieldContainerSelector ? el.closest(this.fieldContainerSelector) : el)
                             .filter(el => el !== null)
                             .forEach(label => {
@@ -44,7 +44,7 @@ class Form {
                 });
         if (this.globalErrorsEl) {
             const globalErrors = errors.filter((e) => e.type !== 'FIELD_ERROR' && e.type !== 'INVALID_FORMAT');
-            this.globalErrorsEl.innerHTML = globalErrors.join("\n");
+            this.globalErrorsEl.innerHTML = globalErrors.map(e => e.reason).join("\n");
             if (globalErrors.length !== 0) {
                 this.globalErrorsEl.classList.remove(this.hideClass);
             }
@@ -60,42 +60,44 @@ class Form {
         }
     }
     clearErrors() {
-        this.el.all('.${CSS.escape(this.errorClass)}').forEach(l => l.classList.remove(this.errorClass));
-        this.globalErrorsEl.innerHTML = '';
-        this.globalErrorsEl.classList.add(this.hideClass);
+        this.el.querySelectorAll(`.${CSS.escape(this.errorClass)}`).forEach(l => l.classList.remove(this.errorClass));
+        if (this.globalErrorsEl) {
+            this.globalErrorsEl.innerHTML = '';
+            this.globalErrorsEl.classList.add(this.hideClass);
+        }
     }
 }
 /*
-export function forms() {
-}
-
-forms.dropContext = function (context) {
-    return function (e) {
-        if (e.context && e.context.indexOf(context) === 0) {
-            e.context = e.context.substring(context.length);
-        }
-        return e;
-    };
-};
-
-
-Dom.ready(() => {
-    document.querySelectorAll('label:not([data-error])').forEach(el => {
-        el.dataset['error'] = "Il valore inserito non è valido";
-    });
-});
-
-Dom.ready(() => {
-    Dom.on(document.body, 'change', '[data-pattern]', {}, evt => {
-        const el = evt.srcElement;
-        const pattern = el.dataset['pattern'];
-        const matches = el.value.match(pattern);
-        const label = el.closest('label');
-        if(label === null){
-            return;
-        }
-        label.classList[matches ? 'remove' : 'add']('has-error');        
-    });
-});
-*/
+ export function forms() {
+ }
+ 
+ forms.dropContext = function (context) {
+ return function (e) {
+ if (e.context && e.context.indexOf(context) === 0) {
+ e.context = e.context.substring(context.length);
+ }
+ return e;
+ };
+ };
+ 
+ 
+ Dom.ready(() => {
+ document.querySelectorAll('label:not([data-error])').forEach(el => {
+ el.dataset['error'] = "Il valore inserito non è valido";
+ });
+ });
+ 
+ Dom.ready(() => {
+ Dom.on(document.body, 'change', '[data-pattern]', {}, evt => {
+ const el = evt.srcElement;
+ const pattern = el.dataset['pattern'];
+ const matches = el.value.match(pattern);
+ const label = el.closest('label');
+ if(label === null){
+ return;
+ }
+ label.classList[matches ? 'remove' : 'add']('has-error');        
+ });
+ });
+ */
 export { Form };
