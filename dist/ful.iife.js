@@ -436,7 +436,7 @@ var ful = (function (exports) {
                 state: state,
                 verifier: pkceVerifier
             });
-            let url = new URL(this.authUri);
+            const url = new URL(this.authUri);
             url.searchParams.set("client_id", this.clientId);
             url.searchParams.set("redirect_uri", this.redirectUri);
             url.searchParams.set("response_type", 'code');
@@ -448,11 +448,11 @@ var ful = (function (exports) {
         }
         async _tokenExchange(code, state) {
             window.history.replaceState('', "", this.redirectUri);
-            let stateAndVerifier = this.storage.pop(AuthorizationCodeFlow.PKCE_AND_STATE_KEY);
+            const stateAndVerifier = this.storage.pop(AuthorizationCodeFlow.PKCE_AND_STATE_KEY);
             if (stateAndVerifier.state !== state) {
                 throw new Error("State mismatch");
             }
-            let response = await fetch(this.tokenUri, {
+            const response = await fetch(this.tokenUri, {
                 method: "POST",
                 headers: {
                     "Content-Type": 'application/x-www-form-urlencoded'
@@ -467,10 +467,10 @@ var ful = (function (exports) {
                 ])
             });
             if (!response.ok) {
-                let text = await response.text();
+                const text = await response.text();
                 throw new Error("Error:" + response.status + ": " + text);
             }
-            let token = await response.json();
+            const token = await response.json();
             return new AuthorizationCodeFlowSession(this.clientId, token, this.tokenUri, this.logoutUri, this.redirectUri);
         }
 
@@ -511,7 +511,7 @@ var ful = (function (exports) {
             this.refreshCallback = callback;
         }
         async refresh() {
-            let response = await fetch(this.tokenUri, {
+            const response = await fetch(this.tokenUri, {
                 method: "POST",
                 headers: {
                     "Content-Type": 'application/x-www-form-urlencoded'
@@ -547,7 +547,7 @@ var ful = (function (exports) {
             await this.refresh();
         }
         logout() {
-            let url = new URL(this.logoutUri);
+            const url = new URL(this.logoutUri);
             url.searchParams.set("post_logout_redirect_uri", this.redirectUri);
             url.searchParams.set("id_token_hint", this.token.id_token);
             window.location = url;
@@ -572,13 +572,13 @@ var ful = (function (exports) {
             this.gracePeriodAfter = gracePeriodAfter || 30000;
         }
         async before(request) {
-            await this.session.refreshIfNeeded(this.gracePeriodBefore);
+            await this.session.refreshIf(this.gracePeriodBefore);
             const headers = new Headers(request.options.headers);
             headers.set("Authorization", this.session.bearerToken());
             return request;
         }
         async after(request, response) {
-            await this.session.refreshIfNeeded(this.gracePeriodAfter);
+            await this.session.refreshIf(this.gracePeriodAfter);
             return response;
         }
     }
@@ -725,7 +725,7 @@ var ful = (function (exports) {
             });
             const currentSection = this.el.querySelector('section.current');
             currentSection?.classList.remove("current");
-            const nthSection = this.el.querySelector(`section:nth-child('${+n}')`);
+            const nthSection = this.el.querySelector(`section:nth-child(${+n})`);
             nthSection.classList.add('current');
             this.el.dispatchEvent(new CustomEvent('wizard:activate', {
                 bubbles: true,
