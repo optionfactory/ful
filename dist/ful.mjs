@@ -26,6 +26,14 @@ function mutate(mutators, el, raw, key, values) {
         maybeMutator(el, raw, key, values);
         return;
     }
+    if (el.getAttribute('type') === 'radio') {
+        el.checked = el.getAttribute('value') === raw;
+        return;
+    }
+    if (el.getAttribute('type') === 'checkbox') {
+        el.checked = raw;
+        return;
+    }
     el.value = raw;
 }
 
