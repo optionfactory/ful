@@ -82,8 +82,9 @@ class Bindings {
             if (!values.hasOwnProperty(k)) {
                 continue;
             }
-            const curEl = el.querySelector(`[name='${CSS.escape(k)}']`);
-            mutate(this.mutators, curEl, values[k], k, values);
+            Array.from(el.querySelectorAll(`[name='${CSS.escape(k)}']`)).forEach((el) => {
+                mutate(this.mutators, el, values[k], k, values);
+            });
         }
     }
     getValues(el) {
