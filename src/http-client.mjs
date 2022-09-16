@@ -46,7 +46,7 @@ class Failure extends Error {
                 details: null
             }];
         try {
-            return text ? [JSON.parse(text)] : def;
+            return text ? JSON.parse(text) : def;
         } catch (e) {
             return def;
         }
