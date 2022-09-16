@@ -123,11 +123,11 @@ class Base64 {
         }
         return res;
     }
-    static decode(str, dialect){
-        const d = dialect || Base64.URL_SAFE;        
+    static decode(str, dialect) {
+        const d = dialect || Base64.URL_SAFE;
         let nbytes = Math.floor(str.length * 0.75);
-        for(let i=0; i !== str.length; ++i){
-            if(str[str.length - i - 1] !== '='){
+        for (let i = 0; i !== str.length; ++i) {
+            if (str[str.length - i - 1] !== '=') {
                 break;
             }
             --nbytes;
@@ -147,6 +147,27 @@ class Base64 {
         }
 
         return view.buffer;
+    }
+}
+
+class Hex {
+    static decode(hex) {
+        if (hex.length % 2 !== 0) {
+            throw new Error("invalid length");
+        }
+        const lenInBytes = hex.length / 2;
+        return new Uint8Array(lenInBytes).map((e, i) => {
+            const offset = i * 2;
+            const octet = hex.substring(offset, offset + 2);
+            return parseInt(octet, 16);
+        });
+    }
+    static encode(bytes, upper) {
+        return Array.from(bytes)
+                .map(b => b.toString(16))
+                .map(b => upper ? b.toUpperCase() : b)
+                .map(o => o.padStart(2, 0))
+                .join('');
     }
 }
 
@@ -740,5 +761,5 @@ class Wizard {
     }
 }
 
-export { AuthorizationCodeFlow, AuthorizationCodeFlowInterceptor, AuthorizationCodeFlowSession, Base64, Bindings, Failure, Form, HttpClient, LocalStorage, SessionStorage, Wizard, timing };
+export { AuthorizationCodeFlow, AuthorizationCodeFlowInterceptor, AuthorizationCodeFlowSession, Base64, Bindings, Failure, Form, Hex, HttpClient, LocalStorage, SessionStorage, Wizard, timing };
 //# sourceMappingURL=ful.mjs.map
