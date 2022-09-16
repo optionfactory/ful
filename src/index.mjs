@@ -1,6 +1,6 @@
 
 export { Bindings } from "./bindings.mjs";
-export { Base64 } from "./encodings.mjs";
+export { Base64, Hex } from "./encodings.mjs";
 export { Form } from "./forms.mjs";
 export { HttpClient, Failure } from "./http-client.mjs";
 export { LocalStorage, SessionStorage} from "./storage.mjs";
