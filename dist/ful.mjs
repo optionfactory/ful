@@ -411,7 +411,7 @@ class Storage {
     type;
     constructor(prefix, storage) {
         this.prefix = prefix;
-        this.storagte = storage;
+        this.storage = storage;
     }
     save(k, v) {
         this.storage.setItem(`${this.prefix}-${k}`, JSON.stringify(v));
