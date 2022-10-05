@@ -6,13 +6,19 @@ class Storage {
         this.prefix = prefix;
         this.storagte = storage;
     }
-    put(k, v) {
-        this.storage.setItem(this.prefix + "-" + k, JSON.stringify(v));
+    save(k, v) {
+        this.storage.setItem(`${this.prefix}-${k}`, JSON.stringify(v));
+    }
+    load(k) {
+        const got = this.storage.getItem(`${this.prefix}-${k}`);
+        return got === undefined ? undefined : JSON.parse(got);
+    }
+    remove(k) {
+        this.storage.removeItem(`${this.prefix}-${k}`);
     }
     pop(k) {
-        const got = this.storage.getItem(this.prefix + "-" + k);
-        const decoded = got === undefined ? undefined : JSON.parse(got);
-        this.storage.removeItem(k);
+        const decoded = this.access(k);
+        this.remove(k);
         return decoded;
     }
 }

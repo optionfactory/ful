@@ -416,13 +416,19 @@ var ful = (function (exports) {
             this.prefix = prefix;
             this.storagte = storage;
         }
-        put(k, v) {
-            this.storage.setItem(this.prefix + "-" + k, JSON.stringify(v));
+        save(k, v) {
+            this.storage.setItem(`${this.prefix}-${k}`, JSON.stringify(v));
+        }
+        load(k) {
+            const got = this.storage.getItem(`${this.prefix}-${k}`);
+            return got === undefined ? undefined : JSON.parse(got);
+        }
+        remove(k) {
+            this.storage.removeItem(`${this.prefix}-${k}`);
         }
         pop(k) {
-            const got = this.storage.getItem(this.prefix + "-" + k);
-            const decoded = got === undefined ? undefined : JSON.parse(got);
-            this.storage.removeItem(k);
+            const decoded = this.access(k);
+            this.remove(k);
             return decoded;
         }
     }
@@ -462,7 +468,7 @@ var ful = (function (exports) {
             const pkceVerifier = Base64.encode(crypto.getRandomValues(new Uint8Array(32)).buffer);
             const pkceChallenge = Base64.encode(crypto.subtle.digest("SHA-256", new TextEncoder().encode(pkceVerifier)));
             const state = this.clientId + Base64.encode(crypto.getRandomValues(new Uint8Array(16)).buffer);
-            this.storage.put(AuthorizationCodeFlow.PKCE_AND_STATE_KEY, {
+            this.storage.save(AuthorizationCodeFlow.PKCE_AND_STATE_KEY, {
                 state: state,
                 verifier: pkceVerifier
             });

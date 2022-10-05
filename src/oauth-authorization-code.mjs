@@ -24,7 +24,7 @@ class AuthorizationCodeFlow {
         const pkceVerifier = Base64.encode(crypto.getRandomValues(new Uint8Array(32)).buffer);
         const pkceChallenge = Base64.encode(crypto.subtle.digest("SHA-256", new TextEncoder().encode(pkceVerifier)));
         const state = this.clientId + Base64.encode(crypto.getRandomValues(new Uint8Array(16)).buffer);
-        this.storage.put(AuthorizationCodeFlow.PKCE_AND_STATE_KEY, {
+        this.storage.save(AuthorizationCodeFlow.PKCE_AND_STATE_KEY, {
             state: state,
             verifier: pkceVerifier
         });
