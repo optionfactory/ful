@@ -442,6 +442,32 @@ class SessionStorage extends Storage {
     }
 }
 
+class VersionedStorage {
+    constructor(storage, key, dataSupplier){
+        this.storage = storage;
+        this.key = key;
+        this.dataSupplier = dataSupplier;
+        this.cache = null;
+        
+    }
+    async load(revision){
+        const saved = this.storage.load(this.key);
+        if (!!saved && saved.revision === revision) {
+            this.cache = saved.value;
+            return;
+        }
+        const freshData = await this.dataSupplier(revision, this.key);
+        this.storage.save(this.key, {
+            revision: revision,
+            value: freshData
+        });
+        this.cache = freshData;
+    }
+    data(){
+        return this.cache;
+    }
+}
+
 class AuthorizationCodeFlow {
     static PKCE_AND_STATE_KEY = "state-and-verifier";
 
@@ -767,5 +793,31 @@ class Wizard {
     }
 }
 
-export { AuthorizationCodeFlow, AuthorizationCodeFlowInterceptor, AuthorizationCodeFlowSession, Base64, Bindings, Failure, Form, Hex, HttpClient, LocalStorage, SessionStorage, Wizard, timing };
+class App {
+    constructor() {
+        this.configurers = [];
+        this.initializers = [];
+        this.handlers = [];
+        this.running = false;
+        document.addEventListener("DOMContentLoaded", async () => {
+            await Promise.all(this.configurers);
+            await Promise.all(this.initializers.map(h => Promise.resolve(h())));
+            await Promise.all(this.handlers.map(h => Promise.resolve(h())));
+        });
+    }
+    configure(cb) {
+        this.configurers.push(Promise.resolve(cb()));
+        return this;
+    }
+    initialize(cb) {
+        this.initializers.push(cb);
+        return this;
+    }
+    ready(cb) {
+        this.handlers.push(cb);
+        return this;
+    }
+}
+
+export { App, AuthorizationCodeFlow, AuthorizationCodeFlowInterceptor, AuthorizationCodeFlowSession, Base64, Bindings, Failure, Form, Hex, HttpClient, LocalStorage, SessionStorage, VersionedStorage, Wizard, timing };
 //# sourceMappingURL=ful.mjs.map

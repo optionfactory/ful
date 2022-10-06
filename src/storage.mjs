@@ -35,5 +35,32 @@ class SessionStorage extends Storage {
     }
 }
 
+class VersionedStorage {
+    constructor(storage, key, dataSupplier){
+        this.storage = storage;
+        this.key = key;
+        this.dataSupplier = dataSupplier;
+        this.cache = null;
+        
+    }
+    async load(revision){
+        const saved = this.storage.load(this.key);
+        if (!!saved && saved.revision === revision) {
+            this.cache = saved.value;
+            return;
+        }
+        const freshData = await this.dataSupplier(revision, this.key);
+        this.storage.save(this.key, {
+            revision: revision,
+            value: freshData
+        });
+        this.cache = freshData;
+    }
+    data(){
+        return this.cache;
+    }
+}
 
-export {LocalStorage, SessionStorage};
+
+
+export {LocalStorage, SessionStorage, VersionedStorage};
