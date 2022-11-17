@@ -38,6 +38,9 @@
                 referrerPolicy: 'no-referrer-when-downgrade',
                 body: JSON.stringify({
                     page: window.location && window.location.href ? window.location.href : "unknown",
+                    filename: error.filename,
+                    line: error.lineno,
+                    col: error.colno,
                     message: error.message,
                     stack: error.error && error.error.stack && error.error.stack.split ? error.error.stack.split("\n") : undefined
                 })
