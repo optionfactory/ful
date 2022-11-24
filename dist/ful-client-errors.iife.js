@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    window.addEventListener('error', function (error) {
+    function ful_report_error(error){
         function meta_content(name) {
             var metaEls = document.getElementsByTagName("meta");
             var content = [].slice.call(metaEls).filter(function (v) {
@@ -48,7 +48,10 @@
         } catch (e) {
             //nothing to do here
         }
-    });
+    }
+
+    window.addEventListener('error', ful_report_error);
+    window.addEventListener('unhandledrejection', ful_report_error);
 
 })();
 //# sourceMappingURL=ful-client-errors.iife.js.map
