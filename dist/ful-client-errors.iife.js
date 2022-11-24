@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    function ful_report_error(error){
+    function ful_report_error(evt){
         function meta_content(name) {
             var metaEls = document.getElementsByTagName("meta");
             var content = [].slice.call(metaEls).filter(function (v) {
@@ -19,6 +19,28 @@
             }
             return scriptEl.dataset['reportClientErrorsUri'];
         }
+        function split_stack(){
+            if(evt.error && evt.error.stack && evt.error.stack.split){
+                return evt.error.stack.split("\n");
+            }
+            if(evt.reason && evt.reason.stack && evt.reason.stack.split){
+                return evt.reason.stack.split("\n");
+            }
+            return undefined
+        }
+        function message(){
+            if(evt.message){
+                return evt.message;
+            }
+            if(evt.reason && evt.reason.message){
+                return evt.reason.message;
+            }
+            if(evt.error && evt.error.message){
+                return evt.error.message;
+            }
+            return undefined;
+        }
+
         var uri = configured_report_uri();
         if(!uri){
             return;
@@ -38,11 +60,11 @@
                 referrerPolicy: 'no-referrer-when-downgrade',
                 body: JSON.stringify({
                     page: window.location && window.location.href ? window.location.href : "unknown",
-                    filename: error.filename,
-                    line: error.lineno,
-                    col: error.colno,
-                    message: error.message,
-                    stack: error.error && error.error.stack && error.error.stack.split ? error.error.stack.split("\n") : undefined
+                    filename: evt.filename,
+                    line: evt.lineno,
+                    col: evt.colno,
+                    message: message(),
+                    stack: split_stack()
                 })
             });
         } catch (e) {
