@@ -1,8 +1,6 @@
 
 
 class Base64 {
-    static STANDARD = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-    static URL_SAFE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
     static encode(arrayBuffer, dialect) {
         const d = dialect || Base64.URL_SAFE;
         const len = arrayBuffer.byteLength;
@@ -48,6 +46,10 @@ class Base64 {
         return view.buffer;
     }
 }
+
+Base64.STANDARD = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+Base64.URL_SAFE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+
 
 class Hex {
     static decode(hex) {

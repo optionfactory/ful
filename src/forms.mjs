@@ -1,17 +1,7 @@
 /* global Infinity, CSS */
 
+
 class Form {
-
-    static DEFAULT_FIELD_CONTAINER_SELECTOR = 'label';
-    static DEFAULT_ERROR_CLASS = 'has-error';
-    static DEFAULT_HIDE_CLASS = 'd-none';
-
-    el;
-    bindings;
-    globalErrorsEl;
-    fieldContainerSelector;
-    errorClass;
-    hideClass;
     constructor(el, bindings, {globalErrorsEl, fieldContainerSelector, errorClass, hideClass}) {
         this.el = el;
         this.bindings = bindings;
@@ -67,6 +57,12 @@ class Form {
         }
     }
 }
+
+Form.DEFAULT_FIELD_CONTAINER_SELECTOR = 'label';
+Form.DEFAULT_ERROR_CLASS = 'has-error';
+Form.DEFAULT_HIDE_CLASS = 'd-none';
+
+
 /*
  export function forms() {
  }

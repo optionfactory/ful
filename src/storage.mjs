@@ -1,7 +1,5 @@
 
 class Storage {
-    prefix;
-    type;
     constructor(prefix, storage) {
         this.prefix = prefix;
         this.storage = storage;

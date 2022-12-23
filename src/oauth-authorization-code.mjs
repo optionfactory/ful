@@ -1,9 +1,8 @@
 import { Base64 } from "./encodings.mjs";
 import { SessionStorage } from "./storage.mjs";
 
-class AuthorizationCodeFlow {
-    static PKCE_AND_STATE_KEY = "state-and-verifier";
 
+class AuthorizationCodeFlow {
     static forKeycloak(clientId, realmBaseUrl, redirectUri){
         const authUri = new URL("protocol/openid-connect/auth", realmBaseUrl);
         const tokenUri = new URL("protocol/openid-connect/token", realmBaseUrl);
@@ -79,6 +78,7 @@ class AuthorizationCodeFlow {
         return null;
     }
 }
+AuthorizationCodeFlow.PKCE_AND_STATE_KEY = "state-and-verifier";
 
 class AuthorizationCodeFlowSession {
     static parseToken(token) {
@@ -155,9 +155,6 @@ class AuthorizationCodeFlowSession {
 }
 
 class AuthorizationCodeFlowInterceptor {
-    session;
-    gracePeriodBefore;
-    gracePeriodAfter;
     constructor(session, gracePeriodBefore, gracePeriodAfter) {
         this.session = session;
         this.gracePeriodBefore = gracePeriodBefore || 2000;

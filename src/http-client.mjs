@@ -10,8 +10,6 @@ class ContextInterceptor {
 }
 
 class CsrfTokenInterceptor {
-    k;
-    v;
     constructor() {
         this.k = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
         this.v = document.querySelector("meta[name='_csrf']").getAttribute("content");
@@ -36,8 +34,6 @@ class RedirectOnUnauthorizedInterceptor {
 }
 
 class Failure extends Error {
-    problems;
-
     static parseProblems(status, text) {
         const def = [{
                 type: "GENERIC_PROBLEM",
@@ -63,7 +59,6 @@ class Failure extends Error {
 }
 
 class HttpClientBuilder {
-    interceptors;
     constructor() {
         this.interceptors = [];
     }
@@ -90,7 +85,6 @@ class HttpClientBuilder {
 }
 
 class HttpClient {
-    interceptors;
     static builder() {
         return new HttpClientBuilder();
     }

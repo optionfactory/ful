@@ -66,10 +66,6 @@ function providePath(result, path, value) {
 }
 
 class Bindings {
-    extractors;
-    mutators;
-    valueHoldersSelector;
-    ignoredChildrenSelector;
 
     constructor( {extractors, mutators, ignoredChildrenSelector, valueHoldersSelector}) {
         this.extractors = extractors || {};
