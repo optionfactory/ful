@@ -69,10 +69,6 @@ var ful = (function (exports) {
     }
 
     class Bindings {
-        extractors;
-        mutators;
-        valueHoldersSelector;
-        ignoredChildrenSelector;
 
         constructor( {extractors, mutators, ignoredChildrenSelector, valueHoldersSelector}) {
             this.extractors = extractors || {};
@@ -105,8 +101,6 @@ var ful = (function (exports) {
     }
 
     class Base64 {
-        static STANDARD = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-        static URL_SAFE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
         static encode(arrayBuffer, dialect) {
             const d = dialect || Base64.URL_SAFE;
             const len = arrayBuffer.byteLength;
@@ -153,6 +147,10 @@ var ful = (function (exports) {
         }
     }
 
+    Base64.STANDARD = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+    Base64.URL_SAFE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+
+
     class Hex {
         static decode(hex) {
             if (hex.length % 2 !== 0) {
@@ -176,18 +174,8 @@ var ful = (function (exports) {
 
     /* global Infinity, CSS */
 
+
     class Form {
-
-        static DEFAULT_FIELD_CONTAINER_SELECTOR = 'label';
-        static DEFAULT_ERROR_CLASS = 'has-error';
-        static DEFAULT_HIDE_CLASS = 'd-none';
-
-        el;
-        bindings;
-        globalErrorsEl;
-        fieldContainerSelector;
-        errorClass;
-        hideClass;
         constructor(el, bindings, {globalErrorsEl, fieldContainerSelector, errorClass, hideClass}) {
             this.el = el;
             this.bindings = bindings;
@@ -244,6 +232,10 @@ var ful = (function (exports) {
         }
     }
 
+    Form.DEFAULT_FIELD_CONTAINER_SELECTOR = 'label';
+    Form.DEFAULT_ERROR_CLASS = 'has-error';
+    Form.DEFAULT_HIDE_CLASS = 'd-none';
+
     class ContextInterceptor {
         constructor() {
             const context = document.querySelector("meta[name='context']").getAttribute("content");
@@ -256,8 +248,6 @@ var ful = (function (exports) {
     }
 
     class CsrfTokenInterceptor {
-        k;
-        v;
         constructor() {
             this.k = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
             this.v = document.querySelector("meta[name='_csrf']").getAttribute("content");
@@ -282,8 +272,6 @@ var ful = (function (exports) {
     }
 
     class Failure extends Error {
-        problems;
-
         static parseProblems(status, text) {
             const def = [{
                     type: "GENERIC_PROBLEM",
@@ -309,7 +297,6 @@ var ful = (function (exports) {
     }
 
     class HttpClientBuilder {
-        interceptors;
         constructor() {
             this.interceptors = [];
         }
@@ -336,7 +323,6 @@ var ful = (function (exports) {
     }
 
     class HttpClient {
-        interceptors;
         static builder() {
             return new HttpClientBuilder();
         }
@@ -410,8 +396,6 @@ var ful = (function (exports) {
     }
 
     class Storage {
-        prefix;
-        type;
         constructor(prefix, storage) {
             this.prefix = prefix;
             this.storage = storage;
@@ -472,8 +456,6 @@ var ful = (function (exports) {
     }
 
     class AuthorizationCodeFlow {
-        static PKCE_AND_STATE_KEY = "state-and-verifier";
-
         static forKeycloak(clientId, realmBaseUrl, redirectUri){
             const authUri = new URL("protocol/openid-connect/auth", realmBaseUrl);
             const tokenUri = new URL("protocol/openid-connect/token", realmBaseUrl);
@@ -549,6 +531,7 @@ var ful = (function (exports) {
             return null;
         }
     }
+    AuthorizationCodeFlow.PKCE_AND_STATE_KEY = "state-and-verifier";
 
     class AuthorizationCodeFlowSession {
         static parseToken(token) {
@@ -625,9 +608,6 @@ var ful = (function (exports) {
     }
 
     class AuthorizationCodeFlowInterceptor {
-        session;
-        gracePeriodBefore;
-        gracePeriodAfter;
         constructor(session, gracePeriodBefore, gracePeriodAfter) {
             this.session = session;
             this.gracePeriodBefore = gracePeriodBefore || 2000;
