@@ -15,7 +15,7 @@ class Storage {
         this.storage.removeItem(`${this.prefix}-${k}`);
     }
     pop(k) {
-        const decoded = this.access(k);
+        const decoded = this.load(k);
         this.remove(k);
         return decoded;
     }

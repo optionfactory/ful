@@ -408,7 +408,7 @@ class Storage {
         this.storage.removeItem(`${this.prefix}-${k}`);
     }
     pop(k) {
-        const decoded = this.access(k);
+        const decoded = this.load(k);
         this.remove(k);
         return decoded;
     }
@@ -469,9 +469,9 @@ class AuthorizationCodeFlow {
         this.redirectUri = redirectUri;
         this.storage = new SessionStorage(clientId);
     }
-    _auth() {
+    async _auth() {
         const pkceVerifier = Base64.encode(crypto.getRandomValues(new Uint8Array(32)).buffer);
-        const pkceChallenge = Base64.encode(crypto.subtle.digest("SHA-256", new TextEncoder().encode(pkceVerifier)));
+        const pkceChallenge = Base64.encode(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(pkceVerifier)));
         const state = this.clientId + Base64.encode(crypto.getRandomValues(new Uint8Array(16)).buffer);
         this.storage.save(AuthorizationCodeFlow.PKCE_AND_STATE_KEY, {
             state: state,
@@ -524,7 +524,7 @@ class AuthorizationCodeFlow {
             return await this._tokenExchange(code, state);
         }
         //if not authorized
-        this._auth();
+        await this._auth();
         return null;
     }
 }
