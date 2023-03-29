@@ -456,7 +456,7 @@ class AuthorizationCodeFlow {
     static forKeycloak(clientId, realmBaseUrl, redirectUri){
         const authUri = new URL("protocol/openid-connect/auth", realmBaseUrl);
         const tokenUri = new URL("protocol/openid-connect/token", realmBaseUrl);
-        const logoutUri = new URL("protocol/openid-connect/lgout", realmBaseUrl);
+        const logoutUri = new URL("protocol/openid-connect/logout", realmBaseUrl);
         const scope = "openid profile";
         return new AuthorizationCodeFlow(clientId, scope, authUri, tokenUri, logoutUri, redirectUri);        
     }
