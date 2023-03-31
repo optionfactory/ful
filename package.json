@@ -1,6 +1,7 @@
 {
-    "name": "ful",
-    "version": "0.14",
+    "name": "@optionfactory/ful",
+    "version": "0.17.0",
+    "repository": "https://github.com/optionfactory/ful",
     "keywords": [
         "ui",
         "browser"
@@ -9,11 +10,12 @@
     "author": "rferranti",
     "contributors": [],
     "main": "index.mjs",
+    "files": ["dist/**"],    
     "scripts": {
         "clean": "rimraf dist && npm prune",
         "initialize": "npm install",
         "test": "mocha --recursive -R spec",
-        "package": "npx rollup --config rollup.conf.js"
+        "build": "npx rollup --config rollup.conf.js"
     },
     "devDependencies": {
         "@rollup/plugin-node-resolve": "^13.3.0",
