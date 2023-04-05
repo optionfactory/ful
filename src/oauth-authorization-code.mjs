@@ -64,12 +64,11 @@ class AuthorizationCodeFlow {
         const token = await response.json();
         return new AuthorizationCodeFlowSession(this.clientId, token, this.tokenUri, this.logoutUri, this.redirectUri);
     }
-
     async ensureLoggedIn() {
         const url = new URL(window.location.href);
         const code = url.searchParams.get("code");
-        if (code) {
-            //if callback from keycloak
+        if (code && this.storage.load(AuthorizationCodeFlow.PKCE_AND_STATE_KEY)) {
+            //if callback from keycloak and we have our state still stored
             const state = url.searchParams.get("state");
             return await this._tokenExchange(code, state);
         }
