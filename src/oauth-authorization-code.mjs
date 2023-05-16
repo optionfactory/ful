@@ -4,22 +4,22 @@ import { SessionStorage } from "./storage.mjs";
 
 class AuthorizationCodeFlow {
     static forKeycloak(clientId, realmBaseUrl, redirectUri){
-        const authUri = new URL("protocol/openid-connect/auth", realmBaseUrl);
-        const tokenUri = new URL("protocol/openid-connect/token", realmBaseUrl);
-        const logoutUri = new URL("protocol/openid-connect/logout", realmBaseUrl);
         const scope = "openid profile";
-        return new AuthorizationCodeFlow(clientId, scope, authUri, tokenUri, logoutUri, redirectUri);        
+        return new AuthorizationCodeFlow(clientId, scope, {
+            auth: new URL("protocol/openid-connect/auth", realmBaseUrl),
+            token: new URL("protocol/openid-connect/token", realmBaseUrl),
+            logout: new URL("protocol/openid-connect/logout", realmBaseUrl),
+            registration: new URL("protocol/openid-connect/registrations", realmBaseUrl),
+            redirect: redirectUri
+        });        
     }
-    constructor(clientId, scope, authUri, tokenUri, logoutUri, redirectUri) {
+    constructor(clientId, scope, {auth, token, registration, logout, redirect}) {
+        this.storage = new SessionStorage(clientId);
         this.clientId = clientId;
         this.scope = scope;
-        this.authUri = authUri;
-        this.tokenUri = tokenUri;
-        this.logoutUri = logoutUri;
-        this.redirectUri = redirectUri;
-        this.storage = new SessionStorage(clientId);
+        this.uri = {auth, token, registration, logout, redirect};
     }
-    async _auth() {
+    async action(uri, additionalParams){
         const pkceVerifier = Base64.encode(crypto.getRandomValues(new Uint8Array(32)).buffer);
         const pkceChallenge = Base64.encode(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(pkceVerifier)));
         const state = this.clientId + Base64.encode(crypto.getRandomValues(new Uint8Array(16)).buffer);
@@ -27,23 +27,34 @@ class AuthorizationCodeFlow {
             state: state,
             verifier: pkceVerifier
         });
-        const url = new URL(this.authUri);
+        const url = new URL(uri);
         url.searchParams.set("client_id", this.clientId);
-        url.searchParams.set("redirect_uri", this.redirectUri);
+        url.searchParams.set("redirect_uri", this.uri.redirect);
         url.searchParams.set("response_type", 'code');
         url.searchParams.set("scope", this.scope);
         url.searchParams.set("state", state);
         url.searchParams.set("code_challenge", pkceChallenge);
         url.searchParams.set("code_challenge_method", 'S256');
+        Object.entries(additionalParams || {}).forEach(kv => {
+            url.searchParams.set(kv[0], kv[1]);
+        });
         window.location = url;
     }
+    async registration(additionalParams){
+        await this.action(this.uri.registration, additionalParams);
+    }
+    async applicationInitiatedAction(kcAction){
+        await this.action(this.uri.auth, {
+            kc_action: kcAction
+        });
+    }
     async _tokenExchange(code, state) {
-        window.history.replaceState('', "", this.redirectUri);
+        window.history.replaceState('', "", this.uri.redirect);
         const stateAndVerifier = this.storage.pop(AuthorizationCodeFlow.PKCE_AND_STATE_KEY);
         if (stateAndVerifier.state !== state) {
             throw new Error("State mismatch");
         }
-        const response = await fetch(this.tokenUri, {
+        const response = await fetch(this.uri.token, {
             method: "POST",
             headers: {
                 "Content-Type": 'application/x-www-form-urlencoded'
@@ -54,7 +65,7 @@ class AuthorizationCodeFlow {
                 ["grant_type", "authorization_code"],
                 ["code_verifier", stateAndVerifier.verifier],
                 ["state", stateAndVerifier.state],
-                ["redirect_uri", this.redirectUri]
+                ["redirect_uri", this.uri.redirect]
             ])
         });
         if (!response.ok) {
@@ -62,7 +73,7 @@ class AuthorizationCodeFlow {
             throw new Error("Error:" + response.status + ": " + text);
         }
         const token = await response.json();
-        return new AuthorizationCodeFlowSession(this.clientId, token, this.tokenUri, this.logoutUri, this.redirectUri);
+        return new AuthorizationCodeFlowSession(this.clientId, token, this.uri);
     }
     async ensureLoggedIn() {
         const url = new URL(window.location.href);
@@ -73,7 +84,7 @@ class AuthorizationCodeFlow {
             return await this._tokenExchange(code, state);
         }
         //if not authorized
-        await this._auth();
+        await this.action(this.uri.auth, {});
         return null;
     }
 }
@@ -82,27 +93,26 @@ AuthorizationCodeFlow.PKCE_AND_STATE_KEY = "state-and-verifier";
 class AuthorizationCodeFlowSession {
     static parseToken(token) {
         const [rawHeader, rawPayload, signature] = token.split(".");
+        const ut8decoder = new TextDecoder("utf-8");
         return {
-            header: JSON.parse(atob(rawHeader)),
-            payload: JSON.parse(atob(rawPayload)),
+            header: JSON.parse(ut8decoder.decode(Base64.decode(rawHeader, Base64.STANDARD))),
+            payload: JSON.parse(ut8decoder.decode(Base64.decode(rawPayload, Base64.STANDARD))),
             signature: signature
         };
     }    
-    constructor(clientId, token, tokenUri, logoutUri, redirectUri) {
+    constructor(clientId, t, {token, logout, redirect}) {
         this.clientId = clientId;
-        this.token = token;
-        this.tokenUri = tokenUri;
-        this.logoutUri = logoutUri;
-        this.redirectUri = redirectUri;
-        this.accessToken = AuthorizationCodeFlowSession.parseToken(token.access_token);
-        this.refreshToken = AuthorizationCodeFlowSession.parseToken(token.refresh_token);
+        this.token = t;
+        this.accessToken = AuthorizationCodeFlowSession.parseToken(t.access_token);
+        this.refreshToken = AuthorizationCodeFlowSession.parseToken(t.refresh_token);
+        this.uri = { token, logout, redirect }
         this.refreshCallback = null;
     }
     onRefresh(callback) {
         this.refreshCallback = callback;
     }
     async refresh() {
-        const response = await fetch(this.tokenUri, {
+        const response = await fetch(this.uri.token, {
             method: "POST",
             headers: {
                 "Content-Type": 'application/x-www-form-urlencoded'
@@ -138,8 +148,8 @@ class AuthorizationCodeFlowSession {
         await this.refresh();
     }
     logout() {
-        const url = new URL(this.logoutUri);
-        url.searchParams.set("post_logout_redirect_uri", this.redirectUri);
+        const url = new URL(this.uri.logout);
+        url.searchParams.set("post_logout_redirect_uri", this.uri.redirect);
         url.searchParams.set("id_token_hint", this.token.id_token);
         window.location = url;
     }
@@ -159,13 +169,12 @@ class AuthorizationCodeFlowInterceptor {
         this.gracePeriodBefore = gracePeriodBefore || 2000;
         this.gracePeriodAfter = gracePeriodAfter || 30000;
     }
-    async before(request) {
+    async intercept(request, chain) {
         await this.session.refreshIf(this.gracePeriodBefore);
         const headers = new Headers(request.options.headers);
         headers.set("Authorization", this.session.bearerToken());
-        return request;
-    }
-    async after(request, response) {
+        request.options.headers = headers;
+        const response = await chain.proceed(request);
         await this.session.refreshIf(this.gracePeriodAfter);
         return response;
     }
