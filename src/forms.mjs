@@ -1,5 +1,6 @@
 /* global Infinity, CSS */
 
+import { Failure } from "./http-client.mjs";
 import { Observable } from "./observable.mjs";
 import { Slots } from "./slots.mjs";
 

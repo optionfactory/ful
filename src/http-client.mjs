@@ -138,30 +138,6 @@ class HttpClient {
                 }]);
         }
     }
-    async form(resource, options, uiOptions) {
-        const ui = uiOptions || {};
-        ui.buttons?.forEach(el => {
-            el.setAttribute("disabled", "disabled");
-            if (ui.loader) {
-                el.dataset['oldContent'] = el.innerHTML;
-                el.innerHTML = ui.loader;
-            }
-        });
-        try {
-            const r = await this.json(resource, options);
-            ui.form?.clearErrors();
-            return r;
-        } catch (e) {
-            ui.form?.setErrors(e.problems);
-            throw e;
-        } finally {
-            ui.buttons?.forEach(el => {
-                el.removeAttribute("disabled");
-                el.innerHTML = el.dataset['oldContent'];
-                delete el.dataset['oldContent'];
-            });
-        }
-    }
 }
 
 

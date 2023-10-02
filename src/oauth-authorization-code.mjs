@@ -124,7 +124,7 @@ class AuthorizationCodeFlowSession {
             ])
         });
         if (!response.ok) {
-            throw new Error("Error:" + response.code + ": " + response.text());
+            throw new Error("Error:" + response.status + ": " + response.text());
         }
         const token = await response.json();
         this.token = token;
