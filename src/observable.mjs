@@ -3,9 +3,17 @@ class Observable {
     constructor() {
         this.listeners = {};
     }
-    async fire(event, data) {
+    fireSync(event, data, initialAcc) {
         const listeners = this.listeners[event] || [];
-        let acc = null;
+        let acc = initialAcc;
+        for (const l of listeners) {
+            acc = l(data, this, acc);
+        }
+        return acc;
+    }
+    async fire(event, data, initialAcc) {
+        const listeners = this.listeners[event] || [];
+        let acc = initialAcc;
         for (const l of listeners) {
             acc = await l(data, this, acc);
         }
@@ -22,6 +30,7 @@ class Observable {
     }
     static mixin(self) {
         self.listeners = {}
+        self.fireSync = Observable.prototype.fireSync;
         self.fire = Observable.prototype.fire;
         self.on = Observable.prototype.on;
         self.un = Observable.prototype.un;
