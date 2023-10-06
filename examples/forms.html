@@ -1,0 +1,166 @@
+<html lang="it">
+
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+    <link href="../dist/ful.css" rel="stylesheet">
+    <script src="../dist/ful.iife.min.js"></script>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <ful-form class="col-6 border border-primary">
+                <h1>Classic layout</h1>
+                <ful-input @name="text.plain" class="mb-3">
+                    text plain <sup>*</sup>
+                </ful-input>
+                <ful-input @name="text.icons" class="mb-3" @float>
+                    Text with icons
+                    <span slot="ibefore">@</span>
+                    <span slot="iafter">@</span>
+                </ful-input>
+                <ful-input @name="datetime" @type="datetime-local" class="mb-3">
+                    datetime-local
+                </ful-input>
+                <ful-input @name="date" @type="date" class="mb-3">
+                    date
+                </ful-input>
+                <ful-input @name="time" @type="time" class="mb-3">
+                    time
+                </ful-input>
+                <ful-select @name="select.single" class="mb-3">
+                    select single
+                    <span slot="ibefore">@</span>
+                    <span slot="iafter">@</span>
+                </ful-select>
+                <ful-select @name="select.multiple" @multiple class="mb-3">
+                    select multiple
+                    <span slot="ibefore">@</span>
+                    <span slot="iafter">@</span>
+                </ful-select>
+
+                <ful-errors></ful-errors>
+
+                <button type="submit" class="btn btn-primary">
+                    <ful-spinner></ful-spinner>
+                    submit
+                </button>
+            </ful-form>
+            <ful-form class="col-6 border border-secondary">
+                <h1>Floating layout</h1>
+                <ful-input @name="text.plain" @floating class="mb-3">
+                    Text plain
+                </ful-input>
+                <ful-input @name="text.icons" @floating class="mb-3">
+                    Text icons <sup>*</sup>
+                    <span slot="ibefore">@</span>
+                    <span slot="iafter">@</span>
+                </ful-input>
+                <ful-input @name="datetime" @type="datetime-local" @floating class="mb-3">
+                    datetime-local
+                </ful-input>
+                <ful-input @name="date" @type="date" @floating class="mb-3">
+                    date
+                </ful-input>
+                <ful-input @name="time" @type="time" @floating class="mb-3">
+                    time
+                </ful-input>
+
+                <ful-select @name="select.single" @floating class="mb-3">
+                    select: single
+                    <span slot="ibefore">@</span>
+                    <span slot="iafter">@</span>
+                    <select slot="input">
+                        <option value="16">aaa</option>
+                        <option value="17">zzz</option>
+                    </select>
+                </ful-select>
+                <ful-select @name="select.multiple" @multiple @floating class="mb-3">
+                    select: multiple
+                    <span slot="ibefore">@</span>
+                    <span slot="iafter">@</span>
+                </ful-select>
+
+                <ful-errors></ful-errors>
+
+                <button type="submit" class="btn btn-primary">
+                    <ful-spinner></ful-spinner>
+                    submit
+                </button>
+
+            </ful-form>
+        </div>
+        <div class="row">
+            <ful-form class="col border border-primary">
+                <h1>Classic layout big</h1>
+                <ful-input @name="blasd1" class="mb-3">
+                    Label1 <sup>*</sup>
+                    <input slot="input" class="form-control form-control-lg">
+                </ful-input>
+                <ful-select @name="tomselect" class="mb-3" @class="form-control-lg">
+                    select single
+                    <span slot="ibefore">@</span>
+                    <span slot="iafter">@</span>
+                </ful-select>
+                <ful-select @name="tomselect" @multiple class="mb-3" @class="form-control-lg">
+                    select multiple
+                    <span slot="ibefore">@</span>
+                    <span slot="iafter">@</span>
+                </ful-select>
+            </ful-form>
+        </div>
+    </div>
+    <script>
+        const sleep = ful.timing.sleep;
+        const Failure = ful.Failure;
+
+        ful.Form.configure();
+
+        document.querySelectorAll('ful-form').forEach(form => {
+            form.on('submit', async (data, form, acc) => {
+                await sleep(1000);
+                console.log("event1", data, form, acc);
+            });
+            form.on('submit', (data, form, acc) => {
+                console.log("event2", data, form, acc);
+            });
+            form.on('submit', (data, form, acc) => {
+                throw new Failure(0, [{
+                    type: 'FIELD_ERROR',
+                    context: 'text.plain',
+                    reason: 'broken broken'
+                }, {
+                    type: 'FIELD_ERROR',
+                    context: 'select.multiple',
+                    reason: 'broken broken'
+                }, {
+                    type: 'GLOBAL_ERROR',
+                    reason: 'globally broken'
+                }]);
+            });
+        })
+
+        document.querySelectorAll('ful-select').forEach(el => {
+            el.setValue({ value: 1, text: "asd"});
+            el.on('load', async () => {
+                console.log("load")
+                return [
+                    { value: 1, text: "asd" },
+                    { value: 2, text: "bsd" }
+                ]
+            });
+        })
+
+
+
+    </script>
+</body>
+
+</html>

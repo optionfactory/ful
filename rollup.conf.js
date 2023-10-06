@@ -1,5 +1,6 @@
 import resolve from '@rollup/plugin-node-resolve';
 import { terser } from "rollup-plugin-terser";
+import postcss from "rollup-plugin-postcss";
 
 export default [{
     input: 'src/client-errors.js',
@@ -10,16 +11,16 @@ export default [{
         plugins: [
             terser()
         ]
-    },{
+    }, {
         sourcemap: true,
         file: 'dist/ful-client-errors.iife.js',
         format: 'iife'
     }],
     treeshake: true,
     plugins: [
-        resolve()        
+        resolve()
     ]
-},{
+}, {
     input: 'src/index.mjs',
     output: [{
         sourcemap: true,
@@ -28,11 +29,11 @@ export default [{
         plugins: [
             terser()
         ]
-    },{
+    }, {
         sourcemap: true,
         file: 'dist/ful.mjs',
         format: 'es'
-    },{
+    }, {
         sourcemap: true,
         file: 'dist/ful.iife.min.js',
         name: 'ful',
@@ -40,7 +41,7 @@ export default [{
         plugins: [
             terser()
         ]
-    },{
+    }, {
         sourcemap: true,
         file: 'dist/ful.iife.js',
         name: 'ful',
@@ -48,6 +49,12 @@ export default [{
     }],
     treeshake: true,
     plugins: [
-        resolve()        
+        resolve(),
+        postcss({
+            extract: 'ful.css',
+            inject: false,
+            minimize: true,
+            sourceMap: true
+        }),
     ]
 }];

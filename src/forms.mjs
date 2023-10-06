@@ -3,7 +3,6 @@
 import { Failure } from "./http-client.mjs";
 import { Observable } from "./observable.mjs";
 
-
 class CustomElements {
     static id = 0;
     static uid(prefix) {

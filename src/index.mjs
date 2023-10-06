@@ -9,3 +9,5 @@ export { timing } from "./timing.mjs";
 export { Wizard } from "./wizard.mjs";
 export { App } from "./app.mjs";
 
+import "./wizard.scss"
+import "./forms.scss"
