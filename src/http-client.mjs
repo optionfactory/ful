@@ -112,19 +112,23 @@ class HttpClient {
     constructor({interceptors}){
         this.interceptors = interceptors || [];
     }
-    async fetch(resource, options) {
+    async exchange(resource, options) {
         const opts = options || {};
         const interceptors = [...this.interceptors, ...opts.interceptors || [], new HttpCall()];
         const chain = new HttpInterceptorChain(interceptors, 0);
         return await chain.proceed({resource, options: opts});
     }
+    async fetch(resource, options) {
+        const response = await this.exchange(resource, options);
+        if (!response.ok) {
+            const message = await response.text();
+            throw Failure.fromResponse(response.status, message);
+        }        
+        return response;
+    }
     async json(resource, options) {
         try {
             const response = await this.fetch(resource, options);
-            if (!response.ok) {
-                const message = await response.text();
-                throw Failure.fromResponse(response.status, message);
-            }
             const text = await response.text();
             return text ? JSON.parse(text) : undefined;
         } catch (e) {
@@ -151,6 +155,15 @@ function jsonRequest(method, body, headers){
         body: JSON.stringify(body)        
     }
 }
+function jsonPost(body, headers){
+    return jsonRequest('POST', body, headers);
+}
+function jsonPut(body, headers){
+    return jsonRequest('PUT', body, headers);
+}
+function jsonPatch(body, headers){
+    return jsonRequest('PATCH', body, headers);
+}
 
 
-export { HttpClient, Failure, jsonRequest };
+export { HttpClient, Failure, jsonRequest, jsonPost, jsonPut, jsonPatch };
