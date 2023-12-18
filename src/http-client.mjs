@@ -113,9 +113,10 @@ class HttpClient {
         this.interceptors = interceptors || [];
     }
     async fetch(resource, options) {
-        const interceptors = [...this.interceptors, ...options.interceptors || [], new HttpCall()];
+        const opts = options || {};
+        const interceptors = [...this.interceptors, ...opts.interceptors || [], new HttpCall()];
         const chain = new HttpInterceptorChain(interceptors, 0);
-        return await chain.proceed({resource, options});
+        return await chain.proceed({resource, opts});
     }
     async json(resource, options) {
         try {
@@ -140,6 +141,16 @@ class HttpClient {
     }
 }
 
+function jsonRequest(method, body, headers){
+    return {
+        headers: {
+            "Content-Type": "application/json",
+            ...headers
+        },
+        method: method,
+        body: JSON.stringify(body)        
+    }
+}
 
 
-export { HttpClient, Failure };
+export { HttpClient, Failure, jsonRequest };
