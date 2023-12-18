@@ -116,7 +116,7 @@ class HttpClient {
         const opts = options || {};
         const interceptors = [...this.interceptors, ...opts.interceptors || [], new HttpCall()];
         const chain = new HttpInterceptorChain(interceptors, 0);
-        return await chain.proceed({resource, opts});
+        return await chain.proceed({resource, options: opts});
     }
     async json(resource, options) {
         try {
