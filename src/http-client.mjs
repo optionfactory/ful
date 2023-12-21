@@ -32,7 +32,7 @@ class RedirectOnUnauthorizedInterceptor {
         if (response.status !== 401) {
             return response;
         }
-        window.location.href = redirectUri;
+        window.location.href = this.redirectUri;
     }
 }
 
