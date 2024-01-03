@@ -28,12 +28,14 @@ class Observable {
         const idx = listeners.indexOf(listener);
         return idx === -1 ? [] : listeners.splice(idx, 1);
     }
-    static mixin(self) {
-        self.listeners = {}
-        self.fireSync = Observable.prototype.fireSync;
-        self.fire = Observable.prototype.fire;
-        self.on = Observable.prototype.on;
-        self.un = Observable.prototype.un;
+    static init(self){
+        self.listeners = {};
+    }
+    static mixin(ctor) {
+        ctor.prototype.fireSync = Observable.prototype.fireSync;
+        ctor.prototype.fire = Observable.prototype.fire;
+        ctor.prototype.on = Observable.prototype.on;
+        ctor.prototype.un = Observable.prototype.un;
     }
 
 }

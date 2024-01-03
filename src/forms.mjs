@@ -9,7 +9,8 @@ class CustomElements {
         return `${prefix}-${++CustomElements.id}`;
     }
     static forwardAttributes(from, to, except) {
-        const ans = from.getAttributeNames().filter(a => except.indexOf(a) === -1)
+        const ans = from.getAttributeNames()
+            .filter(a => except.indexOf(a) === -1)
             .filter(a => a[0] === '@')
             .forEach(a => {
                 if (a === '@class') {
@@ -207,7 +208,7 @@ class Input extends HTMLElement {
 class Select extends HTMLElement {
     constructor(tsConfig) {
         super();
-        Observable.mixin(this);
+        Observable.init(this);
         const id = CustomElements.uid('ful-select');
         const name = this.getAttribute('@name');
         const floating = this.hasAttribute('@floating');
@@ -262,10 +263,14 @@ class Select extends HTMLElement {
 
 }
 
+Observable.mixin(Select);
+
+
+
 class Form extends HTMLElement {
     constructor({ mutators, extractors, valueHoldersSelector, ignoredChildrenSelector }) {
         super();
-        Observable.mixin(this);
+        Observable.init(this);
         this.mutators = mutators || {}
         this.extractors = extractors || {}
         this.valueHoldersSelector = valueHoldersSelector || '[name]';
@@ -451,6 +456,7 @@ class Form extends HTMLElement {
     }
 }
 
+Observable.mixin(Form);
 
 
 
