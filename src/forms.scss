@@ -4,3 +4,25 @@ ful-field-error,
 ful-select {
     display: block;
 }
+
+.form-floating>.ts-wrapper {
+    height: calc(3.5rem + calc(var(--bs-border-width) * 2));
+    min-height: calc(3.5rem + calc(var(--bs-border-width) * 2));
+    line-height: 1.25;
+}
+
+.form-floating>.ts-wrapper>.ts-control {
+    padding-top: 1.625rem !important;
+    padding-bottom: 0.625rem !important;
+    line-height: 20px;
+}
+
+.form-floating>.ts-wrapper~label {
+    color: rgba(var(--bs-body-color-rgb), .65);
+    transform: scale(.85) translateY(-0.5rem) translateX(0.15rem);
+}
+
+.form-floating>.ts-wrapper.multi .ts-control>div {
+    margin: 0 3px 0 0;
+    padding: 0px 5px;
+}
