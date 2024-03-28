@@ -128,8 +128,8 @@ class AuthorizationCodeFlowSession {
         }
         const token = await response.json();
         this.token = token;
-        this.accessToken = this._parseToken(token.access_token);
-        this.refreshToken = this._parseToken(token.refresh_token);
+        this.accessToken = AuthorizationCodeFlowSession.parseToken(token.access_token);
+        this.refreshToken = AuthorizationCodeFlowSession.parseToken(token.refresh_token);
         if (this.refreshCallback) {
             this.refreshCallback(this.token, this.accessToken, this.refreshToken);
         }

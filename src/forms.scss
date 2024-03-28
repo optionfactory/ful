@@ -5,6 +5,7 @@ ful-select {
     display: block;
 }
 
+
 .form-floating>.ts-wrapper {
     height: calc(3.5rem + calc(var(--bs-border-width) * 2));
     min-height: calc(3.5rem + calc(var(--bs-border-width) * 2));
@@ -26,3 +27,11 @@ ful-select {
     margin: 0 3px 0 0;
     padding: 0px 5px;
 }
+
+ful-input:not(:defined),
+ful-errors:not(:defined),
+ful-field-error:not(:defined),
+ful-select:not(:defined) {
+    visibility: hidden;
+}
+
