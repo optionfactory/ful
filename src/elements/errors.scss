@@ -1,0 +1,9 @@
+ful-errors:not(:defined),
+ful-field-error:not(:defined) {
+    visibility: hidden;
+}
+
+ful-errors,
+ful-field-error {
+    display: block;
+}

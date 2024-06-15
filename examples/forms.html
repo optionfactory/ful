@@ -20,29 +20,29 @@
         <div class="row">
             <ful-form class="col-6 border border-primary">
                 <h1>Classic layout</h1>
-                <ful-input @name="text.plain" class="mb-3">
+                <ful-input input-name="text.plain" class="mb-3">
                     text plain <sup>*</sup>
                 </ful-input>
-                <ful-input @name="text.icons" class="mb-3" @float>
+                <ful-input input-name="text.icons" class="mb-3">
                     Text with icons
                     <i slot="ibefore" class="bi bi-envelope-at"></i>
                     <i slot="iafter" class="bi bi-envelope-at"></i>
                 </ful-input>
-                <ful-input @name="datetime" @type="datetime-local" class="mb-3">
+                <ful-input input-name="datetime" input-type="datetime-local" class="mb-3">
                     datetime-local
                 </ful-input>
-                <ful-input @name="date" @type="date" class="mb-3">
+                <ful-input input-name="date" input-type="date" class="mb-3">
                     date
                 </ful-input>
-                <ful-input @name="time" @type="time" class="mb-3">
+                <ful-input input-name="time" input-type="time" class="mb-3">
                     time
                 </ful-input>
-                <ful-select @remote @name="select.single" class="mb-3">
+                <ful-select remote input-name="select.single" class="mb-3">
                     select single
                     <i slot="ibefore" class="bi bi-envelope-at"></i>
                     <i slot="iafter" class="bi bi-envelope-at"></i>
                 </ful-select>
-                <ful-select @name="select.multiple" @multiple @remote class="mb-3">
+                <ful-select input-name="select.multiple" input-multiple remote class="mb-3">
                     select multiple
                     <i slot="ibefore" class="bi bi-envelope-at"></i>
                     <i slot="iafter" class="bi bi-envelope-at"></i>
@@ -51,31 +51,31 @@
                 <ful-errors></ful-errors>
 
                 <button type="submit" class="btn btn-primary">
-                    <ful-spinner></ful-spinner>
+                    <ful-spinner hidden></ful-spinner>
                     submit
                 </button>
             </ful-form>
             <ful-form class="col-6 border border-secondary">
                 <h1>Floating layout</h1>
-                <ful-input @name="text.plain" @floating class="mb-3">
+                <ful-input input-name="text.plain" floating class="mb-3">
                     Text plain
                 </ful-input>
-                <ful-input @name="text.icons" @floating class="mb-3">
+                <ful-input input-name="text.icons" floating class="mb-3">
                     Text icons <sup>*</sup>
                     <i slot="ibefore" class="bi bi-envelope-at"></i>
                     <i slot="iafter" class="bi bi-envelope-at"></i>
                 </ful-input>
-                <ful-input @name="datetime" @type="datetime-local" @floating class="mb-3">
+                <ful-input input-name="datetime" input-type="datetime-local" floating class="mb-3">
                     datetime-local
                 </ful-input>
-                <ful-input @name="date" @type="date" @floating class="mb-3">
+                <ful-input input-name="date" input-type="date" floating class="mb-3">
                     date
                 </ful-input>
-                <ful-input @name="time" @type="time" @floating class="mb-3">
+                <ful-input input-name="time" input-type="time" floating class="mb-3">
                     time
                 </ful-input>
 
-                <ful-select @name="select.single" @floating @remote class="mb-3">
+                <ful-select input-name="select.single" floating remote class="mb-3">
                     select: single
                     <i slot="ibefore" class="bi bi-envelope-at"></i>
                     <i slot="iafter" class="bi bi-envelope-at"></i>
@@ -84,7 +84,7 @@
                         <option value="17">zzz</option>
                     </select>
                 </ful-select>
-                <ful-select @name="select.multiple" @multiple @floating @remote class="mb-3">
+                <ful-select input-name="select.multiple" input-multiple floating remote class="mb-3">
                     select: multiple
                     <i slot="ibefore" class="bi bi-envelope-at"></i>
                     <i slot="iafter" class="bi bi-envelope-at"></i>
@@ -93,7 +93,7 @@
                 <ful-errors></ful-errors>
 
                 <button type="submit" class="btn btn-primary">
-                    <ful-spinner></ful-spinner>
+                    <ful-spinner hidden></ful-spinner>
                     submit
                 </button>
 
@@ -102,16 +102,16 @@
         <div class="row">
             <ful-form class="col border border-primary">
                 <h1>Classic layout big</h1>
-                <ful-input @name="blasd1" class="mb-3">
+                <ful-input input-name="blasd1" class="mb-3">
                     Label1 <sup>*</sup>
                     <input slot="input" class="form-control form-control-lg">
                 </ful-input>
-                <ful-select @remote @name="tomselect" class="mb-3" @class="form-control-lg">
+                <ful-select remote input-name="tomselect" class="mb-3" input-class="form-control-lg">
                     select single
                     <i slot="ibefore" class="bi bi-envelope-at"></i>
                     <i slot="iafter" class="bi bi-envelope-at"></i>
                 </ful-select>
-                <ful-select @remote @name="tomselect" @multiple class="mb-3" @class="form-control-lg">
+                <ful-select remote input-name="tomselect" input-multiple class="mb-3" input-class="form-control-lg">
                     select multiple
                     <i slot="ibefore" class="bi bi-envelope-at"></i>
                     <i slot="iafter" class="bi bi-envelope-at"></i>
@@ -120,10 +120,16 @@
         </div>
     </div>
     <script>
+
         const sleep = ful.timing.sleep;
         const Failure = ful.Failure;
 
-        ful.Form.configure();
+        ful.FieldError.configure();
+        ful.Errors.configure();
+        ful.Spinner.configure();
+        ful.Input.configure();
+        ful.Select.configure();
+        ful.Form.custom('ful-form', {});
 
         document.querySelectorAll('ful-form').forEach(form => {
             form.on('submit', async (data, form, acc) => {

@@ -1,4 +1,4 @@
-import { Bindings } from "../src/bindings.mjs";
+import { Form } from "../src/elements/form.mjs";
 import { mockdom } from "./mockdom.mjs"
 
 import assert from 'assert';

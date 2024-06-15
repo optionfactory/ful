@@ -1,0 +1,23 @@
+ful-wizard:not(:defined) {
+    visibility: hidden;
+}
+
+ful-wizard {
+    display: block;
+}
+
+ful-wizard > ol > li.active {
+    display: block;
+}
+
+ful-wizard > ol > li {
+    display: none;
+}
+
+ful-wizard > section {
+    display: none;
+}
+
+ful-wizard > section.current {
+    display: block;
+}
