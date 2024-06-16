@@ -50,7 +50,7 @@ class Attributes {
             .forEach(a => {
                 const target = a.substring(prefix.length);
                 if (target === 'class') {
-                    to.classList.add(...from.getAttribute("class").split(" ").filter(a => a.length));
+                    to.classList.add(...from.getAttribute(prefix + "class").split(" ").filter(a => a.length));
                     return;
                 }
                 to.setAttribute(target, from.getAttribute(a))
@@ -130,102 +130,4 @@ const Stateful = (SuperClass, flags, others) => {
     };
 }
 
-class CustomElements {
-
-    static labelAndInputGroup(id, name, isFloating, slotted) {
-        if (isFloating) {
-            /**
-             * <div class="input-group has-validation">
-             *   <span data-tpl-if="slotted.before" class="input-group-text">{{{{ slotted.before }}}}</span>
-             *   <div class="form-floating">
-             *       {{{{ slotted.input }}}} 
-             *       <label data-tpl-for="name" class="form-label">{{{{ slotted.default }}}}</label>
-             *   </div>
-             *   <span data-tpl-if="slotted.after" class="input-group-text">{{{{ slotted.after }}}}</span>
-             *   <ful-field-error data-tpl-field="name"></ful-field-error>                                 
-             * </div>    
-             */
-            const label = document.createElement("label");
-            label.setAttribute("for", id);
-            label.classList.add('form-label');
-            label.append(slotted.default);
-
-            const ff = document.createElement('div');
-            ff.classList.add("form-floating");
-            ff.append(slotted.input, label);
-
-            const ffe = document.createElement('ful-field-error');
-            ffe.setAttribute("field", name);
-
-            const ig = document.createElement("div");
-            ig.classList.add('input-group', 'has-validtion');
-
-            if (slotted.before) {
-                ig.append(slotted.before);
-            } else if (slotted.ibefore) {
-                const igt = document.createElement('div');
-                igt.classList.add('input-group-text')
-                igt.append(slotted.ibefore)
-                ig.append(igt);
-            }
-            ig.append(ff);
-            if (slotted.after) {
-                ig.append(slotted.after);
-            } else if (slotted.iafter) {
-                const igt = document.createElement('div');
-                igt.classList.add('input-group-text')
-                igt.append(slotted.iafter)
-                ig.append(igt);
-            }
-            ig.append(ffe);
-            return ig;
-        }
-        /**
-                <label data-tpl-for="name" class="form-label">{{{{ slotted.default }}}}</label>
-                <div class="input-group has-validation">
-                    <span data-tpl-if="slotted.before" class="input-group-text">{{{{ slotted.before }}}}</span>
-                    {{{{ slotted.input }}}} 
-                    <span data-tpl-if="slotted.after" class="input-group-text">{{{{ slotted.after }}}}</span>
-                    <ful-field-error data-tpl-field="name"></ful-field-error>            
-                </div>     
-         */
-
-        const label = document.createElement("label");
-        label.setAttribute("for", name);
-        label.classList.add('form-label');
-        label.append(slotted.default);
-
-        const ffe = document.createElement('ful-field-error');
-        ffe.setAttribute("field", name);
-
-        const ig = document.createElement("div");
-        ig.classList.add('input-group', 'has-validation');
-
-        if (slotted.before) {
-            ig.append(slotted.before);
-        } else if (slotted.ibefore) {
-            const igt = document.createElement('div');
-            igt.classList.add('input-group-text')
-            igt.append(slotted.ibefore)
-            ig.append(igt);
-        }
-        ig.append(slotted.input);
-        if (slotted.after) {
-            ig.append(slotted.after);
-        } else if (slotted.iafter) {
-            const igt = document.createElement('div');
-            igt.classList.add('input-group-text')
-            igt.append(slotted.iafter)
-            ig.append(igt);
-        }
-        ig.append(ffe);
-
-        const fragment = new DocumentFragment();
-        fragment.append(label, ig)
-        return fragment;
-    }
-
-}
-
-
-export { Fragments, Attributes, Slots, Templated, Stateful, CustomElements };
+export { Fragments, Attributes, Slots, Templated, Stateful };

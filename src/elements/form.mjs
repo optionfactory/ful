@@ -1,11 +1,8 @@
-/* global Infinity, CSS, ftl */
+/* global Infinity, CSS */
 
 import { Failure } from "../http-client.mjs";
 import { Observable } from "../observable.mjs";
-import {Templated } from "./elements.mjs"
-
-
-
+import { Templated } from "./elements.mjs"
 
 class Form extends Templated(Observable(HTMLElement)) {
     constructor({ mutators, extractors, valueHoldersSelector, ignoredChildrenSelector }) {
@@ -186,7 +183,5 @@ class Form extends Templated(Observable(HTMLElement)) {
         });
     }
 }
-
-
 
 export { Form };

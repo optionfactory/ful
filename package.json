@@ -1,6 +1,11 @@
 {
     "name": "@optionfactory/ful",
     "version": "0.25.0",
+    "main": "./dist/ful.iife.js",
+    "module":  "./dist/ful.mjs",
+    "files": [
+        "dist/**"
+    ],
     "repository": "https://github.com/optionfactory/ful",
     "keywords": [
         "ui",
@@ -9,10 +14,6 @@
     "license": "MIT",
     "author": "rferranti",
     "contributors": [],
-    "main": "index.mjs",
-    "files": [
-        "dist/**"
-    ],
     "scripts": {
         "clean": "rimraf dist && npm prune",
         "initialize": "npm install",
