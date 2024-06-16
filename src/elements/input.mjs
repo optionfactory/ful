@@ -1,8 +1,10 @@
 import { Attributes, Templated } from "./elements.mjs"
 
-const ful_input_ec = globalThis.ec || ftl.EvaluationContext.configure({})
+const ful_input_ec = globalThis.ec || ftl.EvaluationContext.configure({
 
-const ful_input_template = globalThis.template || ftl.Template.fromHtml(`
+});
+
+const ful_input_template_ = globalThis.ful_input_template || ftl.Template.fromHtml(`
     <div data-tpl-if="floating" class="input-group has-validation">
         <span data-tpl-if="slotted.ibefore" class="input-group-text">{{{{ slotted.ibefore }}}}</span>
         <div data-tpl-if="slotted.before" data-tpl-remove="tag">{{{{ slotted.before }}}}</div>
@@ -29,7 +31,7 @@ const ful_input_template = globalThis.template || ftl.Template.fromHtml(`
 
 
 
-class Input extends Templated(HTMLElement, ful_input_template) {
+class Input extends Templated(HTMLElement, ful_input_template_) {
     render(slotted, template) {
         const floating = this.hasAttribute('floating');
         const input = slotted.input = slotted.input || (() => {

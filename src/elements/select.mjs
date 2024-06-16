@@ -4,9 +4,11 @@ import { Observable } from "../observable.mjs";
  * <script src="tom-select.complete.js"></script>
  * <link href="tom-select.bootstrap5.css" rel="stylesheet" />
  */
-const ful_select_ec = globalThis.ec || ftl.EvaluationContext.configure({})
+const ful_select_ec = globalThis.ec || ftl.EvaluationContext.configure({
 
-const ful_select_template = globalThis.template || ftl.Template.fromHtml(`
+});
+
+const ful_select_template_ = globalThis.ful_select_template || ftl.Template.fromHtml(`
     <div data-tpl-if="floating" class="input-group has-validation">
         <span data-tpl-if="slotted.ibefore" class="input-group-text">{{{{ slotted.ibefore }}}}</span>
         <div data-tpl-if="slotted.before" data-tpl-remove="tag">{{{{ slotted.before }}}}</div>
@@ -32,7 +34,7 @@ const ful_select_template = globalThis.template || ftl.Template.fromHtml(`
 `, ful_select_ec);
 
 
-class Select extends Templated(Observable(HTMLElement), ful_select_template) {
+class Select extends Templated(Observable(HTMLElement), ful_select_template_) {
     constructor(tsConfig) {
         super();
         this.tsConfig = tsConfig;
