@@ -61,7 +61,7 @@ class Attributes {
 class Slots {
     static from(el) {
         const namedSlots = Array.from(el.childNodes)
-            .filter(el => el.matches('[slot]'))
+            .filter(el => el.matches && el.matches('[slot]'))
             .map(el => {
                 el.remove();
                 const slot = el.getAttribute("slot");
