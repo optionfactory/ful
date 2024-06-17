@@ -60,17 +60,19 @@ class Attributes {
 
 class Slots {
     static from(el) {
-        const slotted = Object.fromEntries(Array.from(el.querySelectorAll("[slot]")).map(el => {
-            el.parentElement.removeChild(el);
-            const slot = el.getAttribute("slot");
-            el.removeAttribute("slot");
-            return [slot, el];
-        }));
+        const namedSlots = Array.from(el.childNodes)
+            .filter(el => el.matches('[slot]'))
+            .map(el => {
+                el.remove();
+                const slot = el.getAttribute("slot");
+                el.removeAttribute("slot");
+                return [slot, el];
+            });
+        const slotted = Object.fromEntries(namedSlots);
         slotted.default = new DocumentFragment();
         slotted.default.append(...el.childNodes);
         return slotted;
     }
-
 }
 
 const Templated = (SuperClass, template) => {
