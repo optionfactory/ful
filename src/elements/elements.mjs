@@ -79,7 +79,7 @@ const Templated = (SuperClass, template) => {
     return class extends SuperClass {
         rendered_;
         get rendered() {
-            return rendered_;
+            return this.rendered_;
         }
         async connectedCallback() {
             if (this.rendered_) {
