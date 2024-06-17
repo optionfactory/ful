@@ -123,10 +123,6 @@ const Stateful = (SuperClass, flags, others) => {
             }
         }
         attributeChangedCallback(name, oldValue, newValue) {
-            if(this.hasOwnProperty("rendered_") && !this.rendered_){
-                //can be called before rendering 
-                return;
-            }
             if (oldValue === newValue) {
                 return;
             }
