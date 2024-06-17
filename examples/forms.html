@@ -53,6 +53,18 @@
                     <i slot="ibefore" class="bi bi-envelope-at"></i>
                     <i slot="iafter" class="bi bi-envelope-at"></i>
                 </ful-select>
+                <ful-radio-group input-name="radio.vertical" class="mb-3">
+                    A vertical radio group
+                    <ful-radio value="one">One</ful-radio>
+                    <ful-radio value="one">Two</ful-radio>
+                </ful-radio-group>
+
+                <ful-radio-group input-name="radio.horizontal" class="mb-3 horizontal">
+                    An horizontal radio group
+                    <ful-radio value="one">One</ful-radio>
+                    <ful-radio value="one">Two</ful-radio>
+                </ful-radio-group>
+
 
                 <ful-errors></ful-errors>
 
@@ -135,6 +147,7 @@
         ful.Spinner.configure();
         ful.Input.configure();
         ful.Select.configure();
+        ful.RadioGroup.configure();
         ful.Form.custom('ful-form', {});
 
         document.addEventListener("DOMContentLoaded", () => {
@@ -154,7 +167,15 @@
                     }, {
                         type: 'FIELD_ERROR',
                         context: 'select.multiple',
-                        reason: 'broken broken'
+                        reason: 'Multiselect validation error message'
+                    }, {
+                        type: 'FIELD_ERROR',
+                        context: 'radio.vertical',
+                        reason: 'Vertical radio validation error message'
+                    }, {
+                        type: 'FIELD_ERROR',
+                        context: 'radio.horizontal',
+                        reason: 'Horizontal radio validation error message'
                     }, {
                         type: 'GLOBAL_ERROR',
                         reason: 'globally broken'
