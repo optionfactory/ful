@@ -10,7 +10,7 @@ class Form extends Templated(Observable(HTMLElement)) {
         this.mutators = mutators || {}
         this.extractors = extractors || {}
         this.valueHoldersSelector = valueHoldersSelector || '[name]';
-        this.ignoredChildrenSelector = ignoredChildrenSelector || '.d-none';
+        this.ignoredChildrenSelector = ignoredChildrenSelector || '.d-none, [hidden]';
     }
     render(slotted, template) {
         const form = document.createElement('form');

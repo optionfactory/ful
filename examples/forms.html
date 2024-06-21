@@ -43,12 +43,21 @@
                 <ful-input input-name="time" input-type="time" class="mb-3">
                     time
                 </ful-input>
-                <ful-select remote input-name="select.single" class="mb-3">
+                <ful-select input-name="select.single" class="mb-3">
+                    select local single
+                    <i slot="ibefore" class="bi bi-envelope-at"></i>
+                    <i slot="iafter" class="bi bi-envelope-at"></i>
+                    <select slot="input">
+                        <option value="16">aaa</option>
+                        <option value="17">zzz</option>
+                    </select>                    
+                </ful-select>                
+                <ful-select type="remote" input-name="select.single" class="mb-3">
                     select single
                     <i slot="ibefore" class="bi bi-envelope-at"></i>
                     <i slot="iafter" class="bi bi-envelope-at"></i>
                 </ful-select>
-                <ful-select input-name="select.multiple" input-multiple remote class="mb-3">
+                <ful-select type="remote" input-name="select.multiple" input-multiple class="mb-3">
                     select multiple
                     <i slot="ibefore" class="bi bi-envelope-at"></i>
                     <i slot="iafter" class="bi bi-envelope-at"></i>
@@ -93,7 +102,7 @@
                     time
                 </ful-input>
 
-                <ful-select input-name="select.single" floating remote class="mb-3">
+                <ful-select input-name="select.single" floating class="mb-3">
                     select: single
                     <i slot="ibefore" class="bi bi-envelope-at"></i>
                     <i slot="iafter" class="bi bi-envelope-at"></i>
@@ -102,7 +111,7 @@
                         <option value="17">zzz</option>
                     </select>
                 </ful-select>
-                <ful-select input-name="select.multiple" input-multiple floating remote class="mb-3">
+                <ful-select type="remote" input-name="select.multiple" input-multiple floating class="mb-3">
                     select: multiple
                     <i slot="ibefore" class="bi bi-envelope-at"></i>
                     <i slot="iafter" class="bi bi-envelope-at"></i>
@@ -124,12 +133,12 @@
                     Label1 <sup>*</sup>
                     <input slot="input" class="form-control form-control-lg">
                 </ful-input>
-                <ful-select remote input-name="tomselect" class="mb-3" input-class="form-control-lg">
+                <ful-select type="remote" input-name="tomselect" class="mb-3" input-class="form-control-lg">
                     select single
                     <i slot="ibefore" class="bi bi-envelope-at"></i>
                     <i slot="iafter" class="bi bi-envelope-at"></i>
                 </ful-select>
-                <ful-select remote input-name="tomselect" input-multiple class="mb-3" input-class="form-control-lg">
+                <ful-select type="remote" input-name="tomselect" input-multiple class="mb-3" input-class="form-control-lg">
                     select multiple
                     <i slot="ibefore" class="bi bi-envelope-at"></i>
                     <i slot="iafter" class="bi bi-envelope-at"></i>
@@ -185,13 +194,14 @@
 
             document.querySelectorAll('ful-select').forEach(el => {
                 el.setValue({ value: 1, text: "asd" });
-                el.on('load', async () => {
-                    console.log("load")
+                el.load = async (q) => {
+                    await sleep(300_000);
+                    console.log("load", q);
                     return [
                         { value: 1, text: "asd" },
                         { value: 2, text: "bsd" }
                     ]
-                });
+                };
             })
 
 

@@ -13,6 +13,9 @@ const ful_radiougroup_template_ = globalThis.ful_radiogroup_template || ftl.Temp
         <legend class="form-label">
             {{{{ slotted.default }}}}
         </legend>
+        <header data-tpl-if="slotted.header">
+            {{{{ slotted.header }}}}
+        </header>
         <section>
             <label data-tpl-each="inputsAndLabels" data-tpl-var="ial">
                 {{{{ ial[0] }}}}
@@ -24,7 +27,7 @@ const ful_radiougroup_template_ = globalThis.ful_radiogroup_template || ftl.Temp
 `, ful_radiogroup_ec);
 
 
-class RadioGroup extends Stateful(Templated(HTMLElement, ful_radiougroup_template_), ['readonly']) {
+class RadioGroup extends Stateful(Templated(HTMLElement, ful_radiougroup_template_), ['disabled']) {
     render(slotted, template) {        
         const name = this.getAttribute('input-name') || Attributes.uid('ful-radiogroup');
         const radioEls = Array.from(slotted.default.querySelectorAll('ful-radio'));

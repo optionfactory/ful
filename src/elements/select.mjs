@@ -34,14 +34,18 @@ const ful_select_template_ = globalThis.ful_select_template || ftl.Template.from
 `, ful_select_ec);
 
 
-class Select extends Templated(Observable(HTMLElement), ful_select_template_) {
+class Select extends Templated(HTMLElement, ful_select_template_) {
     constructor(tsConfig) {
         super();
         this.tsConfig = tsConfig;
     }
     render(slotted, template) {
         const floating = this.hasAttribute('floating');
-        const remote = this.hasAttribute('remote');
+
+        const type = this.getAttribute("type") || 'local';
+        const remote = type != 'local';
+        const loadOnce = this.getAttribute('load') != 'always';
+
         const input = slotted.input = slotted.input || (() => {
             return document.createElement("select");
         })();
@@ -58,20 +62,34 @@ class Select extends Templated(Observable(HTMLElement), ful_select_template_) {
         slotted.input = Fragments.from(input);
 
         this.loaded = !remote;
+
+        const tsDefaultConfig = {
+            render: {
+                loading: () => '<ful-spinner class="centered p-2"></ful-spinner>'
+            }
+        }
+
         this.ts = new TomSelect(input, Object.assign(remote ? {
             preload: 'focus',
             load: async (query, callback) => {
-                if (this.loaded) {
+                if (!remote || remote && loadOnce && this.loaded) {
                     callback();
                     return;
                 }
-                const data = await this.fire('load', query, [])
+                const data = await this.load(query);
                 this.loaded = true;
                 callback(data);
-            }
-        } : {}, this.tsConfig));
+            },
+            shouldLoad: (query) => this.shouldLoad(query)
+        } : {}, tsDefaultConfig, this.tsConfig));
 
         return template.render({ id, name, floating, slotted });
+    }
+    shouldLoad(q){
+        return true;
+    }
+    load(q){
+        return []
     }
     async setValue(v) {
         if (!this.loaded) {
