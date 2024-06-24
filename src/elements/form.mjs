@@ -1,17 +1,14 @@
 /* global Infinity, CSS */
 
 import { Failure } from "../http-client.mjs";
-import { Observable } from "../observable.mjs";
 import { Templated } from "./elements.mjs"
 
-class Form extends Templated(Observable(HTMLElement)) {
-    constructor({ mutators, extractors, valueHoldersSelector, ignoredChildrenSelector }) {
-        super();
-        this.mutators = mutators || {}
-        this.extractors = extractors || {}
-        this.valueHoldersSelector = valueHoldersSelector || '[name]';
-        this.ignoredChildrenSelector = ignoredChildrenSelector || '.d-none, [hidden]';
-    }
+class Form extends Templated(HTMLElement) {
+    static MUTATORS = {};
+    static EXTRACTORS = {};
+    static VALUE_HOLDERS_SELECTOR = '[name]';
+    static IGNORED_CHILDREN_SELECTOR = '.d-none, [hidden]';
+
     render(slotted, template) {
         const form = document.createElement('form');
         form.append(slotted.default);
@@ -19,7 +16,9 @@ class Form extends Templated(Observable(HTMLElement)) {
             e.preventDefault();
             this.spinner(true);
             try {
-                await this.fire('submit', this.getValues(), this);
+                if(this.submitter) {
+                    await this.submitter(this.getValues(), this);
+                }
             } catch (e) {
                 if (e instanceof Failure) {
                     this.setErrors(e.problems);
@@ -46,20 +45,20 @@ class Form extends Templated(Observable(HTMLElement)) {
                 continue;
             }
             Array.from(this.querySelectorAll(`[name='${CSS.escape(k)}']`)).forEach((el) => {
-                Form.mutate(this.mutators, el, values[k], k, values);
+                Form.mutate(Form.MUTATORS, el, values[k], k, values);
             });
         }
     }
     getValues() {
-        return Array.from(this.querySelectorAll(this.valueHoldersSelector))
+        return Array.from(this.querySelectorAll(Form.VALUE_HOLDERS_SELECTOR))
             .filter((el) => {
                 if (el.dataset['fulBindInclude'] === 'never') {
                     return false;
                 }
-                return el.dataset['fulBindInclude'] === 'always' || el.closest(this.ignoredChildrenSelector) === null;
+                return el.dataset['fulBindInclude'] === 'always' || el.closest(Form.IGNORED_CHILDREN_SELECTOR) === null;
             })
             .reduce((result, el) => {
-                return Form.providePath(result, el.getAttribute('name'), Form.extract(this.extractors, el));
+                return Form.providePath(result, el.getAttribute('name'), Form.extract(Form.EXTRACTORS, el));
             }, {});
     }
     setErrors(errors, scroll) {
@@ -68,13 +67,10 @@ class Form extends Templated(Observable(HTMLElement)) {
             .filter((e) => e.type === 'FIELD_ERROR' || e.type === 'INVALID_FORMAT')
             .forEach((e) => {
                 const name = e.context.replace("[", ".").replace("].", ".");
+                //TODO: match [name=] ful-validation-target and [name=]:not(:has(ful-validation-target))
+                //
                 this.querySelectorAll(`[name='${CSS.escape(name)}']`)
-                    .forEach(input => {
-                        input.classList.add('is-invalid')
-                        if (input.parentElement.classList.contains("form-floating")) {
-                            input.parentElement.classList.add('is-invalid')
-                        }
-                    });
+                    .forEach(input => input.classList.add('is-invalid'));
                 this.querySelectorAll(`ful-field-error[field='${CSS.escape(name)}']`)
                     .forEach(el => el.innerText = e.reason);
             });
@@ -83,14 +79,14 @@ class Form extends Templated(Observable(HTMLElement)) {
                 const globalErrors = errors.filter((e) => e.type !== 'FIELD_ERROR' && e.type !== 'INVALID_FORMAT');
                 el.innerHTML = globalErrors.map(e => e.reason).join("\n");
                 if (globalErrors.length !== 0) {
-                    el.classList.remove('d-none');
+                    el.removeAttribute('hidden');
                 }
             })
 
         if (!scroll) {
             return;
         }
-        const ys = Array.from(this.querySelectorAll('ful-field-error:not(.d-none)'))
+        const ys = Array.from(this.querySelectorAll('ful-field-error'))
             .map(el => el.getBoundingClientRect().y + window.scrollY)
         const miny = Math.min(...ys);
         if (miny !== Infinity) {
@@ -98,12 +94,12 @@ class Form extends Templated(Observable(HTMLElement)) {
         }
     }
     clearErrors() {
-        this.querySelectorAll('[name].is-invalid, .form-floating.is-invalid')
+        this.querySelectorAll('.is-invalid')
             .forEach(el => el.classList.remove('is-invalid'));
         this.querySelectorAll("ful-errors")
             .forEach(el => {
                 el.innerHTML = '';
-                el.classList.add('d-none');
+                el.setAttribute('hidden', '');
             });
     }
     static extract(extractors, el) {

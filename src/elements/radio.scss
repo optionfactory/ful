@@ -61,6 +61,6 @@ ful-radio-group > fieldset label:has(input[type=radio]:checked) {
 }
 
 
-ful-radio-group:has(.is-invalid) .invalid-feedback {
+ful-radio-group:has(.is-invalid) ful-field-error {
     display: block;
 }

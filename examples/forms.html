@@ -109,59 +109,14 @@
                 </ful-radio-group>
 
 
-                <ful-errors></ful-errors>
+                <ful-errors hidden></ful-errors>
 
                 <button type="submit" class="btn btn-primary">
                     <ful-spinner hidden></ful-spinner>
                     submit
                 </button>
             </ful-form>
-            <ful-form class="col-6 border border-secondary">
-                <h1>Floating layout</h1>
-                <ful-input input-name="text.plain" floating class="mb-3">
-                    Text plain
-                </ful-input>
-                <ful-input input-name="text.icons" floating class="mb-3">
-                    Text icons <sup>*</sup>
-                    <i slot="ibefore" class="bi bi-envelope-at"></i>
-                    <i slot="iafter" class="bi bi-envelope-at"></i>
-                </ful-input>
-                <ful-input input-name="datetime" input-type="datetime-local" floating class="mb-3">
-                    datetime-local
-                </ful-input>
-                <ful-input input-name="date" input-type="date" floating class="mb-3">
-                    date
-                </ful-input>
-                <ful-input input-name="time" input-type="time" floating class="mb-3">
-                    time
-                </ful-input>
-
-                <ful-select input-name="select.single" floating class="mb-3">
-                    select: single
-                    <i slot="ibefore" class="bi bi-envelope-at"></i>
-                    <i slot="iafter" class="bi bi-envelope-at"></i>
-                    <select slot="input">
-                        <option value="16">aaa</option>
-                        <option value="17">zzz</option>
-                    </select>
-                </ful-select>
-                <ful-select type="remote" input-name="select.multiple" input-multiple floating class="mb-3">
-                    select: multiple
-                    <i slot="ibefore" class="bi bi-envelope-at"></i>
-                    <i slot="iafter" class="bi bi-envelope-at"></i>
-                </ful-select>
-
-                <ful-errors></ful-errors>
-
-                <button type="submit" class="btn btn-primary">
-                    <ful-spinner hidden></ful-spinner>
-                    submit
-                </button>
-
-            </ful-form>
-        </div>
-        <div class="row">
-            <ful-form class="col border border-primary">
+            <ful-form class="col-6 border border-primary">
                 <h1>Classic layout big</h1>
                 <ful-input input-name="blasd1" class="mb-3">
                     Label1 <sup>*</sup>
@@ -185,8 +140,6 @@
         const sleep = ful.timing.sleep;
         const Failure = ful.Failure;
 
-        ful.FieldError.configure();
-        ful.Errors.configure();
         ful.Spinner.configure();
         ful.Input.configure();
         ful.Select.configure();
@@ -195,14 +148,7 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             document.querySelectorAll('ful-form').forEach(form => {
-                form.on('submit', async (data, form, acc) => {
-                    await sleep(1000);
-                    console.log("event1", data, form, acc);
-                });
-                form.on('submit', (data, form, acc) => {
-                    console.log("event2", data, form, acc);
-                });
-                form.on('submit', (data, form, acc) => {
+                form.submitter = async (data, form) => {
                     throw new Failure(0, [{
                         type: 'FIELD_ERROR',
                         context: 'text.plain',
@@ -267,12 +213,12 @@
                         type: 'GLOBAL_ERROR',
                         reason: 'globally broken'
                     }]);
-                });
-            })
+                };
+            });
 
-            document.querySelectorAll('ful-select').forEach(el => {
-                el.setValue({ value: 1, text: "asd" });
-                el.load = async (q) => {
+            document.querySelectorAll('ful-select').forEach(sel => {
+                sel.setValue({ value: 1, text: "asd" });
+                sel.loader = async (q) => {
                     await sleep(3_000);
                     console.log("load", q);
                     return [

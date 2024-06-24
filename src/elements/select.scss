@@ -6,48 +6,20 @@ ful-select {
     display: block;
 }
 
-ful-select .form-floating > .ts-wrapper {
-    height: calc(3.5rem + calc(var(--bs-border-width) * 2));
-    min-height: calc(3.5rem + calc(var(--bs-border-width) * 2));
-    line-height: 1.25;
-}
-
-ful-select  .form-floating > .ts-wrapper > .ts-control {
-    padding-top: 1.625rem !important;
-    padding-bottom: 0.625rem !important;
-    line-height: 20px;
-}
-
-ful-select .form-floating > .ts-wrapper~label {
-    color: rgba(var(--bs-body-color-rgb), .65);
-    transform: scale(.85) translateY(-0.5rem) translateX(0.15rem);
-}
-
-ful-select .form-floating > .ts-wrapper.multi .ts-control > div {
-    margin: 0 3px 0 0;
-    padding: 0px 5px;
-}
-
-
 ful-select .ts-control {
     /*fixes border radius on box-shadow*/
     border-radius: inherit !important;    
 }
 
-
-
 ful-select:has(.is-invalid) .invalid-feedback {
     display: block;
 }
-
 
 ful-select:has(.is-invalid) .form-select,
 ful-select:has(.is-invalid) .form-control {
     border-color: var(--bs-form-invalid-border-color) !important;
 }
 
-
-ful-select:has(.is-invalid) .focus .ts-control
-{
+ful-select:has(.is-invalid) .focus .ts-control {
     box-shadow: 0 0 0 .25rem rgba(var(--bs-danger-rgb), .25);
 }

@@ -8,6 +8,6 @@ ful-input {
 
 
 
-ful-input:has(.is-invalid) .invalid-feedback {
+ful-input:has(.is-invalid) ful-field-error {
     display: block;
 }

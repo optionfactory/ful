@@ -1,5 +1,4 @@
 import { Fragments, Attributes, Templated } from "./elements.mjs"
-import { Observable } from "../observable.mjs";
 /**
  * <script src="tom-select.complete.js"></script>
  * <link href="tom-select.bootstrap5.css" rel="stylesheet" />
@@ -9,32 +8,16 @@ const ful_select_ec = globalThis.ec || ftl.EvaluationContext.configure({
 });
 
 const ful_select_template_ = globalThis.ful_select_template || ftl.Template.fromHtml(`
-    <div data-tpl-if="floating" data-tpl-remove="tag">
-        <div class="input-group">
-            <span data-tpl-if="slotted.ibefore" class="input-group-text">{{{{ slotted.ibefore }}}}</span>
-            <div data-tpl-if="slotted.before" data-tpl-remove="tag">{{{{ slotted.before }}}}</div>
-            <div class="form-floating">
-                {{{{ slotted.input }}}} 
-                {{{{ input }}}}
-                <label data-tpl-for="name" class="form-label">{{{{ slotted.default }}}}</label>
-            </div>
-            <div data-tpl-if="slotted.after" data-tpl-remove="tag">{{{{ slotted.after }}}}</div>
-            <span data-tpl-if="slotted.iafter" class="input-group-text">{{{{ slotted.iafter }}}}</span>
-        </div>
-        <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>
+    <label data-tpl-for="tsId" class="form-label">{{{{ slotted.default }}}}</label>
+    {{{{ input }}}}
+    <div class="input-group">
+        <span data-tpl-if="slotted.ibefore" class="input-group-text">{{{{ slotted.ibefore }}}}</span>
+        <div data-tpl-if="slotted.before" data-tpl-remove="tag">{{{{ slotted.before }}}}</div>
+        {{{{ slotted.input }}}} 
+        <div data-tpl-if="slotted.after" data-tpl-remove="tag">{{{{ slotted.after }}}}</div>
+        <span data-tpl-if="slotted.iafter" class="input-group-text">{{{{ slotted.iafter }}}}</span>
     </div>
-    <div data-tpl-if="!floating" data-tpl-remove="tag">
-        <label data-tpl-for="tsId" class="form-label">{{{{ slotted.default }}}}</label>
-        {{{{ input }}}}
-        <div class="input-group">
-            <span data-tpl-if="slotted.ibefore" class="input-group-text">{{{{ slotted.ibefore }}}}</span>
-            <div data-tpl-if="slotted.before" data-tpl-remove="tag">{{{{ slotted.before }}}}</div>
-            {{{{ slotted.input }}}} 
-            <div data-tpl-if="slotted.after" data-tpl-remove="tag">{{{{ slotted.after }}}}</div>
-            <span data-tpl-if="slotted.iafter" class="input-group-text">{{{{ slotted.iafter }}}}</span>
-        </div>
-        <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>            
-    </div>
+    <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>            
 `, ful_select_ec);
 
 
@@ -44,8 +27,6 @@ class Select extends Templated(HTMLElement, ful_select_template_) {
         this.tsConfig = tsConfig;
     }
     render(slotted, template) {
-        const floating = this.hasAttribute('floating');
-
         const type = this.getAttribute("type") || 'local';
         const remote = type != 'local';
         const loadOnce = this.getAttribute('load') != 'always';
@@ -81,23 +62,17 @@ class Select extends Templated(HTMLElement, ful_select_template_) {
                     callback();
                     return;
                 }
-                const data = await this.load(query);
+                const data = await (this.loader ? this.loader(query) : []);
                 this.loaded = true;
                 callback(data);
             },
-            shouldLoad: (query) => this.shouldLoad(query)
+            shouldLoad: (query) => this.shouldLoad ? this.shouldLoad(query) : true
         } : {}, tsDefaultConfig, this.tsConfig));
 
         //we remove the input to move it
         input.remove();
 
-        return template.render({ id, tsId, name, floating, input, slotted });
-    }
-    shouldLoad(q){
-        return true;
-    }
-    load(q){
-        return []
+        return template.render({ id, tsId, name, input, slotted });
     }
     async setValue(v) {
         if (!this.loaded) {
