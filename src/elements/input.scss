@@ -6,3 +6,8 @@ ful-input {
     display: block;
 }
 
+
+
+ful-input:has(.is-invalid) .invalid-feedback {
+    display: block;
+}

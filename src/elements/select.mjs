@@ -9,29 +9,31 @@ const ful_select_ec = globalThis.ec || ftl.EvaluationContext.configure({
 });
 
 const ful_select_template_ = globalThis.ful_select_template || ftl.Template.fromHtml(`
-    <div data-tpl-if="floating" class="input-group has-validation">
-        <span data-tpl-if="slotted.ibefore" class="input-group-text">{{{{ slotted.ibefore }}}}</span>
-        <div data-tpl-if="slotted.before" data-tpl-remove="tag">{{{{ slotted.before }}}}</div>
-        <div class="form-floating">
-            {{{{ slotted.input }}}} 
-            {{{{ input }}}}
-            <label data-tpl-for="name" class="form-label">{{{{ slotted.default }}}}</label>
+    <div data-tpl-if="floating" data-tpl-remove="tag">
+        <div class="input-group">
+            <span data-tpl-if="slotted.ibefore" class="input-group-text">{{{{ slotted.ibefore }}}}</span>
+            <div data-tpl-if="slotted.before" data-tpl-remove="tag">{{{{ slotted.before }}}}</div>
+            <div class="form-floating">
+                {{{{ slotted.input }}}} 
+                {{{{ input }}}}
+                <label data-tpl-for="name" class="form-label">{{{{ slotted.default }}}}</label>
+            </div>
+            <div data-tpl-if="slotted.after" data-tpl-remove="tag">{{{{ slotted.after }}}}</div>
+            <span data-tpl-if="slotted.iafter" class="input-group-text">{{{{ slotted.iafter }}}}</span>
         </div>
-        <div data-tpl-if="slotted.after" data-tpl-remove="tag">{{{{ slotted.after }}}}</div>
-        <span data-tpl-if="slotted.iafter" class="input-group-text">{{{{ slotted.iafter }}}}</span>
         <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>
     </div>
     <div data-tpl-if="!floating" data-tpl-remove="tag">
         <label data-tpl-for="tsId" class="form-label">{{{{ slotted.default }}}}</label>
         {{{{ input }}}}
-        <div class="input-group has-validation">
+        <div class="input-group">
             <span data-tpl-if="slotted.ibefore" class="input-group-text">{{{{ slotted.ibefore }}}}</span>
             <div data-tpl-if="slotted.before" data-tpl-remove="tag">{{{{ slotted.before }}}}</div>
             {{{{ slotted.input }}}} 
             <div data-tpl-if="slotted.after" data-tpl-remove="tag">{{{{ slotted.after }}}}</div>
             <span data-tpl-if="slotted.iafter" class="input-group-text">{{{{ slotted.iafter }}}}</span>
-            <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>            
         </div>
+        <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>            
     </div>
 `, ful_select_ec);
 

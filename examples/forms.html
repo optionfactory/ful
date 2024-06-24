@@ -29,7 +29,15 @@
                 <ful-input input-name="text.plain" class="mb-3">
                     text plain <sup>*</sup>
                 </ful-input>
-                <ful-input input-name="text.icons" class="mb-3">
+                <ful-input input-name="text.icons.before" class="mb-3">
+                    Text with icon before
+                    <i slot="ibefore" class="bi bi-envelope-at"></i>
+                </ful-input>
+                <ful-input input-name="text.icons.after" class="mb-3">
+                    Text with icon after
+                    <i slot="iafter" class="bi bi-envelope-at"></i>
+                </ful-input>                                
+                <ful-input input-name="text.icons.both" class="mb-3">
                     Text with icons
                     <i slot="ibefore" class="bi bi-envelope-at"></i>
                     <i slot="iafter" class="bi bi-envelope-at"></i>
@@ -78,12 +86,12 @@
                         <option value="17">zzz</option>
                     </select>                    
                 </ful-select>                
-                <ful-select type="remote" input-name="select.single.remote" class="mb-3">
+                <ful-select type="remote" input-name="select.single.remote" input-class="form-select" class="mb-3">
                     select remote single
                     <i slot="ibefore" class="bi bi-envelope-at"></i>
                     <i slot="iafter" class="bi bi-envelope-at"></i>
                 </ful-select>
-                <ful-select type="remote" input-name="select.multiple.remote" input-multiple class="mb-3">
+                <ful-select type="remote" input-name="select.multiple.remote" input-class="form-select" input-multiple class="mb-3">
                     select remote multiple
                     <i slot="ibefore" class="bi bi-envelope-at"></i>
                     <i slot="iafter" class="bi bi-envelope-at"></i>
@@ -198,11 +206,55 @@
                     throw new Failure(0, [{
                         type: 'FIELD_ERROR',
                         context: 'text.plain',
-                        reason: 'broken broken'
+                        reason: 'text.plain error message'
                     }, {
                         type: 'FIELD_ERROR',
-                        context: 'select.multiple',
-                        reason: 'Multiselect validation error message'
+                        context: 'text.icons.before',
+                        reason: 'text icons before error message'
+                    }, {
+                        type: 'FIELD_ERROR',
+                        context: 'text.icons.after',
+                        reason: 'text icons after error message'
+                    }, {
+                        type: 'FIELD_ERROR',
+                        context: 'text.icons.both',
+                        reason: 'text.icons.both error message'
+                    }, {
+                        type: 'FIELD_ERROR',
+                        context: 'datetime',
+                        reason: 'datetime error message'
+                    }, {
+                        type: 'FIELD_ERROR',
+                        context: 'date',
+                        reason: 'date error message'
+                    }, {
+                        type: 'FIELD_ERROR',
+                        context: 'time',
+                        reason: 'time error message'
+                    }, {                                                                        
+                        type: 'FIELD_ERROR',
+                        context: 'select.single.local.noicons',
+                        reason: 'select.single.local.noicons error message'
+                    }, {
+                        type: 'FIELD_ERROR',
+                        context: 'select.single.local.iconbefore',
+                        reason: 'select.single.local.iconbefore error message'
+                    }, {
+                        type: 'FIELD_ERROR',
+                        context: 'select.single.local.iconafter',
+                        reason: 'select.single.local.iconafter error message'
+                    }, {
+                        type: 'FIELD_ERROR',
+                        context: 'select.single.local.icons',
+                        reason: 'select.single.local.icons error message'
+                    }, {
+                        type: 'FIELD_ERROR',
+                        context: 'select.single.remote',
+                        reason: 'select.single.remote error message'
+                    }, {
+                        type: 'FIELD_ERROR',
+                        context: 'select.multiple.remote',
+                        reason: 'select.multiple.remote error message'
                     }, {
                         type: 'FIELD_ERROR',
                         context: 'radio.vertical',
