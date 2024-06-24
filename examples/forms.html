@@ -217,8 +217,13 @@
             });
 
             document.querySelectorAll('ful-select').forEach(sel => {
-                sel.setValue({ value: 1, text: "asd" });
-                sel.loader = async (q) => {
+                sel.loader = async (q, type) => {
+                    if(type === 'id'){
+                        console.log("loading by id");
+                        return [
+                            {value: q, text: q + "-asd"}
+                        ];
+                    }
                     await sleep(3_000);
                     console.log("load", q);
                     return [
@@ -226,6 +231,9 @@
                         { value: 2, text: "bsd" }
                     ]
                 };
+                console.log("before ")
+                sel.setValue(4);
+                console.log("after ");
             })
 
 

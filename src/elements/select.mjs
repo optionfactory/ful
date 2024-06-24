@@ -55,28 +55,42 @@ class Select extends Templated(HTMLElement, ful_select_template_) {
             }
         }
 
+
+        this._remote = remote;
+        // we need to await this load in setValue when remote is configured and the option
+        // is not loaded yet.
+        // tomselect settings.load does not retun a promise as it wraps the configured load function
+        // with a debouncer
+        this._unwrappedRemoteLoad = async (query, callback) => {
+
+            if (!remote || remote && loadOnce && this.loaded) {
+                callback();
+                return;
+            }
+            const type = query && query.hasOwnProperty('byId') ? 'id' : 'query';
+            const qvalue = type === 'id' ? query.byId : query;
+            const data = await (this.loader ? this.loader(qvalue, type) : []);
+            if(type !== 'id'){
+                this.loaded = true;
+            }
+            callback(data);
+        };
+
+
         this.ts = new TomSelect(input, Object.assign(remote ? {
             preload: 'focus',
-            load: async (query, callback) => {
-                if (!remote || remote && loadOnce && this.loaded) {
-                    callback();
-                    return;
-                }
-                const data = await (this.loader ? this.loader(query) : []);
-                this.loaded = true;
-                callback(data);
-            },
+            load: this._unwrappedRemoteLoad,
             shouldLoad: (query) => this.shouldLoad ? this.shouldLoad(query) : true
         } : {}, tsDefaultConfig, this.tsConfig));
-
+        console.log("ts created");
         //we remove the input to move it
         input.remove();
 
         return template.render({ id, tsId, name, input, slotted });
     }
     async setValue(v) {
-        if (!this.loaded) {
-            await this.ts.load();
+        if(this._remote){
+            await this._unwrappedRemoteLoad({byId: v}, this.ts.loadCallback.bind(this.ts));
         }
         this.ts.setValue(v);
     }

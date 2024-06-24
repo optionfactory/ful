@@ -11,7 +11,6 @@ export { Select } from "./elements/select.mjs";
 export { RadioGroup } from "./elements/radio.mjs";
 export { Spinner } from "./elements/spinner.mjs";
 export { Wizard } from "./elements/wizard.mjs";
-export { App } from "./app.mjs";
 
 import "./elements/errors.scss"
 import "./elements/form.scss"
