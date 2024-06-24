@@ -43,22 +43,48 @@
                 <ful-input input-name="time" input-type="time" class="mb-3">
                     time
                 </ful-input>
-                <ful-select input-name="select.single" class="mb-3">
-                    select local single
-                    <i slot="ibefore" class="bi bi-envelope-at"></i>
-                    <i slot="iafter" class="bi bi-envelope-at"></i>
-                    <select slot="input">
+                <ful-select input-name="select.single.local.noicons" class="mb-3">
+                    select local single no icons
+                    <select slot="input" class="form-select">
                         <option value="16">aaa</option>
                         <option value="17">zzz</option>
                     </select>                    
                 </ful-select>                
-                <ful-select type="remote" input-name="select.single" class="mb-3">
-                    select single
+
+                <ful-select input-name="select.single.local.iconbefore" class="mb-3">
+                    select local single icon before
+                    <i slot="ibefore" class="bi bi-envelope-at"></i>
+                    <select slot="input" class="form-select">
+                        <option value="16">aaa</option>
+                        <option value="17">zzz</option>
+                    </select>                    
+                </ful-select>                
+
+                <ful-select input-name="select.single.local.iconafter" class="mb-3">
+                    select local single icon after
+                    <i slot="iafter" class="bi bi-envelope-at"></i>
+                    <select slot="input" class="form-select">
+                        <option value="16">aaa</option>
+                        <option value="17">zzz</option>
+                    </select>                    
+                </ful-select>                
+
+                <ful-select input-name="select.single.local.icons" class="mb-3">
+                    select local single 2 icons
+                    <i slot="ibefore" class="bi bi-envelope-at"></i>
+                    <i slot="iafter" class="bi bi-envelope-at"></i>
+                    <select slot="input"  class="form-select">
+                        <option value="16">aaa</option>
+                        <option value="17">zzz</option>
+                    </select>                    
+                </ful-select>                
+                <ful-select type="remote" input-name="select.single.remote" class="mb-3">
+                    select remote single
                     <i slot="ibefore" class="bi bi-envelope-at"></i>
                     <i slot="iafter" class="bi bi-envelope-at"></i>
                 </ful-select>
-                <ful-select type="remote" input-name="select.multiple" input-multiple class="mb-3">
-                    select multiple
+                <ful-select type="remote" input-name="select.multiple.remote" input-multiple class="mb-3">
+                    select remote multiple
                     <i slot="ibefore" class="bi bi-envelope-at"></i>
                     <i slot="iafter" class="bi bi-envelope-at"></i>
                 </ful-select>
@@ -195,7 +221,7 @@
             document.querySelectorAll('ful-select').forEach(el => {
                 el.setValue({ value: 1, text: "asd" });
                 el.load = async (q) => {
-                    await sleep(300_000);
+                    await sleep(3_000);
                     console.log("load", q);
                     return [
                         { value: 1, text: "asd" },

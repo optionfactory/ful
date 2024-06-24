@@ -14,6 +14,7 @@ const ful_select_template_ = globalThis.ful_select_template || ftl.Template.from
         <div data-tpl-if="slotted.before" data-tpl-remove="tag">{{{{ slotted.before }}}}</div>
         <div class="form-floating">
             {{{{ slotted.input }}}} 
+            {{{{ input }}}}
             <label data-tpl-for="name" class="form-label">{{{{ slotted.default }}}}</label>
         </div>
         <div data-tpl-if="slotted.after" data-tpl-remove="tag">{{{{ slotted.after }}}}</div>
@@ -21,7 +22,8 @@ const ful_select_template_ = globalThis.ful_select_template || ftl.Template.from
         <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>
     </div>
     <div data-tpl-if="!floating" data-tpl-remove="tag">
-        <label data-tpl-for="id" class="form-label">{{{{ slotted.default }}}}</label>
+        <label data-tpl-for="tsId" class="form-label">{{{{ slotted.default }}}}</label>
+        {{{{ input }}}}
         <div class="input-group has-validation">
             <span data-tpl-if="slotted.ibefore" class="input-group-text">{{{{ slotted.ibefore }}}}</span>
             <div data-tpl-if="slotted.before" data-tpl-remove="tag">{{{{ slotted.before }}}}</div>
@@ -50,6 +52,7 @@ class Select extends Templated(HTMLElement, ful_select_template_) {
             return document.createElement("select");
         })();
         const id = input.getAttribute('id') || this.getAttribute('input-id') || Attributes.uid('ful-select');
+        const tsId = `${id}-ts-control`;
         Attributes.forward('input-', this, input)
         Attributes.defaultValue(input, "id", id);
         Attributes.defaultValue(input, "placeholder", " ");
@@ -83,7 +86,10 @@ class Select extends Templated(HTMLElement, ful_select_template_) {
             shouldLoad: (query) => this.shouldLoad(query)
         } : {}, tsDefaultConfig, this.tsConfig));
 
-        return template.render({ id, name, floating, slotted });
+        //we remove the input to move it
+        input.remove();
+
+        return template.render({ id, tsId, name, floating, input, slotted });
     }
     shouldLoad(q){
         return true;
