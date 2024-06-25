@@ -15,11 +15,7 @@ function flatten(obj, prefix) {
     }, {});
 }
 
-
-
 class Form extends Templated(HTMLElement) {
-    static MUTATORS = {};
-    static EXTRACTORS = {};
     static VALUE_HOLDERS_SELECTOR = '[name]';
     static IGNORED_CHILDREN_SELECTOR = '.d-none, [hidden]';
 
@@ -56,7 +52,7 @@ class Form extends Templated(HTMLElement) {
     setValues(values) {
         for (const [flattenedKey, value] of Object.entries(flatten(values, ''))) {
             Array.from(this.querySelectorAll(`[name='${CSS.escape(flattenedKey)}']`)).forEach((el) => {
-                Form.mutate(Form.MUTATORS, el, value, flattenedKey);
+                Form.mutate(el, value);
             });
         }
     }
@@ -69,7 +65,7 @@ class Form extends Templated(HTMLElement) {
                 return el.dataset['fulBindInclude'] === 'always' || el.closest(Form.IGNORED_CHILDREN_SELECTOR) === null;
             })
             .reduce((result, el) => {
-                return Form.providePath(result, el.getAttribute('name'), Form.extract(Form.EXTRACTORS, el));
+                return Form.providePath(result, el.getAttribute('name'), Form.extract(el));
             }, {});
     }
     setErrors(errors) {
@@ -112,11 +108,7 @@ class Form extends Templated(HTMLElement) {
                 el.setAttribute('hidden', '');
             });
     }
-    static extract(extractors, el) {
-        const maybeExtractor = extractors[el.dataset['fulBindExtractor']] || extractors[el.dataset['fulBindProvide']];
-        if (maybeExtractor) {
-            return maybeExtractor(el);
-        }
+    static extract(el) {
         if (el.getAttribute('type') === 'radio') {
             if (!el.checked) {
                 return undefined;
@@ -131,12 +123,7 @@ class Form extends Templated(HTMLElement) {
         }
         return el.value || null;
     }
-    static mutate(mutators, el, raw, flattenedKey) {
-        const maybeMutator = mutators[el.dataset['fulBindMutator']] || mutators[el.dataset['fulBindProvide']];
-        if (maybeMutator) {
-            maybeMutator(el, raw, flattenedKey);
-            return;
-        }
+    static mutate(el, raw) {
         if (el.getAttribute('type') === 'radio') {
             el.checked = el.getAttribute('value') === raw;
             return;
