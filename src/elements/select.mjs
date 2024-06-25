@@ -41,11 +41,6 @@ class Select extends Templated(HTMLElement, ful_select_template_) {
         Attributes.forward('input-', this, input)
         Attributes.defaultValue(input, "id", id);
         Attributes.defaultValue(input, "placeholder", " ");
-        input.setValue = this.setValue.bind(this);
-        input.getValue = this.getValue.bind(this);
-
-
-
 
         //tomselect needs the input to have a parent.
         //se we move the input to a fragment
@@ -90,13 +85,15 @@ class Select extends Templated(HTMLElement, ful_select_template_) {
         input.remove();
         return template.render({ id, tsId, name, input, slotted });
     }
-    async setValue(v) {
-        if(this._remote){
-            await this._unwrappedRemoteLoad({byId: v}, this.ts.loadCallback.bind(this.ts));
-        }
-        this.ts.setValue(v);
+    set value(v) {
+        (async () => {
+            if(this._remote){
+                await this._unwrappedRemoteLoad({byId: v}, this.ts.loadCallback.bind(this.ts));
+            }
+            this.ts.setValue(v);
+        })();
     }
-    getValue() {
+    get value() {
         const v = this.ts.getValue();
         return v === '' ? null : v;
     }

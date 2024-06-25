@@ -51,11 +51,11 @@ class RadioGroup extends Stateful(Templated(HTMLElement, ful_radiougroup_templat
         });
         return fragment;
     }
-    getValue() {
+    get value() {
         const checked = this.querySelector('input[type=radio]:checked');
         return checked ? checked.value : null;
     }
-    setValue(value){
+    set value(value){
         this.querySelector(`input[type=radio][value=${CSS.escape(value)}]`).checked = true;
     }
     static configure() {

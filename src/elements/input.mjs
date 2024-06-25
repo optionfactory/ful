@@ -33,10 +33,10 @@ class Input extends Templated(HTMLElement, ful_input_template_) {
         const name = this.getAttribute('name');
         return template.render({ id, name, slotted });
     }
-    getValue(){
+    get value(){
         return this.input.value;
     }
-    setValue(value){
+    set value(value){
         this.input.value = value;
     }
     static configure() {
