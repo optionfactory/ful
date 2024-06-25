@@ -1,4 +1,4 @@
-import { Attributes, Templated } from "./elements.mjs"
+import { Attributes, Stateful, Templated } from "./elements.mjs"
 
 const ful_input_ec = globalThis.ec || ftl.EvaluationContext.configure({
 
@@ -16,7 +16,7 @@ const ful_input_template_ = globalThis.ful_input_template || ftl.Template.fromHt
     <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>
 `, ful_input_ec);
 
-class Input extends Templated(HTMLElement, ful_input_template_) {
+class StatelessInput extends Templated(HTMLElement, ful_input_template_) {
     render(slotted, template) {
         const input = this.input = slotted.input = slotted.input || (() => {
             const el = document.createElement("input")
@@ -33,10 +33,26 @@ class Input extends Templated(HTMLElement, ful_input_template_) {
         const name = this.getAttribute('name');
         return template.render({ id, name, slotted });
     }
-    get value(){
+
+}
+
+class Input extends Stateful(StatelessInput, [], ['value']) {
+    render(slotted, template) {
+        const fragment = super.render(slotted, template);
+        this.input.value = this.getAttribute('value');
+        return fragment;
+    }
+    get value() {
+        if (this.input) {
+            return this.getAttribute('value');
+        }
         return this.input.value;
     }
-    set value(value){
+    set value(value) {
+        if (!this.input) {
+            //handled during rendering
+            return;
+        }
         this.input.value = value;
     }
     static configure() {
@@ -44,4 +60,4 @@ class Input extends Templated(HTMLElement, ful_input_template_) {
     }
 }
 
-export { Input };
+export { StatelessInput, Input };

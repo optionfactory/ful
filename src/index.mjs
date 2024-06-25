@@ -6,7 +6,7 @@ export { AuthorizationCodeFlow, AuthorizationCodeFlowSession, AuthorizationCodeF
 export { timing } from "./timing.mjs";
 export { Fragments, Attributes, Slots, Templated, Stateful } from "./elements/elements.mjs";
 export { Form } from "./elements/form.mjs";
-export { Input } from "./elements/input.mjs";
+export { StatelessInput, Input } from "./elements/input.mjs";
 export { Select } from "./elements/select.mjs";
 export { RadioGroup } from "./elements/radio.mjs";
 export { Spinner } from "./elements/spinner.mjs";
