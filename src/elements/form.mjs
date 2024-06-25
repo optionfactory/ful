@@ -16,7 +16,7 @@ class Form extends Templated(HTMLElement) {
             e.preventDefault();
             this.spinner(true);
             try {
-                if(this.submitter) {
+                if (this.submitter) {
                     await this.submitter(this.getValues(), this);
                 }
             } catch (e) {
@@ -119,6 +119,9 @@ class Form extends Templated(HTMLElement) {
         if (el.dataset['fulBindType'] === 'boolean') {
             return !el.value ? null : el.value === 'true';
         }
+        if (el.getValue) {
+            return el.getValue();
+        }
         return el.value || null;
     }
     static mutate(mutators, el, raw, key, values) {
@@ -133,6 +136,10 @@ class Form extends Templated(HTMLElement) {
         }
         if (el.getAttribute('type') === 'checkbox') {
             el.checked = raw;
+            return;
+        }
+        if (el.setValue) {
+            el.setValue(raw);
             return;
         }
         el.value = raw;
