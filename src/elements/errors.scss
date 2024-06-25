@@ -13,6 +13,9 @@ ful-errors {
     border-radius: var(--ful-errors-border-radius);    
 }
 
+ful-field-error {
+    display: none;
+}
 
 .validated-input:has(.is-invalid) ful-field-error,
 ful-input:has(.is-invalid) ful-field-error, 

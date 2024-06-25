@@ -96,6 +96,7 @@ class Form extends Templated(HTMLElement) {
             return;
         }
         const ys = Array.from(this.querySelectorAll('ful-field-error'))
+            .map(el => el.parentElement ? el.parentElement : el)
             .map(el => el.getBoundingClientRect().y + window.scrollY)
         const miny = Math.min(...ys);
         if (miny !== Infinity) {
