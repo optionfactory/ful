@@ -77,12 +77,9 @@ class Slots {
 
 const Templated = (SuperClass, template) => {
     return class extends SuperClass {
-        rendered_;
-        get rendered() {
-            return this.rendered_;
-        }
+        #rendered;
         async connectedCallback() {
-            if (this.rendered_) {
+            if (this.#rendered) {
                 return;
             }
             const slotted = Slots.from(this);
@@ -91,7 +88,7 @@ const Templated = (SuperClass, template) => {
             if (fragment) {
                 this.appendChild(fragment);
             }
-            this.rendered_ = true;
+            this.#rendered = true;
         }
     };
 }
@@ -110,7 +107,7 @@ const Stateful = (SuperClass, flags, others) => {
             for (const flag of flags) {
                 Object.defineProperty(this, flag, {
                     get() {
-                        return this.hasAttribute(flag);
+                        return this.internals_.states.has(`--${flag}`);
                     },
                     set(value) {
                         //see https://developer.mozilla.org/en-US/docs/Web/API/CustomStateSet#using_double_dash_prefixed_idents
