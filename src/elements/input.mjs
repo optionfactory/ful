@@ -24,7 +24,7 @@ class StatelessInput extends Templated(HTMLElement, ful_input_template_) {
             return el;
         })();
         input.setAttribute('ful-validation-target', '');
-        
+
         const id = input.getAttribute('id') || this.getAttribute('input-id') || Attributes.uid('ful-input');
         Attributes.forward('input-', this, slotted.input)
         Attributes.defaultValue(slotted.input, "id", id);
@@ -43,7 +43,7 @@ class Input extends Stateful(StatelessInput, [], ['value']) {
         return fragment;
     }
     get value() {
-        if (this.input) {
+        if (!this.input) {
             return this.getAttribute('value');
         }
         return this.input.value;
