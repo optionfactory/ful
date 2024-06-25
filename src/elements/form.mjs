@@ -16,7 +16,6 @@ function flatten(obj, prefix) {
 }
 
 class Form extends Templated(HTMLElement) {
-    static VALUE_HOLDERS_SELECTOR = '[name]';
     static IGNORED_CHILDREN_SELECTOR = '.d-none, [hidden]';
 
     render(slotted, template) {
@@ -57,7 +56,7 @@ class Form extends Templated(HTMLElement) {
         }
     }
     getValues() {
-        return Array.from(this.querySelectorAll(Form.VALUE_HOLDERS_SELECTOR))
+        return Array.from(this.querySelectorAll('[name]'))
             .filter((el) => {
                 if (el.dataset['fulBindInclude'] === 'never') {
                     return false;
@@ -161,12 +160,8 @@ class Form extends Templated(HTMLElement) {
             current = current[ckey];
         }
     }
-    static custom(tagName, configuration) {
-        customElements.define(tagName, class extends Form {
-            constructor() {
-                super(configuration);
-            }
-        });
+    static configure() {
+        customElements.define('ful-form', Form);
     }
 }
 
