@@ -30,18 +30,22 @@ class Select extends Templated(HTMLElement, ful_select_template_) {
         const type = this.getAttribute("type") || 'local';
         const remote = type != 'local';
         const loadOnce = this.getAttribute('load') != 'always';
-
+        const name = this.getAttribute('name');
         const input = slotted.input = slotted.input || (() => {
             return document.createElement("select");
         })();
+        input.setAttribute('ful-validation-target', '');
+
         const id = input.getAttribute('id') || this.getAttribute('input-id') || Attributes.uid('ful-select');
         const tsId = `${id}-ts-control`;
         Attributes.forward('input-', this, input)
         Attributes.defaultValue(input, "id", id);
         Attributes.defaultValue(input, "placeholder", " ");
-        const name = input.getAttribute('name');
         input.setValue = this.setValue.bind(this);
         input.getValue = this.getValue.bind(this);
+
+
+
 
         //tomselect needs the input to have a parent.
         //se we move the input to a fragment
@@ -82,10 +86,8 @@ class Select extends Templated(HTMLElement, ful_select_template_) {
             load: this._unwrappedRemoteLoad,
             shouldLoad: (query) => this.shouldLoad ? this.shouldLoad(query) : true
         } : {}, tsDefaultConfig, this.tsConfig));
-        console.log("ts created");
         //we remove the input to move it
         input.remove();
-
         return template.render({ id, tsId, name, input, slotted });
     }
     async setValue(v) {

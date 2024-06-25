@@ -18,18 +18,26 @@ const ful_input_template_ = globalThis.ful_input_template || ftl.Template.fromHt
 
 class Input extends Templated(HTMLElement, ful_input_template_) {
     render(slotted, template) {
-        const input = slotted.input = slotted.input || (() => {
+        const input = this.input = slotted.input = slotted.input || (() => {
             const el = document.createElement("input")
             el.classList.add("form-control");
             return el;
         })();
+        input.setAttribute('ful-validation-target', '');
+        
         const id = input.getAttribute('id') || this.getAttribute('input-id') || Attributes.uid('ful-input');
         Attributes.forward('input-', this, slotted.input)
         Attributes.defaultValue(slotted.input, "id", id);
         Attributes.defaultValue(slotted.input, "type", "text");
         Attributes.defaultValue(slotted.input, "placeholder", " ");
-        const name = input.getAttribute('name');
+        const name = this.getAttribute('name');
         return template.render({ id, name, slotted });
+    }
+    getValue(){
+        return this.input.value;
+    }
+    setValue(value){
+        this.input.value = value;
     }
     static configure() {
         customElements.define('ful-input', Input);

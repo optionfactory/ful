@@ -3,6 +3,20 @@
 import { Failure } from "../http-client.mjs";
 import { Templated } from "./elements.mjs"
 
+function flatten(obj, prefix) {
+    return Object.keys(obj).reduce((acc, k) => {
+        const pre = prefix.length ? prefix + '.' : '';
+        if (typeof obj[k] === 'object' && obj[k] !== null) {
+            Object.assign(acc, flatten(obj[k], pre + k));
+        } else {
+            acc[pre + k] = obj[k];
+        }
+        return acc;
+    }, {});
+}
+
+
+
 class Form extends Templated(HTMLElement) {
     static MUTATORS = {};
     static EXTRACTORS = {};
@@ -40,12 +54,9 @@ class Form extends Templated(HTMLElement) {
         })
     }
     setValues(values) {
-        for (let k in values) {
-            if (!values.hasOwnProperty(k)) {
-                continue;
-            }
-            Array.from(this.querySelectorAll(`[name='${CSS.escape(k)}']`)).forEach((el) => {
-                Form.mutate(Form.MUTATORS, el, values[k], k, values);
+        for (const [flattenedKey, value] of Object.entries(flatten(values, ''))) {
+            Array.from(this.querySelectorAll(`[name='${CSS.escape(flattenedKey)}']`)).forEach((el) => {
+                Form.mutate(Form.MUTATORS, el, value, flattenedKey);
             });
         }
     }
@@ -61,15 +72,13 @@ class Form extends Templated(HTMLElement) {
                 return Form.providePath(result, el.getAttribute('name'), Form.extract(Form.EXTRACTORS, el));
             }, {});
     }
-    setErrors(errors, scroll) {
+    setErrors(errors) {
         this.clearErrors();
         errors
             .filter((e) => e.type === 'FIELD_ERROR' || e.type === 'INVALID_FORMAT')
             .forEach((e) => {
                 const name = e.context.replace("[", ".").replace("].", ".");
-                //TODO: match [name=] ful-validation-target and [name=]:not(:has(ful-validation-target))
-                //
-                this.querySelectorAll(`[name='${CSS.escape(name)}']`)
+                this.querySelectorAll(`[name='${CSS.escape(name)}'] [ful-validation-target],[name='${CSS.escape(name)}']:not(:has([ful-validation-target]))`)
                     .forEach(input => input.classList.add('is-invalid'));
                 this.querySelectorAll(`ful-field-error[field='${CSS.escape(name)}']`)
                     .forEach(el => el.innerText = e.reason);
@@ -83,7 +92,7 @@ class Form extends Templated(HTMLElement) {
                 }
             })
 
-        if (!scroll) {
+        if (!this.hasAttribute('scroll-on-error')) {
             return;
         }
         const ys = Array.from(this.querySelectorAll('ful-field-error'))
@@ -124,10 +133,10 @@ class Form extends Templated(HTMLElement) {
         }
         return el.value || null;
     }
-    static mutate(mutators, el, raw, key, values) {
+    static mutate(mutators, el, raw, flattenedKey) {
         const maybeMutator = mutators[el.dataset['fulBindMutator']] || mutators[el.dataset['fulBindProvide']];
         if (maybeMutator) {
-            maybeMutator(el, raw, key, values);
+            maybeMutator(el, raw, flattenedKey);
             return;
         }
         if (el.getAttribute('type') === 'radio') {

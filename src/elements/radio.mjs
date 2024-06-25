@@ -29,14 +29,16 @@ const ful_radiougroup_template_ = globalThis.ful_radiogroup_template || ftl.Temp
 
 class RadioGroup extends Stateful(Templated(HTMLElement, ful_radiougroup_template_), ['disabled']) {
     render(slotted, template) {        
-        const name = this.getAttribute('input-name') || Attributes.uid('ful-radiogroup');
+        const name = this.getAttribute('name') || Attributes.uid('ful-radiogroup');
         const radioEls = Array.from(slotted.default.querySelectorAll('ful-radio'));
         const inputsAndLabels = radioEls.map(el => {
             const input = document.createElement('input');
             input.setAttribute('type', 'radio');
             Attributes.forward('input-', this, input);
             Attributes.forward('', el, input);
-            Attributes.defaultValue(input, 'name', name);
+            input.setAttribute('name', `${name}-ignore`);
+            input.setAttribute('ful-validation-target', '');
+            input.dataset['fulBindInclude'] = 'never';
             const label = Fragments.fromChildNodes(el);
             return [input, label];
         });
@@ -48,6 +50,13 @@ class RadioGroup extends Stateful(Templated(HTMLElement, ful_radiougroup_templat
             inputsAndLabels: inputsAndLabels
         });
         return fragment;
+    }
+    getValue() {
+        const checked = this.querySelector('input[type=radio]:checked');
+        return checked ? checked.value : null;
+    }
+    setValue(value){
+        this.querySelector(`input[type=radio][value=${CSS.escape(value)}]`).checked = true;
     }
     static configure() {
         customElements.define('ful-radio-group', RadioGroup);
