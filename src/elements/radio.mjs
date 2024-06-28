@@ -23,6 +23,9 @@ const ful_radiougroup_template_ = globalThis.ful_radiogroup_template || ftl.Temp
             </label>
         </section>
         <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>
+        <footer data-tpl-if="slotted.footer">
+            {{{{ slotted.footer }}}}
+        </footer>
     </fieldset>
 `, ful_radiogroup_ec);
 
