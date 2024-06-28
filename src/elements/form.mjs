@@ -81,7 +81,7 @@ class Form extends Templated(HTMLElement) {
         this.querySelectorAll("ful-errors")
             .forEach(el => {
                 const globalErrors = errors.filter((e) => e.type !== 'FIELD_ERROR' && e.type !== 'INVALID_FORMAT');
-                el.innerHTML = globalErrors.map(e => e.reason).join("\n");
+                el.innerText = globalErrors.map(e => e.reason).join("\n");
                 if (globalErrors.length !== 0) {
                     el.removeAttribute('hidden');
                 }
