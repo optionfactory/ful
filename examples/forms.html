@@ -19,6 +19,16 @@
 
     <link href="../dist/ful.css" rel="stylesheet">
     <script src="../dist/ful.iife.min.js"></script>
+    <script>
+        const sleep = ful.timing.sleep;
+        const Failure = ful.Failure;
+
+        ful.Spinner.configure();
+        ful.Input.configure();
+        ful.Select.configure();
+        ful.RadioGroup.configure();
+        ful.Form.configure();        
+    </script>
 </head>
 
 <body>
@@ -26,7 +36,7 @@
         <div class="row">
             <ful-form class="col-6 border border-primary">
                 <h1>Classic layout</h1>
-                <ful-input name="text.plain" class="mb-3">
+                <ful-input name="text.plain" class="mb-3" value="123">
                     text plain <sup>*</sup>
                 </ful-input>
                 <ful-input name="text.icons.before" class="mb-3">
@@ -137,18 +147,12 @@
     </div>
     <script>
 
-        const sleep = ful.timing.sleep;
-        const Failure = ful.Failure;
 
-        ful.Spinner.configure();
-        ful.Input.configure();
-        ful.Select.configure();
-        ful.RadioGroup.configure();
-        ful.Form.custom('ful-form', {});
 
         document.addEventListener("DOMContentLoaded", () => {
             document.querySelectorAll('ful-form').forEach(form => {
                 form.submitter = async (data, form) => {
+                    await sleep(2_000);
                     throw new Failure(0, [{
                         type: 'FIELD_ERROR',
                         context: 'text.plain',

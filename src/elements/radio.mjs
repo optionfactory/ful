@@ -1,4 +1,4 @@
-import { Attributes, Fragments, Stateful, Templated } from "./elements.mjs"
+import { Attributes, Fragments, ParsedElement,  Templated, Stateful } from "./elements.mjs"
 
 
 
@@ -30,7 +30,7 @@ const ful_radiougroup_template_ = globalThis.ful_radiogroup_template || ftl.Temp
 `, ful_radiogroup_ec);
 
 
-class RadioGroup extends Stateful(Templated(HTMLElement, ful_radiougroup_template_), ['disabled']) {
+class RadioGroup extends Stateful(Templated(ParsedElement, ful_radiougroup_template_), ['disabled'], ['value']) {
     render(slotted, template) {        
         const name = this.getAttribute('name') || Attributes.uid('ful-radiogroup');
         const radioEls = Array.from(slotted.default.querySelectorAll('ful-radio'));

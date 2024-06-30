@@ -1,7 +1,7 @@
 /* global Infinity, CSS */
 
 import { Failure } from "../http-client.mjs";
-import { Templated } from "./elements.mjs"
+import { ParsedElement, Templated } from "./elements.mjs"
 
 function flatten(obj, prefix) {
     return Object.keys(obj).reduce((acc, k) => {
@@ -15,10 +15,10 @@ function flatten(obj, prefix) {
     }, {});
 }
 
-class Form extends Templated(HTMLElement) {
+class Form extends Templated(ParsedElement) {
     static IGNORED_CHILDREN_SELECTOR = '.d-none, [hidden]';
 
-    render(slotted, template) {
+    async render(slotted, template) {
         const form = document.createElement('form');
         form.append(slotted.default);
         form.addEventListener('submit', async (e) => {

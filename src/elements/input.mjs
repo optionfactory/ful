@@ -1,4 +1,4 @@
-import { Attributes, Stateful, Templated } from "./elements.mjs"
+import { Attributes, ParsedElement, Stateful, Templated } from "./elements.mjs"
 
 const ful_input_ec = globalThis.ec || ftl.EvaluationContext.configure({
 
@@ -16,7 +16,7 @@ const ful_input_template_ = globalThis.ful_input_template || ftl.Template.fromHt
     <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>
 `, ful_input_ec);
 
-class StatelessInput extends Templated(HTMLElement, ful_input_template_) {
+class StatelessInput extends Templated(ParsedElement, ful_input_template_) {
     render(slotted, template) {
         const input = this.input = slotted.input = slotted.input || (() => {
             const el = document.createElement("input")
@@ -43,16 +43,9 @@ class Input extends Stateful(StatelessInput, [], ['value']) {
         return fragment;
     }
     get value() {
-        if (!this.input) {
-            return this.getAttribute('value');
-        }
         return this.input.value;
     }
     set value(value) {
-        if (!this.input) {
-            //handled during rendering
-            return;
-        }
         this.input.value = value;
     }
     static configure() {

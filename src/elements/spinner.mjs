@@ -1,4 +1,4 @@
-import { Attributes, Fragments, Templated } from "./elements.mjs"
+import { ParsedElement, Templated } from "./elements.mjs"
 
 
 
@@ -14,7 +14,7 @@ const ful_spinner_template_ = globalThis.ful_spinner_template || ftl.Template.fr
 `, ful_spinner_ec);
 
 
-class Spinner extends Templated(HTMLElement, ful_spinner_template_) {
+class Spinner extends Templated(ParsedElement, ful_spinner_template_) {
     render(slotted, template) {
         return template.render({ slotted });
     }

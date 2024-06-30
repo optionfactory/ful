@@ -1,3 +1,6 @@
+import { SyncEvent } from "../events.mjs";
+
+
 class Fragments {
     static fromHtml(...html) {
         const el = document.createElement('div');
@@ -7,7 +10,7 @@ class Fragments {
             fragment.appendChild(node);
         });
         return fragment;
-    }    
+    }
     static toHtml(fragment) {
         var r = document.createElement("root");
         r.appendChild(fragment);
@@ -75,20 +78,86 @@ class Slots {
     }
 }
 
-const Templated = (SuperClass, template) => {
-    return class extends SuperClass {
-        #rendered;
-        async connectedCallback() {
-            if (this.#rendered) {
+class Nodes {
+    static isParsed(el) {
+        for (var c = el; c; c = c.parentNode) {
+            if (c.nextSibling) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
+class UpgradeQueue {
+    #q = [];
+    constructor() {
+        document.addEventListener('DOMContentLoaded', this.dequeue.bind(this));
+    }
+    enqueue(el) {
+        if (!this.#q.length) {
+            requestAnimationFrame(this.dequeue.bind(this));
+        }
+        this.#q.push(el);
+    }
+    dequeue() {
+        this.#q.splice(0).forEach(el => el.upgrade());
+    }
+}
+
+const upgradeQueue = new UpgradeQueue();
+
+
+class ParsedElement extends HTMLElement {
+    #parsed;
+    connectedCallback() {
+        if (this.#parsed) {
+            return;
+        }
+        if (this.ownerDocument.readyState === 'complete' || Nodes.isParsed(this)) {
+            upgradeQueue.enqueue(this);
+            return;
+        }
+        this.ownerDocument.addEventListener('DOMContentLoaded', () => {
+            observer.disconnect();
+            upgradeQueue.enqueue(this);
+        });
+        const observer = new MutationObserver(() => {
+            if (!Nodes.isParsed(this)) {
                 return;
             }
+            observer.disconnect();
+            upgradeQueue.enqueue(this);
+        });
+        observer.observe(this.parentNode, { childList: true, subtree: true });
+    }
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (!this.#parsed || oldValue === newValue) {
+            return;
+        }
+        this[name] = newValue;
+        const method = this[`on${name.charAt(0).toUpperCase()}${name.substr(1).toLowerCase()}Changed`];
+        method?.call(this, newValue, oldValue);
+    }
+    upgrade() {
+        if (this.#parsed) {
+            return;
+        }
+        this.#parsed = true;
+        return this.ready();
+    }
+}
+
+
+const Templated = (SuperClass, template) => {
+    return class extends SuperClass {
+        async ready() {
             const slotted = Slots.from(this);
             const fragment = await Promise.resolve(this.render(slotted, template));
             this.innerHTML = '';
             if (fragment) {
                 this.appendChild(fragment);
             }
-            this.#rendered = true;
         }
     };
 }
@@ -105,7 +174,10 @@ const Stateful = (SuperClass, flags, others) => {
             super(...args);
             this.internals_ = this.internals_ || this.attachInternals();
             for (const flag of flags) {
+                //TODO: Object.defineProperty(k.prototype, ...)
                 Object.defineProperty(this, flag, {
+                    enumerable: true,
+                    configurable: true,
                     get() {
                         return this.internals_.states.has(`--${flag}`);
                     },
@@ -122,15 +194,7 @@ const Stateful = (SuperClass, flags, others) => {
                 });
             }
         }
-        attributeChangedCallback(name, oldValue, newValue) {
-            if (oldValue === newValue) {
-                return;
-            }
-            this[name] = newValue;
-            const method = this[`on${name.charAt(0).toUpperCase()}${name.substr(1).toLowerCase()}Changed`];
-            method?.call(this, newValue, oldValue);
-        }
     };
 }
 
-export { Fragments, Attributes, Slots, Templated, Stateful };
+export { Fragments, Attributes, Slots, Nodes, ParsedElement, Templated, Stateful };

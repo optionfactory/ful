@@ -1,4 +1,4 @@
-import { Fragments, Attributes, Templated } from "./elements.mjs"
+import { Fragments, Attributes, ParsedElement, Templated, Stateful } from "./elements.mjs"
 /**
  * <script src="tom-select.complete.js"></script>
  * <link href="tom-select.bootstrap5.css" rel="stylesheet" />
@@ -21,7 +21,7 @@ const ful_select_template_ = globalThis.ful_select_template || ftl.Template.from
 `, ful_select_ec);
 
 
-class Select extends Templated(HTMLElement, ful_select_template_) {
+class Select extends Stateful(Templated(ParsedElement, ful_select_template_), [], ["value"]) {
     constructor(tsConfig) {
         super();
         this.tsConfig = tsConfig;
