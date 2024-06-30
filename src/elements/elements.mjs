@@ -187,11 +187,9 @@ const Stateful = (SuperClass, flags, others) => {
                 //see https://developer.mozilla.org/en-US/docs/Web/API/CustomStateSet#using_double_dash_prefixed_idents
                 if (Attributes.asBoolean(value)) {
                     this.internals_.states.add(`--${flag}`);
-                    this.setAttribute(flag, '');
                     return;
                 }
                 this.internals_.states.delete(`--${flag}`);
-                this.removeAttribute(flag);
             }
         });
     }
