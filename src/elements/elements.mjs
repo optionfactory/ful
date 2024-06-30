@@ -166,35 +166,37 @@ const Stateful = (SuperClass, flags, others) => {
 
     const all = [].concat(flags).concat(others || []);
 
-    return class extends SuperClass {
+    const k = class extends SuperClass {
         static get observedAttributes() {
             return all;
         }
         constructor(...args) {
             super(...args);
             this.internals_ = this.internals_ || this.attachInternals();
-            for (const flag of flags) {
-                //TODO: Object.defineProperty(k.prototype, ...)
-                Object.defineProperty(this, flag, {
-                    enumerable: true,
-                    configurable: true,
-                    get() {
-                        return this.internals_.states.has(`--${flag}`);
-                    },
-                    set(value) {
-                        //see https://developer.mozilla.org/en-US/docs/Web/API/CustomStateSet#using_double_dash_prefixed_idents
-                        if (Attributes.asBoolean(value)) {
-                            this.internals_.states.add(`--${flag}`);
-                            this.setAttribute(flag, '');
-                            return;
-                        }
-                        this.internals_.states.delete(`--${flag}`);
-                        this.removeAttribute(flag);
-                    }
-                });
-            }
         }
     };
+
+    for (const flag of flags) {
+        Object.defineProperty(k.prototype, flag, {
+            enumerable: true,
+            configurable: true,
+            get() {
+                return this.internals_.states.has(`--${flag}`);
+            },
+            set(value) {
+                //see https://developer.mozilla.org/en-US/docs/Web/API/CustomStateSet#using_double_dash_prefixed_idents
+                if (Attributes.asBoolean(value)) {
+                    this.internals_.states.add(`--${flag}`);
+                    this.setAttribute(flag, '');
+                    return;
+                }
+                this.internals_.states.delete(`--${flag}`);
+                this.removeAttribute(flag);
+            }
+        });
+    }
+
+    return k;
 }
 
 export { Fragments, Attributes, Slots, Nodes, ParsedElement, Templated, Stateful };
