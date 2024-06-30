@@ -49,7 +49,7 @@ class Wizard extends HTMLElement {
             cancelable: true
         }));
     }
-    moveTo = function (n) {
+    moveTo(n) {
         this.progress.forEach(p => {
             const children = [...p.children];
             const current = children.filter(e => e.matches(".active"))[0];
@@ -64,13 +64,6 @@ class Wizard extends HTMLElement {
             bubbles: true,
             cancelable: true
         }));
-    }
-    static custom(tagName, configuration) {
-        customElements.define(tagName, class extends Wizard {
-            constructor() {
-                super(configuration);
-            }
-        });
     }
     static configure() {
         return Wizard.custom('ful-wizard');

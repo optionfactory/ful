@@ -6,9 +6,7 @@ class Fragments {
         const el = document.createElement('div');
         el.innerHTML = html.join("");
         const fragment = new DocumentFragment();
-        Array.from(el.childNodes).forEach(node => {
-            fragment.appendChild(node);
-        });
+        fragment.append(...el.childNodes);
         return fragment;
     }
     static toHtml(fragment) {
@@ -18,17 +16,12 @@ class Fragments {
     }
     static from(...nodes) {
         const fragment = new DocumentFragment();
-        for (let i = 0; i !== nodes.length; ++i) {
-            fragment.appendChild(nodes[i]);
-        }
+        fragment.append(...nodes);
         return fragment;
     }
     static fromChildNodes(el) {
-        const nodes = Array.from(el.childNodes);
         const fragment = new DocumentFragment();
-        for (let i = 0; i !== nodes.length; ++i) {
-            fragment.appendChild(nodes[i]);
-        }
+        fragment.append(...el.childNodes);
         return fragment;
     }
 }
@@ -106,7 +99,6 @@ class UpgradeQueue {
 }
 
 const upgradeQueue = new UpgradeQueue();
-
 
 class ParsedElement extends HTMLElement {
     #parsed;
