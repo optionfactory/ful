@@ -61,9 +61,6 @@ class RadioGroup extends Stateful(Templated(ParsedElement, ful_radiougroup_templ
     set value(value){
         this.querySelector(`input[type=radio][value=${CSS.escape(value)}]`).checked = true;
     }
-    static configure() {
-        customElements.define('ful-radio-group', RadioGroup);
-    }    
 }
 
 

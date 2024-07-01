@@ -148,9 +148,6 @@ class Form extends Templated(ParsedElement) {
             window.scroll(window.scrollX, miny > Form.SCROLL_OFFSET ? miny - Form.SCROLL_OFFSET : 0);
         }
     }
-    static configure() {
-        customElements.define('ful-form', Form);
-    }
 }
 
 export { Form };

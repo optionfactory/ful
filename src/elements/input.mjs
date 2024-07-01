@@ -48,9 +48,6 @@ class Input extends Stateful(StatelessInput, [], ['value']) {
     set value(value) {
         this.input.value = value;
     }
-    static configure() {
-        customElements.define('ful-input', Input);
-    }
 }
 
 export { StatelessInput, Input };

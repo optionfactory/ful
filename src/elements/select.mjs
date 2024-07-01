@@ -97,17 +97,6 @@ class Select extends Stateful(Templated(ParsedElement, ful_select_template_), []
         const v = this.ts.getValue();
         return v === '' ? null : v;
     }
-    static custom(tagName, configuration) {
-        customElements.define(tagName, class extends Select {
-            constructor() {
-                super(configuration);
-            }
-        });
-    }
-    static configure() {
-        return Select.custom('ful-select');
-    }
-
 }
 
 export { Select };

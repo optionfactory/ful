@@ -128,8 +128,6 @@ class ParsedElement extends HTMLElement {
             return;
         }
         this[name] = newValue;
-        const method = this[`on${name.charAt(0).toUpperCase()}${name.substr(1).toLowerCase()}Changed`];
-        method?.call(this, newValue, oldValue);
     }
     upgrade() {
         if (this.#parsed) {

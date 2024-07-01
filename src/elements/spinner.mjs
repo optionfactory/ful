@@ -18,9 +18,6 @@ class Spinner extends Templated(ParsedElement, ful_spinner_template_) {
     render(slotted, template) {
         return template.render({ slotted });
     }
-    static configure() {
-        customElements.define('ful-spinner', Spinner);
-    }
 }
 
 export { Spinner };
