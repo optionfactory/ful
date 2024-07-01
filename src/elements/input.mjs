@@ -32,7 +32,7 @@ const makeInputFragment = (el, slotted) => {
 
 class Input extends ParsedElement([], ['value']) {
     render() {
-        const slotted = Slots.from(el);
+        const slotted = Slots.from(this);
         const fragment = makeInputFragment(this, slotted);
         this.replaceChildren(fragment);
     }
