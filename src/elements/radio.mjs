@@ -1,4 +1,4 @@
-import { Attributes, Fragments, ParsedElement, Stateful } from "./elements.mjs"
+import { Attributes, Slots, Fragments, ParsedElement } from "./elements.mjs"
 
 
 const ful_radiogroup_ec = globalThis.ec || ftl.EvaluationContext.configure({
@@ -27,8 +27,8 @@ const ful_radiougroup_template_ = globalThis.ful_radiogroup_template || ftl.Temp
 `, ful_radiogroup_ec);
 
 
-class RadioGroup extends Stateful(ParsedElement, ['disabled'], ['value']) {
-    render() {        
+class RadioGroup extends ParsedElement(['disabled'], ['value']) {
+    render() {
         const slotted = Slots.from(this);
         const name = this.getAttribute('name') || Attributes.uid('ful-radiogroup');
         const radioEls = Array.from(slotted.default.querySelectorAll('ful-radio'));
@@ -44,20 +44,18 @@ class RadioGroup extends Stateful(ParsedElement, ['disabled'], ['value']) {
             return [input, label];
         });
         radioEls.forEach(el => el.remove());
-        
-        const fragment = ful_radiougroup_template_.render({
+
+        ful_radiougroup_template_.renderTo(this, {
             name: name,
             slotted: slotted,
             inputsAndLabels: inputsAndLabels
         });
-        this.replaceChildren(fragment);
-
     }
     get value() {
         const checked = this.querySelector('input[type=radio]:checked');
         return checked ? checked.value : null;
     }
-    set value(value){
+    set value(value) {
         this.querySelector(`input[type=radio][value=${CSS.escape(value)}]`).checked = true;
     }
 }

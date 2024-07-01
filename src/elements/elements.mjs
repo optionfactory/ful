@@ -100,72 +100,85 @@ class UpgradeQueue {
 
 const upgradeQueue = new UpgradeQueue();
 
-class ParsedElement extends HTMLElement {
-    #parsed;
-    connectedCallback() {
-        if (this.#parsed) {
-            return;
-        }
-        if (this.ownerDocument.readyState === 'complete' || Nodes.isParsed(this)) {
-            upgradeQueue.enqueue(this);
-            return;
-        }
-        this.ownerDocument.addEventListener('DOMContentLoaded', () => {
-            observer.disconnect();
-            upgradeQueue.enqueue(this);
-        });
-        const observer = new MutationObserver(() => {
-            if (!Nodes.isParsed(this)) {
-                return;
-            }
-            observer.disconnect();
-            upgradeQueue.enqueue(this);
-        });
-        observer.observe(this.parentNode, { childList: true, subtree: true });
-    }
-    attributeChangedCallback(name, oldValue, newValue) {
-        if (!this.#parsed || oldValue === newValue) {
-            return;
-        }
-        this[name] = newValue;
-    }
-    upgrade() {
-        if (this.#parsed) {
-            return;
-        }
-        this.#parsed = true;
-        return this.render();
-    }
-}
+const ParsedElement = (flags, others) => {
 
-const Stateful = (SuperClass, flags, others) => {
+    const observed_flags = flags || [];
+    const observed_others = others || [];    
+    const observed = [].concat(observed_flags).concat(observed_others);
 
-    const all = [].concat(flags).concat(others || []);
-
-    const k = class extends SuperClass {
+    const k = class extends HTMLElement {
         static get observedAttributes() {
-            return all;
+            return observed;
         }
+        #parsed;
+        #internals;
         constructor(...args) {
             super(...args);
-            this.internals_ = this.internals_ || this.attachInternals();
+            this.#internals = this.attachInternals();
         }
+        get internals() {
+            return this.#internals;
+        }
+        connectedCallback() {
+            if (this.#parsed) {
+                return;
+            }
+            if (this.ownerDocument.readyState === 'complete' || Nodes.isParsed(this)) {
+                upgradeQueue.enqueue(this);
+                return;
+            }
+            this.ownerDocument.addEventListener('DOMContentLoaded', () => {
+                observer.disconnect();
+                upgradeQueue.enqueue(this);
+            });
+            const observer = new MutationObserver(() => {
+                if (!Nodes.isParsed(this)) {
+                    return;
+                }
+                observer.disconnect();
+                upgradeQueue.enqueue(this);
+            });
+            observer.observe(this.parentNode, { childList: true, subtree: true });
+        }
+        attributeChangedCallback(name, oldValue, newValue) {
+            if (!this.#parsed || oldValue === newValue) {
+                return;
+            }
+            this[name] = newValue;
+        }
+        async upgrade() {
+            if (this.#parsed) {
+                return;
+            }
+            this.#parsed = true;
+            await this.render();
+            for (const flag of observed_flags) {
+                if(this.hasAttribute(flag)){
+                    this[flag] = true;
+                }
+            }
+            for (const other of observed_others) {
+                if(this.hasAttribute(other)){
+                    this[other] = this.getAttribute(other);
+                }
+            }
+        }        
     };
 
-    for (const flag of flags) {
+    for (const flag of observed_flags) {
         Object.defineProperty(k.prototype, flag, {
             enumerable: true,
             configurable: true,
             get() {
-                return this.internals_.states.has(`--${flag}`);
+                return this.internals.states.has(`--${flag}`);
             },
             set(value) {
                 //see https://developer.mozilla.org/en-US/docs/Web/API/CustomStateSet#using_double_dash_prefixed_idents
                 if (Attributes.asBoolean(value)) {
-                    this.internals_.states.add(`--${flag}`);
+                    this.internals.states.add(`--${flag}`);
                     return;
                 }
-                this.internals_.states.delete(`--${flag}`);
+                this.internals.states.delete(`--${flag}`);
             }
         });
     }
@@ -173,4 +186,4 @@ const Stateful = (SuperClass, flags, others) => {
     return k;
 }
 
-export { Fragments, Attributes, Slots, Nodes, ParsedElement, Stateful };
+export { Fragments, Attributes, Slots, Nodes, ParsedElement };

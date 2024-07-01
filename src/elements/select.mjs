@@ -1,4 +1,4 @@
-import { Fragments, Attributes, ParsedElement, Stateful } from "./elements.mjs"
+import { Fragments, Attributes, Slots, ParsedElement } from "./elements.mjs"
 /**
  * <script src="tom-select.complete.js"></script>
  * <link href="tom-select.bootstrap5.css" rel="stylesheet" />
@@ -21,7 +21,7 @@ const ful_select_template_ = globalThis.ful_select_template || ftl.Template.from
 `, ful_select_ec);
 
 
-class Select extends Stateful(ParsedElement, [], ["value"]) {
+class Select extends ParsedElement([], ["value"]) {
     constructor(tsConfig) {
         super();
         this.tsConfig = tsConfig;
@@ -70,7 +70,7 @@ class Select extends Stateful(ParsedElement, [], ["value"]) {
             const type = query && query.hasOwnProperty('byId') ? 'id' : 'query';
             const qvalue = type === 'id' ? query.byId : query;
             const data = await (this.loader ? this.loader(qvalue, type) : []);
-            if(type !== 'id'){
+            if (type !== 'id') {
                 this.loaded = true;
             }
             callback(data);
@@ -84,13 +84,12 @@ class Select extends Stateful(ParsedElement, [], ["value"]) {
         } : {}, tsDefaultConfig, this.tsConfig));
         //we remove the input to move it
         input.remove();
-        const fragment = ful_select_template_.render({ id, tsId, name, input, slotted });
-        this.replaceChildren(fragment);
+        ful_select_template_.renderTo(this, { id, tsId, name, input, slotted });
     }
     set value(v) {
         (async () => {
-            if(this._remote){
-                await this._unwrappedRemoteLoad({byId: v}, this.ts.loadCallback.bind(this.ts));
+            if (this._remote) {
+                await this._unwrappedRemoteLoad({ byId: v }, this.ts.loadCallback.bind(this.ts));
             }
             this.ts.setValue(v);
         })();

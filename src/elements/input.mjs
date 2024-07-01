@@ -1,10 +1,10 @@
-import { Attributes, ParsedElement, Stateful } from "./elements.mjs"
+import { Attributes, Slots, ParsedElement } from "./elements.mjs"
 
 const ful_input_ec = globalThis.ec || ftl.EvaluationContext.configure({
 
 });
 
-const ful_input_template_ = globalThis.ful_input_template || ftl.Template.fromHtml(`
+const template = globalThis.ful_input_template || ftl.Template.fromHtml(`
     <label data-tpl-for="id" class="form-label">{{{{ slotted.default }}}}</label>
     <div class="input-group">
         <span data-tpl-if="slotted.ibefore" class="input-group-text">{{{{ slotted.ibefore }}}}</span>
@@ -16,33 +16,34 @@ const ful_input_template_ = globalThis.ful_input_template || ftl.Template.fromHt
     <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>
 `, ful_input_ec);
 
-class StatelessInput extends ParsedElement {
-    render() {
-        const slotted = Slots.from(this);
+const renderInput = (el) => {
+    const slotted = Slots.from(el);
 
-        const input = this.input = slotted.input = slotted.input || (() => {
-            const el = document.createElement("input")
-            el.classList.add("form-control");
-            return el;
-        })();
-        input.setAttribute('ful-validation-target', '');
+    const input = el.input = slotted.input = slotted.input || (() => {
+        const el = document.createElement("input")
+        el.classList.add("form-control");
+        return el;
+    })();
+    input.setAttribute('ful-validation-target', '');
 
-        const id = input.getAttribute('id') || this.getAttribute('input-id') || Attributes.uid('ful-input');
-        Attributes.forward('input-', this, slotted.input)
-        Attributes.defaultValue(slotted.input, "id", id);
-        Attributes.defaultValue(slotted.input, "type", "text");
-        Attributes.defaultValue(slotted.input, "placeholder", " ");
-        const name = this.getAttribute('name');
-        const fragment = ful_input_template_.render({ id, name, slotted });
-        this.replaceChildren(fragment);
-
-    }
-
+    const id = input.getAttribute('id') || el.getAttribute('input-id') || Attributes.uid('ful-input');
+    Attributes.forward('input-', el, slotted.input)
+    Attributes.defaultValue(slotted.input, "id", id);
+    Attributes.defaultValue(slotted.input, "type", "text");
+    Attributes.defaultValue(slotted.input, "placeholder", " ");
+    const name = el.getAttribute('name');
+    template.renderTo(el, { id, name, slotted });
 }
 
-class Input extends Stateful(StatelessInput, [], ['value']) {
+class StatelessInput extends ParsedElement() {
     render() {
-        this.input.value = this.getAttribute('value');
+        renderInput(this);
+    }
+}
+
+class Input extends ParsedElement([], ['value']) {
+    render() {
+        renderInput(this);
     }
     get value() {
         return this.input.value;

@@ -70,13 +70,12 @@ function mutate(el, raw) {
     el.value = raw;
 }
 
-class Form extends ParsedElement {
+class Form extends ParsedElement() {
     static IGNORED_CHILDREN_SELECTOR = '.d-none, [hidden]';
     static SCROLL_OFFSET = 50;
     render() {
-        const slotted = Slots.from(this);
         const form = document.createElement('form');
-        form.append(slotted.default);
+        form.replaceChildren(...this.childNodes);
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             this.spinner(true);
