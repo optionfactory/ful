@@ -67,7 +67,7 @@ class Select extends ParsedElement([], ["value"]) {
             }
             const type = query && query.hasOwnProperty('byId') ? 'id' : 'query';
             const qvalue = type === 'id' ? query.byId : query;
-            const data = await (this.loader ? this.loader(qvalue, type) : []);
+            const data = await (this.#loader ? this.#loader(qvalue, type) : []);
             if (type !== 'id') {
                 this.loaded = true;
             }
@@ -83,6 +83,14 @@ class Select extends ParsedElement([], ["value"]) {
         //we remove the input to move it
         input.remove();
         templates.get('ful-select').renderTo(this, { id, tsId, name, input, slotted });
+    }
+    #loader;
+    set loader(l){
+        this.#loader = l;
+        // loader can be configured later so we load now
+        if(this.hasAttribute('value')){
+            this.value = this.getAttribute("value");
+        }
     }
     set value(v) {
         (async () => {

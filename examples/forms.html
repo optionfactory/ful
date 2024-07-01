@@ -91,7 +91,7 @@
                         <option value="17">zzz</option>
                     </select>                    
                 </ful-select>                
-                <ful-select type="remote" name="select.single.remote" input-class="form-select" class="mb-3">
+                <ful-select type="remote" name="select.single.remote" input-class="form-select" class="mb-3" value="1">
                     select remote single
                     <i slot="ibefore" class="bi bi-envelope-at"></i>
                     <i slot="iafter" class="bi bi-envelope-at"></i>
@@ -224,11 +224,10 @@
                     }
                     await sleep(3_000);
                     return [
-                        { value: 1, text: "asd" },
-                        { value: 2, text: "bsd" }
+                        { value: "1", text: "asd" },
+                        { value: "2", text: "bsd" }
                     ]
                 };
-                sel.value = 445;
             })
 
 
