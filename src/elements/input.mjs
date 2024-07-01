@@ -1,10 +1,6 @@
-import { Attributes, Slots, ParsedElement } from "./elements.mjs"
+import { Attributes, Fragments, Slots, templates, ParsedElement } from "./elements.mjs"
 
-const ful_input_ec = globalThis.ec || ftl.EvaluationContext.configure({
-
-});
-
-const template = globalThis.ful_input_template || ftl.Template.fromHtml(`
+templates.put('ful-input', Fragments.fromHtml(`
     <label data-tpl-for="id" class="form-label">{{{{ slotted.default }}}}</label>
     <div class="input-group">
         <span data-tpl-if="slotted.ibefore" class="input-group-text">{{{{ slotted.ibefore }}}}</span>
@@ -14,7 +10,8 @@ const template = globalThis.ful_input_template || ftl.Template.fromHtml(`
         <span data-tpl-if="slotted.iafter" class="input-group-text">{{{{ slotted.iafter }}}}</span>
     </div>
     <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>
-`, ful_input_ec);
+`));
+
 
 const renderInput = (el) => {
     const slotted = Slots.from(el);
@@ -32,7 +29,7 @@ const renderInput = (el) => {
     Attributes.defaultValue(slotted.input, "type", "text");
     Attributes.defaultValue(slotted.input, "placeholder", " ");
     const name = el.getAttribute('name');
-    template.renderTo(el, { id, name, slotted });
+    templates.get('ful-input').renderTo(el, { id, name, slotted });
 }
 
 class StatelessInput extends ParsedElement() {

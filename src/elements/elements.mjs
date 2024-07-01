@@ -82,6 +82,38 @@ class Nodes {
     }
 }
 
+class TemplateRegistry {
+    #idToFragment = {};
+    #idToTemplate = {};
+    #ec;
+    put(k, fragment) {
+        if (this.#ec) {
+            this.#idToTemplate[k] = ftl.Template.fromFragment(fragment, ec);
+            return;
+        }
+        this.#idToFragment[k] = fragment;
+    }
+    get(k) {
+        if (!this.#ec) {
+            throw new Error("evaluationContext is not configured");
+        }
+        const tpl = this.#idToTemplate[k];
+        if (!tpl) {
+            throw new Error(`missing template: '${k}'`);
+        }
+        return tpl;
+    }
+    configure(ec) {
+        this.#ec = ec;
+        for (const [k, fragment] of Object.entries(this.#idToFragment)) {
+            delete this.#idToFragment[k];
+            this.#idToTemplate[k] = ftl.Template.fromFragment(fragment, ec);
+        }
+    }
+}
+
+const templates = new TemplateRegistry();
+
 class UpgradeQueue {
     #q = [];
     constructor() {
@@ -186,4 +218,4 @@ const ParsedElement = (flags, others) => {
     return k;
 }
 
-export { Fragments, Attributes, Slots, Nodes, ParsedElement };
+export { Fragments, Attributes, Slots, Nodes, TemplateRegistry, templates, ParsedElement };

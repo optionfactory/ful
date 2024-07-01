@@ -1,13 +1,11 @@
-import { Fragments, Attributes, Slots, ParsedElement } from "./elements.mjs"
+import { Fragments, Attributes, Slots, templates, ParsedElement } from "./elements.mjs"
+
 /**
  * <script src="tom-select.complete.js"></script>
  * <link href="tom-select.bootstrap5.css" rel="stylesheet" />
  */
-const ful_select_ec = globalThis.ec || ftl.EvaluationContext.configure({
 
-});
-
-const ful_select_template_ = globalThis.ful_select_template || ftl.Template.fromHtml(`
+templates.put('ful-select', Fragments.fromHtml(`
     <label data-tpl-for="tsId" class="form-label">{{{{ slotted.default }}}}</label>
     {{{{ input }}}}
     <div class="input-group">
@@ -18,7 +16,7 @@ const ful_select_template_ = globalThis.ful_select_template || ftl.Template.from
         <span data-tpl-if="slotted.iafter" class="input-group-text">{{{{ slotted.iafter }}}}</span>
     </div>
     <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>            
-`, ful_select_ec);
+`));
 
 
 class Select extends ParsedElement([], ["value"]) {
@@ -84,7 +82,7 @@ class Select extends ParsedElement([], ["value"]) {
         } : {}, tsDefaultConfig, this.tsConfig));
         //we remove the input to move it
         input.remove();
-        ful_select_template_.renderTo(this, { id, tsId, name, input, slotted });
+        templates.get('ful-select').renderTo(this, { id, tsId, name, input, slotted });
     }
     set value(v) {
         (async () => {

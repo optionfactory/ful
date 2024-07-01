@@ -1,21 +1,16 @@
-import { ParsedElement, Slots } from "./elements.mjs"
+import { Slots, Fragments, templates, ParsedElement } from "./elements.mjs"
 
-const ful_spinner_ec = globalThis.ec || ftl.EvaluationContext.configure({
-
-});
-
-const template = globalThis.ful_spinner_template || ftl.Template.fromHtml(`
+templates.put('ful-spinner', Fragments.fromHtml(`
     <div class="ful-spinner-wrapper">
         <div class="ful-spinner-text">{{{{ slotted.default }}}}</div>
         <div class="ful-spinner-icon"></div>
     </div>
-`, ful_spinner_ec);
-
+`));
 
 class Spinner extends ParsedElement() {
     render() {
         const slotted = Slots.from(this);
-        template.renderTo(this, { slotted });
+        templates.get('ful-spinner').renderTo(this, { slotted });
     }
 }
 

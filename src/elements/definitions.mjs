@@ -3,10 +3,11 @@ import { Input } from "./input.mjs";
 import { RadioGroup } from "./radio.mjs";
 import { Select } from "./select.mjs";
 import { Form } from "./form.mjs";
-
+import { templates } from "./elements.mjs";
 
 export class CustomElements {
-    static configure() {
+    static configure(ec) {
+        templates.configure(ec);
         customElements.define('ful-spinner', Spinner);
         customElements.define('ful-input', Input);
         customElements.define('ful-radio-group', RadioGroup);

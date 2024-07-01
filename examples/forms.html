@@ -14,16 +14,15 @@
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"
         integrity="sha256-KNeF6xW5o/tW1oae5XlS4JCNADoM+RHqrnoUqL6pvHY=" crossorigin="anonymous"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/@optionfactory/ftl@0.17.0/dist/ftl.iife.min.js"
-        integrity="sha256-mdKYHLmuPVaDwe+4srWerNG/uQOjaUYehgJRrWGidrs=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@optionfactory/ftl@0.20.0/dist/ftl.iife.min.js" crossorigin="anonymous"></script>
 
     <link href="../dist/ful.css" rel="stylesheet">
     <script src="../dist/ful.iife.min.js"></script>
     <script>
         const sleep = ful.timing.sleep;
         const Failure = ful.Failure;
-
-        ful.CustomElements.configure();
+        const ec = ftl.EvaluationContext.configure();
+        ful.CustomElements.configure(ec);
     </script>
 </head>
 

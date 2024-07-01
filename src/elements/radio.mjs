@@ -1,11 +1,6 @@
-import { Attributes, Slots, Fragments, ParsedElement } from "./elements.mjs"
+import { Attributes, Slots, Fragments, templates, ParsedElement } from "./elements.mjs"
 
-
-const ful_radiogroup_ec = globalThis.ec || ftl.EvaluationContext.configure({
-
-});
-
-const ful_radiougroup_template_ = globalThis.ful_radiogroup_template || ftl.Template.fromHtml(`
+templates.put('ful-radio-group', Fragments.fromHtml(`
     <fieldset>
         <legend class="form-label">
             {{{{ slotted.default }}}}
@@ -24,7 +19,7 @@ const ful_radiougroup_template_ = globalThis.ful_radiogroup_template || ftl.Temp
             {{{{ slotted.footer }}}}
         </footer>
     </fieldset>
-`, ful_radiogroup_ec);
+`));
 
 
 class RadioGroup extends ParsedElement(['disabled'], ['value']) {
@@ -44,8 +39,7 @@ class RadioGroup extends ParsedElement(['disabled'], ['value']) {
             return [input, label];
         });
         radioEls.forEach(el => el.remove());
-
-        ful_radiougroup_template_.renderTo(this, {
+        templates.get('ful-radio-group').renderTo(this, {
             name: name,
             slotted: slotted,
             inputsAndLabels: inputsAndLabels
