@@ -1,6 +1,4 @@
-import { ParsedElement, Templated } from "./elements.mjs"
-
-
+import { ParsedElement } from "./elements.mjs"
 
 const ful_spinner_ec = globalThis.ec || ftl.EvaluationContext.configure({
 
@@ -14,9 +12,10 @@ const ful_spinner_template_ = globalThis.ful_spinner_template || ftl.Template.fr
 `, ful_spinner_ec);
 
 
-class Spinner extends Templated(ParsedElement, ful_spinner_template_) {
-    render(slotted, template) {
-        return template.render({ slotted });
+class Spinner extends ParsedElement {
+    render() {
+        const slotted = Slots.from(this);
+        this.replaceChildren(ful_spinner_template_.render({ slotted }));
     }
 }
 

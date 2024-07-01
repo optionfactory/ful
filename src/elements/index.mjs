@@ -1,4 +1,4 @@
-export { Fragments, Attributes, Slots, Nodes, ParsedElement, Templated, Stateful } from "./elements.mjs";
+export { Fragments, Attributes, Slots, Nodes, ParsedElement, Stateful } from "./elements.mjs";
 export { Form } from "./form.mjs";
 export { StatelessInput, Input } from "./input.mjs";
 export { Select } from "./select.mjs";

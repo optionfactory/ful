@@ -134,19 +134,8 @@ class ParsedElement extends HTMLElement {
             return;
         }
         this.#parsed = true;
-        return this.ready();
+        return this.render();
     }
-}
-
-
-const Templated = (SuperClass, template) => {
-    return class extends SuperClass {
-        async ready() {
-            const slotted = Slots.from(this);
-            const fragment = await Promise.resolve(this.render(slotted, template));
-            this.replaceChildren(fragment);
-        }
-    };
 }
 
 const Stateful = (SuperClass, flags, others) => {
@@ -184,4 +173,4 @@ const Stateful = (SuperClass, flags, others) => {
     return k;
 }
 
-export { Fragments, Attributes, Slots, Nodes, ParsedElement, Templated, Stateful };
+export { Fragments, Attributes, Slots, Nodes, ParsedElement, Stateful };

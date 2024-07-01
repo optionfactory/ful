@@ -1,4 +1,4 @@
-import { Fragments, Attributes, ParsedElement, Templated, Stateful } from "./elements.mjs"
+import { Fragments, Attributes, ParsedElement, Stateful } from "./elements.mjs"
 /**
  * <script src="tom-select.complete.js"></script>
  * <link href="tom-select.bootstrap5.css" rel="stylesheet" />
@@ -21,12 +21,14 @@ const ful_select_template_ = globalThis.ful_select_template || ftl.Template.from
 `, ful_select_ec);
 
 
-class Select extends Stateful(Templated(ParsedElement, ful_select_template_), [], ["value"]) {
+class Select extends Stateful(ParsedElement, [], ["value"]) {
     constructor(tsConfig) {
         super();
         this.tsConfig = tsConfig;
     }
-    render(slotted, template) {
+    render() {
+        const slotted = Slots.from(this);
+
         const type = this.getAttribute("type") || 'local';
         const remote = type != 'local';
         const loadOnce = this.getAttribute('load') != 'always';
@@ -53,7 +55,6 @@ class Select extends Stateful(Templated(ParsedElement, ful_select_template_), []
                 loading: () => '<ful-spinner class="centered p-2"></ful-spinner>'
             }
         }
-
 
         this._remote = remote;
         // we need to await this load in setValue when remote is configured and the option
@@ -83,7 +84,8 @@ class Select extends Stateful(Templated(ParsedElement, ful_select_template_), []
         } : {}, tsDefaultConfig, this.tsConfig));
         //we remove the input to move it
         input.remove();
-        return template.render({ id, tsId, name, input, slotted });
+        const fragment = ful_select_template_.render({ id, tsId, name, input, slotted });
+        this.replaceChildren(fragment);
     }
     set value(v) {
         (async () => {

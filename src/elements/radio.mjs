@@ -1,7 +1,4 @@
-import { Attributes, Fragments, ParsedElement,  Templated, Stateful } from "./elements.mjs"
-
-
-
+import { Attributes, Fragments, ParsedElement, Stateful } from "./elements.mjs"
 
 
 const ful_radiogroup_ec = globalThis.ec || ftl.EvaluationContext.configure({
@@ -30,8 +27,9 @@ const ful_radiougroup_template_ = globalThis.ful_radiogroup_template || ftl.Temp
 `, ful_radiogroup_ec);
 
 
-class RadioGroup extends Stateful(Templated(ParsedElement, ful_radiougroup_template_), ['disabled'], ['value']) {
-    render(slotted, template) {        
+class RadioGroup extends Stateful(ParsedElement, ['disabled'], ['value']) {
+    render() {        
+        const slotted = Slots.from(this);
         const name = this.getAttribute('name') || Attributes.uid('ful-radiogroup');
         const radioEls = Array.from(slotted.default.querySelectorAll('ful-radio'));
         const inputsAndLabels = radioEls.map(el => {
@@ -47,12 +45,13 @@ class RadioGroup extends Stateful(Templated(ParsedElement, ful_radiougroup_templ
         });
         radioEls.forEach(el => el.remove());
         
-        const fragment = template.render({
+        const fragment = ful_radiougroup_template_.render({
             name: name,
             slotted: slotted,
             inputsAndLabels: inputsAndLabels
         });
-        return fragment;
+        this.replaceChildren(fragment);
+
     }
     get value() {
         const checked = this.querySelector('input[type=radio]:checked');

@@ -1,7 +1,7 @@
 /* global Infinity, CSS */
 
 import { Failure } from "../http-client.mjs";
-import { ParsedElement, Templated } from "./elements.mjs"
+import { ParsedElement } from "./elements.mjs"
 
 function flatten(obj, prefix) {
     return Object.keys(obj).reduce((acc, k) => {
@@ -70,10 +70,11 @@ function mutate(el, raw) {
     el.value = raw;
 }
 
-class Form extends Templated(ParsedElement) {
+class Form extends ParsedElement {
     static IGNORED_CHILDREN_SELECTOR = '.d-none, [hidden]';
     static SCROLL_OFFSET = 50;
-    render(slotted) {
+    render() {
+        const slotted = Slots.from(this);
         const form = document.createElement('form');
         form.append(slotted.default);
         form.addEventListener('submit', async (e) => {
@@ -93,7 +94,7 @@ class Form extends Templated(ParsedElement) {
                 this.spinner(false)
             }
         })
-        return form;
+        this.replaceChildren(form);
     }
     spinner(spin) {
         this.querySelectorAll('ful-spinner').forEach(el => el.hidden = !spin)

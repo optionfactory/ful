@@ -1,4 +1,4 @@
-import { Attributes, ParsedElement, Stateful, Templated } from "./elements.mjs"
+import { Attributes, ParsedElement, Stateful } from "./elements.mjs"
 
 const ful_input_ec = globalThis.ec || ftl.EvaluationContext.configure({
 
@@ -16,8 +16,10 @@ const ful_input_template_ = globalThis.ful_input_template || ftl.Template.fromHt
     <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>
 `, ful_input_ec);
 
-class StatelessInput extends Templated(ParsedElement, ful_input_template_) {
-    render(slotted, template) {
+class StatelessInput extends ParsedElement {
+    render() {
+        const slotted = Slots.from(this);
+
         const input = this.input = slotted.input = slotted.input || (() => {
             const el = document.createElement("input")
             el.classList.add("form-control");
@@ -31,16 +33,16 @@ class StatelessInput extends Templated(ParsedElement, ful_input_template_) {
         Attributes.defaultValue(slotted.input, "type", "text");
         Attributes.defaultValue(slotted.input, "placeholder", " ");
         const name = this.getAttribute('name');
-        return template.render({ id, name, slotted });
+        const fragment = ful_input_template_.render({ id, name, slotted });
+        this.replaceChildren(fragment);
+
     }
 
 }
 
 class Input extends Stateful(StatelessInput, [], ['value']) {
-    render(slotted, template) {
-        const fragment = super.render(slotted, template);
+    render() {
         this.input.value = this.getAttribute('value');
-        return fragment;
     }
     get value() {
         return this.input.value;
