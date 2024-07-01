@@ -1,6 +1,6 @@
 export { Fragments, Attributes, Slots, Nodes, TemplateRegistry, templates, ParsedElement } from "./elements.mjs";
 export { Form } from "./form.mjs";
-export { StatelessInput, Input } from "./input.mjs";
+export { makeInputFragment, Input } from "./input.mjs";
 export { Select } from "./select.mjs";
 export { RadioGroup } from "./radio.mjs";
 export { Spinner } from "./spinner.mjs";

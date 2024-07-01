@@ -13,9 +13,7 @@ templates.put('ful-input', Fragments.fromHtml(`
 `));
 
 
-const renderInput = (el) => {
-    const slotted = Slots.from(el);
-
+const makeInputFragment = (el, slotted) => {
     const input = el.input = slotted.input = slotted.input || (() => {
         const el = document.createElement("input")
         el.classList.add("form-control");
@@ -29,18 +27,14 @@ const renderInput = (el) => {
     Attributes.defaultValue(slotted.input, "type", "text");
     Attributes.defaultValue(slotted.input, "placeholder", " ");
     const name = el.getAttribute('name');
-    templates.get('ful-input').renderTo(el, { id, name, slotted });
-}
-
-class StatelessInput extends ParsedElement() {
-    render() {
-        renderInput(this);
-    }
+    return templates.get('ful-input').render(el, { id, name, slotted });
 }
 
 class Input extends ParsedElement([], ['value']) {
     render() {
-        renderInput(this);
+        const slotted = Slots.from(el);
+        const fragment = makeInputFragment(this, slotted);
+        this.replaceChildren(fragment);
     }
     get value() {
         return this.input.value;
@@ -50,4 +44,4 @@ class Input extends ParsedElement([], ['value']) {
     }
 }
 
-export { StatelessInput, Input };
+export { makeInputFragment, Input };
