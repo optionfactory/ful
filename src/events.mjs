@@ -5,7 +5,7 @@
 class SyncEvent extends CustomEvent {
     #results;
     constructor(type, options) {
-        super(type, options);
+        super(type, {...options, cancelable: true});
         this.#results = [];
     }
 
@@ -14,9 +14,11 @@ class SyncEvent extends CustomEvent {
         // event handlers asynchronously via the event loop, dispatchEvent() 
         // invokes event handlers synchronously. 
         // see: https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent
-        const success = el.dispatchEvent(this);
+        el.dispatchEvent(this);
+        //we ignore the result of dispatchEvent and use defaultPrevented instead
+        //because handlers can be async
         const results = await Promise.all(this.#results);
-        return [success, results];
+        return [!this.defaultPrevented, results];
     }
 
     static on(el, type, h, useCapture) {

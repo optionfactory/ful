@@ -135,7 +135,7 @@ const upgradeQueue = new UpgradeQueue();
 const ParsedElement = (flags, others) => {
 
     const observed_flags = flags || [];
-    const observed_others = others || [];    
+    const observed_others = others || [];
     const observed = [].concat(observed_flags).concat(observed_others);
 
     const k = class extends HTMLElement {
@@ -185,16 +185,16 @@ const ParsedElement = (flags, others) => {
             this.#parsed = true;
             await this.render();
             for (const flag of observed_flags) {
-                if(this.hasAttribute(flag)){
+                if (this.hasAttribute(flag)) {
                     this[flag] = true;
                 }
             }
             for (const other of observed_others) {
-                if(this.hasAttribute(other)){
+                if (this.hasAttribute(other)) {
                     this[other] = this.getAttribute(other);
                 }
             }
-        }        
+        }
     };
 
     for (const flag of observed_flags) {
@@ -205,16 +205,26 @@ const ParsedElement = (flags, others) => {
                 return this.internals.states.has(`--${flag}`);
             },
             set(value) {
-                //see https://developer.mozilla.org/en-US/docs/Web/API/CustomStateSet#using_double_dash_prefixed_idents
-                if (Attributes.asBoolean(value)) {
-                    this.internals.states.add(`--${flag}`);
-                    return;
-                }
-                this.internals.states.delete(`--${flag}`);
+                const v = Attributes.asBoolean(value);
+                const event = new SyncEvent(`${flag}:changed`, {
+                    detail: { value: v }
+                });
+                (async () => {
+                    const [success, results] = await event.dispatchTo(this);
+                    if (!success) {
+                        return;
+                    }
+                    if (v) {
+                        //see https://developer.mozilla.org/en-US/docs/Web/API/CustomStateSet#using_double_dash_prefixed_idents
+                        this.internals.states.add(`--${flag}`);
+                        return;
+                    }
+                    this.internals.states.delete(`--${flag}`);
+                })();
             }
         });
     }
-
+    
     return k;
 }
 
