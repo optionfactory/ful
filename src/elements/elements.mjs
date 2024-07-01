@@ -3,14 +3,14 @@ import { SyncEvent } from "../events.mjs";
 
 class Fragments {
     static fromHtml(...html) {
-        const el = document.createElement('div');
+        const el = document.createElement("div");
         el.innerHTML = html.join("");
         const fragment = new DocumentFragment();
         fragment.append(...el.childNodes);
         return fragment;
     }
     static toHtml(fragment) {
-        var r = document.createElement("root");
+        var r = document.createElement("div");
         r.appendChild(fragment);
         return r.innerHTML;
     }
@@ -144,10 +144,7 @@ const Templated = (SuperClass, template) => {
         async ready() {
             const slotted = Slots.from(this);
             const fragment = await Promise.resolve(this.render(slotted, template));
-            this.innerHTML = '';
-            if (fragment) {
-                this.appendChild(fragment);
-            }
+            this.replaceChildren(fragment);
         }
     };
 }

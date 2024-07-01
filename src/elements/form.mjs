@@ -121,7 +121,7 @@ class Form extends Templated(ParsedElement) {
         const globalErrors = es.filter((e) => e.type !== 'FIELD_ERROR' && e.type !== 'INVALID_FORMAT');
         this.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
         this.querySelectorAll("ful-errors").forEach(el => {
-            el.innerHTML = '';
+            el.replaceChildren();
             el.setAttribute('hidden', '');
         });
         fieldErrors.forEach((e) => {
