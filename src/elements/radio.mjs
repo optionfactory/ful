@@ -1,32 +1,33 @@
-import { Attributes, Slots, Fragments, templates, ParsedElement } from "./elements.mjs"
+import { Attributes, Fragments, ParsedElement } from "./elements.mjs"
 
-templates.put('ful-radio-group', Fragments.fromHtml(`
-    <fieldset>
-        <legend class="form-label">
-            {{{{ slotted.default }}}}
-        </legend>
-        <header data-tpl-if="slotted.header">
-            {{{{ slotted.header }}}}
-        </header>
-        <section>
-            <label data-tpl-each="inputsAndLabels" data-tpl-var="ial">
-                {{{{ ial[0] }}}}
-                {{{{ ial[1] }}}}
-            </label>
-        </section>
-        <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>
-        <footer data-tpl-if="slotted.footer">
-            {{{{ slotted.footer }}}}
-        </footer>
-    </fieldset>
-`));
-
-
-class RadioGroup extends ParsedElement(['disabled'], ['value']) {
-    render() {
-        const slotted = Slots.from(this);
+class RadioGroup extends ParsedElement({
+    flags: ['disabled'], 
+    attrs: ['value'],
+    slots: true,
+    template: `
+        <fieldset>
+            <legend class="form-label">
+                {{{{ slots.default }}}}
+            </legend>
+            <header data-tpl-if="slots.header">
+                {{{{ slots.header }}}}
+            </header>
+            <section>
+                <label data-tpl-each="inputsAndLabels" data-tpl-var="ial">
+                    {{{{ ial[0] }}}}
+                    {{{{ ial[1] }}}}
+                </label>
+            </section>
+            <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>
+            <footer data-tpl-if="slots.footer">
+                {{{{ slots.footer }}}}
+            </footer>
+        </fieldset>
+    `
+}) {
+    render(template, slots) {
         const name = this.getAttribute('name') || Attributes.uid('ful-radiogroup');
-        const radioEls = Array.from(slotted.default.querySelectorAll('ful-radio'));
+        const radioEls = Array.from(slots.default.querySelectorAll('ful-radio'));
         const inputsAndLabels = radioEls.map(el => {
             const input = document.createElement('input');
             input.setAttribute('type', 'radio');
@@ -39,11 +40,7 @@ class RadioGroup extends ParsedElement(['disabled'], ['value']) {
             return [input, label];
         });
         radioEls.forEach(el => el.remove());
-        templates.get('ful-radio-group').renderTo(this, {
-            name: name,
-            slotted: slotted,
-            inputsAndLabels: inputsAndLabels
-        });
+        template.renderTo(this, {name, slots, inputsAndLabels});
     }
     get value() {
         const checked = this.querySelector('input[type=radio]:checked');

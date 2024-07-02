@@ -14,15 +14,21 @@
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"
         integrity="sha256-KNeF6xW5o/tW1oae5XlS4JCNADoM+RHqrnoUqL6pvHY=" crossorigin="anonymous"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/@optionfactory/ftl@0.20.0/dist/ftl.iife.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@optionfactory/ftl@0.20.0/dist/ftl.iife.min.js"
+        crossorigin="anonymous"></script>
 
     <link href="../dist/ful.css" rel="stylesheet">
     <script src="../dist/ful.iife.min.js"></script>
     <script>
         const sleep = ful.timing.sleep;
         const Failure = ful.Failure;
-        const ec = ftl.EvaluationContext.configure();
-        ful.CustomElements.configure(ec);
+
+        ful.elements.define('ful-spinner', ful.Spinner)
+            .define('ful-input', ful.Input)
+            .define('ful-radio-group', ful.RadioGroup)
+            .define('ful-select', ful.Select)
+            .define('ful-form', ful.Form)
+            .configure(ftl.EvaluationContext.configure());
     </script>
 </head>
 
@@ -41,7 +47,7 @@
                 <ful-input name="text.icons.after" class="mb-3">
                     Text with icon after
                     <i slot="iafter" class="bi bi-envelope-at"></i>
-                </ful-input>                                
+                </ful-input>
                 <ful-input name="text.icons.both" class="mb-3">
                     Text with icons
                     <i slot="ibefore" class="bi bi-envelope-at"></i>
@@ -61,8 +67,8 @@
                     <select slot="input" class="form-select">
                         <option value="16">aaa</option>
                         <option value="17">zzz</option>
-                    </select>                    
-                </ful-select>                
+                    </select>
+                </ful-select>
 
                 <ful-select name="select.single.local.iconbefore" class="mb-3">
                     select local single icon before
@@ -70,8 +76,8 @@
                     <select slot="input" class="form-select">
                         <option value="16">aaa</option>
                         <option value="17">zzz</option>
-                    </select>                    
-                </ful-select>                
+                    </select>
+                </ful-select>
 
                 <ful-select name="select.single.local.iconafter" class="mb-3">
                     select local single icon after
@@ -79,24 +85,25 @@
                     <select slot="input" class="form-select">
                         <option value="16">aaa</option>
                         <option value="17">zzz</option>
-                    </select>                    
-                </ful-select>                
+                    </select>
+                </ful-select>
 
                 <ful-select name="select.single.local.icons" class="mb-3">
                     select local single 2 icons
                     <i slot="ibefore" class="bi bi-envelope-at"></i>
                     <i slot="iafter" class="bi bi-envelope-at"></i>
-                    <select slot="input"  class="form-select">
+                    <select slot="input" class="form-select">
                         <option value="16">aaa</option>
                         <option value="17">zzz</option>
-                    </select>                    
-                </ful-select>                
+                    </select>
+                </ful-select>
                 <ful-select type="remote" name="select.single.remote" input-class="form-select" class="mb-3" value="1">
                     select remote single
                     <i slot="ibefore" class="bi bi-envelope-at"></i>
                     <i slot="iafter" class="bi bi-envelope-at"></i>
                 </ful-select>
-                <ful-select type="remote" name="select.multiple.remote" input-class="form-select" input-multiple class="mb-3">
+                <ful-select type="remote" name="select.multiple.remote" input-class="form-select" input-multiple
+                    class="mb-3">
                     select remote multiple
                     <i slot="ibefore" class="bi bi-envelope-at"></i>
                     <i slot="iafter" class="bi bi-envelope-at"></i>
@@ -132,7 +139,8 @@
                     <i slot="ibefore" class="bi bi-envelope-at"></i>
                     <i slot="iafter" class="bi bi-envelope-at"></i>
                 </ful-select>
-                <ful-select type="remote" name="tomselect.multiple" input-multiple class="mb-3" input-class="form-control-lg">
+                <ful-select type="remote" name="tomselect.multiple" input-multiple class="mb-3"
+                    input-class="form-control-lg">
                     select multiple
                     <i slot="ibefore" class="bi bi-envelope-at"></i>
                     <i slot="iafter" class="bi bi-envelope-at"></i>
@@ -176,7 +184,7 @@
                         type: 'FIELD_ERROR',
                         context: 'time',
                         reason: 'time error message'
-                    }, {                                                                        
+                    }, {
                         type: 'FIELD_ERROR',
                         context: 'select.single.local.noicons',
                         reason: 'select.single.local.noicons error message'
@@ -217,9 +225,9 @@
 
             document.querySelectorAll('ful-select').forEach(sel => {
                 sel.loader = async (q, type) => {
-                    if(type === 'id'){
+                    if (type === 'id') {
                         return [
-                            {value: q, text: q + "-asd"}
+                            { value: q, text: q + "-asd" }
                         ];
                     }
                     await sleep(3_000);

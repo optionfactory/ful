@@ -1,16 +1,16 @@
-import { Slots, Fragments, templates, ParsedElement } from "./elements.mjs"
+import { ParsedElement } from "./elements.mjs"
 
-templates.put('ful-spinner', Fragments.fromHtml(`
-    <div class="ful-spinner-wrapper">
-        <div class="ful-spinner-text">{{{{ slotted.default }}}}</div>
-        <div class="ful-spinner-icon"></div>
-    </div>
-`));
-
-class Spinner extends ParsedElement() {
-    render() {
-        const slotted = Slots.from(this);
-        templates.get('ful-spinner').renderTo(this, { slotted });
+class Spinner extends ParsedElement({
+    slots: true,
+    template: `
+        <div class="ful-spinner-wrapper">
+            <div class="ful-spinner-text">{{{{ slots.default }}}}</div>
+            <div class="ful-spinner-icon"></div>
+        </div>
+    `
+}) {
+    render(template, slots) {
+        template.renderTo(this, { slots });
     }
 }
 

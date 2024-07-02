@@ -1,37 +1,37 @@
-import { Fragments, Attributes, Slots, templates, ParsedElement } from "./elements.mjs"
+import { Fragments, Attributes, ParsedElement } from "./elements.mjs"
 
 /**
  * <script src="tom-select.complete.js"></script>
  * <link href="tom-select.bootstrap5.css" rel="stylesheet" />
  */
 
-templates.put('ful-select', Fragments.fromHtml(`
-    <label data-tpl-for="tsId" class="form-label">{{{{ slotted.default }}}}</label>
-    {{{{ input }}}}
-    <div class="input-group">
-        <span data-tpl-if="slotted.ibefore" class="input-group-text">{{{{ slotted.ibefore }}}}</span>
-        <div data-tpl-if="slotted.before" data-tpl-remove="tag">{{{{ slotted.before }}}}</div>
-        {{{{ slotted.input }}}} 
-        <div data-tpl-if="slotted.after" data-tpl-remove="tag">{{{{ slotted.after }}}}</div>
-        <span data-tpl-if="slotted.iafter" class="input-group-text">{{{{ slotted.iafter }}}}</span>
-    </div>
-    <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>            
-`));
-
-
-class Select extends ParsedElement([], ["value"]) {
+class Select extends ParsedElement({
+    flags: [], 
+    attrs: ["value"],
+    slots: true,
+    template: `
+        <label data-tpl-for="tsId" class="form-label">{{{{ slots.default }}}}</label>
+        {{{{ input }}}}
+        <div class="input-group">
+            <span data-tpl-if="slots.ibefore" class="input-group-text">{{{{ slots.ibefore }}}}</span>
+            <div data-tpl-if="slots.before" data-tpl-remove="tag">{{{{ slots.before }}}}</div>
+            {{{{ slots.input }}}} 
+            <div data-tpl-if="slots.after" data-tpl-remove="tag">{{{{ slots.after }}}}</div>
+            <span data-tpl-if="slots.iafter" class="input-group-text">{{{{ slots.iafter }}}}</span>
+        </div>
+        <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>            
+    `
+}) {
     constructor(tsConfig) {
         super();
         this.tsConfig = tsConfig;
     }
-    render() {
-        const slotted = Slots.from(this);
-
+    render(template, slots) {
         const type = this.getAttribute("type") || 'local';
         const remote = type != 'local';
         const loadOnce = this.getAttribute('load') != 'always';
         const name = this.getAttribute('name');
-        const input = slotted.input = slotted.input || (() => {
+        const input = slots.input = slots.input || (() => {
             return document.createElement("select");
         })();
         input.setAttribute('ful-validation-target', '');
@@ -44,7 +44,7 @@ class Select extends ParsedElement([], ["value"]) {
 
         //tomselect needs the input to have a parent.
         //se we move the input to a fragment
-        slotted.input = Fragments.from(input);
+        slots.input = Fragments.from(input);
 
         this.loaded = !remote;
 
@@ -82,7 +82,7 @@ class Select extends ParsedElement([], ["value"]) {
         } : {}, tsDefaultConfig, this.tsConfig));
         //we remove the input to move it
         input.remove();
-        templates.get('ful-select').renderTo(this, { id, tsId, name, input, slotted });
+        template.renderTo(this, { id, tsId, name, input, slots });
     }
     #loader;
     set loader(l){
