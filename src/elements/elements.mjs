@@ -143,10 +143,14 @@ const ParsedElement = (flags, others) => {
             return observed;
         }
         #parsed;
+        #initialized;
         #internals;
         constructor(...args) {
             super(...args);
             this.#internals = this.attachInternals();
+        }
+        get initialized(){
+            return this.#initialized;
         }
         get internals() {
             return this.#internals;
@@ -194,20 +198,26 @@ const ParsedElement = (flags, others) => {
                     this[other] = this.getAttribute(other);
                 }
             }
+            this.#initialized = true;
         }
     };
 
     for (const flag of observed_flags) {
+        const state = `--${flag};`
         Object.defineProperty(k.prototype, flag, {
             enumerable: true,
             configurable: true,
             get() {
-                return this.internals.states.has(`--${flag}`);
+                return this.internals.states.has(state);
             },
             set(value) {
                 const v = Attributes.asBoolean(value);
-                const event = new SyncEvent(`${flag}:changed`, {
-                    detail: { value: v }
+                const et = this.initialized ? 'changed' : 'init';
+                const event = new SyncEvent(`${flag}:${et}`, {
+                    detail: { 
+                        target: this,
+                        value: v 
+                    }
                 });
                 (async () => {
                     const [success, results] = await event.dispatchTo(this);
@@ -216,15 +226,15 @@ const ParsedElement = (flags, others) => {
                     }
                     if (v) {
                         //see https://developer.mozilla.org/en-US/docs/Web/API/CustomStateSet#using_double_dash_prefixed_idents
-                        this.internals.states.add(`--${flag}`);
+                        this.internals.states.add(state);
                         return;
                     }
-                    this.internals.states.delete(`--${flag}`);
+                    this.internals.states.delete(state);
                 })();
             }
         });
     }
-    
+
     return k;
 }
 
