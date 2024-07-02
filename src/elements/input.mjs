@@ -31,8 +31,8 @@ const makeInputFragment = (el, template, slots) => {
 }
 
 class Input extends ParsedElement({
-    flags: [], 
-    attrs: ['value'],
+    states: [], 
+    attributes: ['value'],
     slots: true,
     template: INPUT_TEMPLATE
 }){

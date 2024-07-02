@@ -224,11 +224,11 @@ class UpgradeQueue {
 const upgradeQueue = new UpgradeQueue();
 
 const ParsedElement = (conf) => {
-    const {flags, attrs, template, slots} = conf || {};
+    const {states, attributes, template, slots} = conf || {};
 
-    const observed_flags = flags || [];
-    const observed_others = attrs || [];
-    const observed = [].concat(observed_flags).concat(observed_others);
+    const observed_states = states || [];
+    const observed_attributes = attributes || [];
+    const observed = [].concat(observed_states).concat(observed_attributes);
 
     const templateId = elements.defineTemplate(template);
 
@@ -282,12 +282,12 @@ const ParsedElement = (conf) => {
             }
             this.#parsed = true;
             await this.render(elements.template(templateId), slots ? LightSlots.from(this) : undefined);
-            for (const flag of observed_flags) {
+            for (const flag of observed_states) {
                 if (this.hasAttribute(flag)) {
                     this[flag] = true;
                 }
             }
-            for (const other of observed_others) {
+            for (const other of observed_attributes) {
                 if (this.hasAttribute(other)) {
                     this[other] = this.getAttribute(other);
                 }
@@ -296,18 +296,17 @@ const ParsedElement = (conf) => {
         }
     };
 
-    for (const flag of observed_flags) {
-        const state = `--${flag}`;
-        Object.defineProperty(k.prototype, flag, {
+    for (const state of observed_states) {
+        Object.defineProperty(k.prototype, state, {
             enumerable: true,
             configurable: true,
             get() {
-                return this.internals.states.has(state);
+                return this.internals.states.has(`--${state}`);
             },
             set(value) {
                 const v = Attributes.asBoolean(value);
                 const et = this.initialized ? 'changed' : 'init';
-                const event = new SyncEvent(`${flag}:${et}`, {
+                const event = new SyncEvent(`${state}:${et}`, {
                     detail: { 
                         target: this,
                         value: v 
@@ -318,12 +317,8 @@ const ParsedElement = (conf) => {
                     if (!success) {
                         return;
                     }
-                    if (v) {
-                        //see https://developer.mozilla.org/en-US/docs/Web/API/CustomStateSet#using_double_dash_prefixed_idents
-                        this.internals.states.add(state);
-                        return;
-                    }
-                    this.internals.states.delete(state);
+                    //see https://developer.mozilla.org/en-US/docs/Web/API/CustomStateSet#using_double_dash_prefixed_idents
+                    this.internals.states[v ? 'add' : 'delete'](`--${state}`);
                 })();
             }
         });
