@@ -297,7 +297,7 @@ const ParsedElement = (conf) => {
     };
 
     for (const flag of observed_flags) {
-        const state = `--${flag};`
+        const state = `--${flag}`;
         Object.defineProperty(k.prototype, flag, {
             enumerable: true,
             configurable: true,
