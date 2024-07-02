@@ -1,7 +1,7 @@
 import { Attributes, ParsedElement } from "./elements.mjs"
 
 
-const FUL_INPUT_TEMPLATE = `
+const INPUT_TEMPLATE = `
 <label data-tpl-for="id" class="form-label">{{{{ slots.default }}}}</label>
 <div class="input-group">
     <span data-tpl-if="slots.ibefore" class="input-group-text">{{{{ slots.ibefore }}}}</span>
@@ -34,7 +34,7 @@ class Input extends ParsedElement({
     flags: [], 
     attrs: ['value'],
     slots: true,
-    template: FUL_INPUT_TEMPLATE
+    template: INPUT_TEMPLATE
 }){
     render(template, slots) {
         const fragment = makeInputFragment(this, template, slots);
