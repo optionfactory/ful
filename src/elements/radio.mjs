@@ -13,10 +13,12 @@ class RadioGroup extends ParsedElement({
                 {{{{ slots.header }}}}
             </header>
             <section>
-                <label data-tpl-each="inputsAndLabels" data-tpl-var="ial">
-                    {{{{ ial[0] }}}}
-                    {{{{ ial[1] }}}}
-                </label>
+                <div class="label-wrapper" data-tpl-each="inputsAndLabels" data-tpl-var="ial">
+                    <label>
+                        {{{{ ial[0] }}}}
+                        {{{{ ial[1] }}}}
+                    </label>
+                </div>
             </section>
             <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>
             <footer data-tpl-if="slots.footer">
