@@ -6,8 +6,7 @@ import { Fragments, Attributes, ParsedElement } from "./elements.mjs"
  */
 
 class Select extends ParsedElement({
-    states: [], 
-    attributes: ["value"],
+    observed: ["value"],
     slots: true,
     template: `
         <label data-tpl-for="tsId" class="form-label">{{{{ slots.default }}}}</label>

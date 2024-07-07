@@ -58,14 +58,6 @@ class Attributes {
     }
     /**
      * 
-     * @param {any} value 
-     * @returns 
-     */
-    static asBoolean(value) {
-        return value !== null && value !== undefined && value !== false;
-    }
-    /**
-     * 
      * @param {HTMLElement} el 
      * @param {string} k 
      * @param {string} v 
@@ -166,36 +158,36 @@ class ElementsRegistry {
     #tagToclass;
     #configured;
     #id = 0;
-    constructor(){
+    constructor() {
         this.#templates = new TemplatesRegistry();
         this.#tagToclass = {};
     }
-    defineTemplate(html){
-        if(html === null || html === undefined){
+    defineTemplate(html) {
+        if (html === null || html === undefined) {
             return undefined;
         }
         const name = `unnamed-${++this.#id}`;
         this.#templates.put(name, Fragments.fromHtml(html));
         return name;
     }
-    template(k){
-        if(k === null || k === undefined){
+    template(k) {
+        if (k === null || k === undefined) {
             return undefined;
         }
         return this.#templates.get(k);
     }
-    define(tag, klass){
-        if(!this.#configured){
+    define(tag, klass) {
+        if (!this.#configured) {
             this.#tagToclass[tag] = klass;
             return this;
         }
-        customElements.define(tag, klass);        
+        customElements.define(tag, klass);
         return this;
     }
     configure(ec) {
         this.#templates.configure(ec);
-        for(const [tag, klass] of Object.entries(this.#tagToclass)) {
-            customElements.define(tag, klass);            
+        for (const [tag, klass] of Object.entries(this.#tagToclass)) {
+            customElements.define(tag, klass);
             delete this.#tagToclass[tag];
         }
         this.#configured = true;
@@ -223,18 +215,34 @@ class UpgradeQueue {
 
 const upgradeQueue = new UpgradeQueue();
 
-const ParsedElement = (conf) => {
-    const {states, attributes, template, slots} = conf || {};
+const mappers = {
+    'string': attr => attr,
+    'number': attr => attr === null ? null : Number(attr),
+    'bool': attr => attr !== null,
+    'json': attr => JSON.parse(attr)
+};
 
-    const observed_states = states || [];
-    const observed_attributes = attributes || [];
-    const observed = [].concat(observed_states).concat(observed_attributes);
+const ParsedElement = (conf) => {
+    const { observed, template, slots } = conf || {};
+
+    const attrsAndTypes = (observed || []).map(a => {
+        const [attr, maybeType] = a.split(":");
+        const type = maybeType?.trim() || 'string';
+        if (!(type in mappers)) {
+            throw new Error(`unsupported attribute type: ${type}`);
+        }
+        return [attr.trim(), type];
+    });
+
+    const attrsAndMappers = attrsAndTypes.map(([attr, type]) => [attr, mappers[type]]);
+
+    const attrToMapper = Object.fromEntries(attrsAndMappers);
 
     const templateId = elements.defineTemplate(template);
 
     const k = class extends HTMLElement {
         static get observedAttributes() {
-            return observed;
+            return Object.keys(attrToMapper);
         }
         #parsed;
         #initialized;
@@ -243,7 +251,7 @@ const ParsedElement = (conf) => {
             super(...args);
             this.#internals = this.attachInternals();
         }
-        get initialized(){
+        get initialized() {
             return this.#initialized;
         }
         get internals() {
@@ -270,11 +278,12 @@ const ParsedElement = (conf) => {
             });
             observer.observe(this.parentNode, { childList: true, subtree: true });
         }
-        attributeChangedCallback(name, oldValue, newValue) {
+        attributeChangedCallback(attr, oldValue, newValue) {
             if (!this.#parsed || oldValue === newValue) {
                 return;
             }
-            this[name] = newValue;
+            const mapper = attrToMapper[attr];
+            this[attr] = mapper(newValue);
         }
         async upgrade() {
             if (this.#parsed) {
@@ -282,34 +291,29 @@ const ParsedElement = (conf) => {
             }
             this.#parsed = true;
             await this.render(elements.template(templateId), slots ? LightSlots.from(this) : undefined);
-            for (const flag of observed_states) {
-                if (this.hasAttribute(flag)) {
-                    this[flag] = true;
-                }
-            }
-            for (const other of observed_attributes) {
-                if (this.hasAttribute(other)) {
-                    this[other] = this.getAttribute(other);
+
+            for (const [attr, mapper] of attrsAndMappers) {
+                if (this.hasAttribute(attr)) {
+                    this[attr] = mapper(this.getAttribute(attr));
                 }
             }
             this.#initialized = true;
         }
     };
 
-    for (const state of observed_states) {
-        Object.defineProperty(k.prototype, state, {
+    for (const [attr, type] of attrsAndTypes.filter(([a, t]) => t === 'bool')) {
+        Object.defineProperty(k.prototype, attr, {
             enumerable: true,
             configurable: true,
             get() {
-                return this.internals.states.has(`--${state}`);
+                return this.internals.states.has(`--${attr}`);
             },
             set(value) {
-                const v = Attributes.asBoolean(value);
                 const et = this.initialized ? 'changed' : 'init';
-                const event = new SyncEvent(`${state}:${et}`, {
-                    detail: { 
+                const event = new SyncEvent(`${attr}:${et}`, {
+                    detail: {
                         target: this,
-                        value: v 
+                        value: value
                     }
                 });
                 (async () => {
@@ -318,7 +322,7 @@ const ParsedElement = (conf) => {
                         return;
                     }
                     //see https://developer.mozilla.org/en-US/docs/Web/API/CustomStateSet#using_double_dash_prefixed_idents
-                    this.internals.states[v ? 'add' : 'delete'](`--${state}`);
+                    this.internals.states[v ? 'add' : 'delete'](`--${attr}`);
                 })();
             }
         });

@@ -1,8 +1,7 @@
 import { Attributes, Fragments, ParsedElement } from "./elements.mjs"
 
 class RadioGroup extends ParsedElement({
-    states: ['disabled'], 
-    attributes: ['value'],
+    observed: ['value', 'disabled:bool'],
     slots: true,
     template: `
         <fieldset>
