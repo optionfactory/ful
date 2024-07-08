@@ -78,26 +78,29 @@ class Form extends ParsedElement() {
         form.replaceChildren(...this.childNodes);
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            this.spinner(true);
-            try {
-                if (this.submitter) {
-                    await this.submitter(this.values, this);
-                }
-            } catch (e) {
-                if (e instanceof Failure) {
-                    this.errors = e.problems;
-                    return;
-                }
-                throw e;
-            } finally {
-                this.spinner(false)
-            }
+            this.spinning(async () => {
+                await this.submitter?.(this.values, this);
+            });
         })
         this.replaceChildren(form);
     }
     spinner(spin) {
         this.querySelectorAll('ful-spinner').forEach(el => el.hidden = !spin)
         this.querySelectorAll('[type=submit],[type=reset]').forEach(el => el.disabled = spin)
+    }
+    async spinning(fn){
+        this.spinner(true)
+        try{
+            await fn();
+        }catch(e) {
+            if (e instanceof Failure) {
+                this.errors = e.problems;
+                return;
+            }
+            throw e;
+        }finally{
+            this.spinner(false);
+        }
     }
     set values(vs) {
         for (const [flattenedKey, value] of Object.entries(flatten(vs, ''))) {
