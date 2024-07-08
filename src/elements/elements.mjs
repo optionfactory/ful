@@ -322,7 +322,7 @@ const ParsedElement = (conf) => {
                         return;
                     }
                     //see https://developer.mozilla.org/en-US/docs/Web/API/CustomStateSet#using_double_dash_prefixed_idents
-                    this.internals.states[v ? 'add' : 'delete'](`--${attr}`);
+                    this.internals.states[value ? 'add' : 'delete'](`--${attr}`);
                 })();
             }
         });
