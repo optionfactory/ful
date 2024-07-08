@@ -309,20 +309,30 @@ const ParsedElement = (conf) => {
                 return this.internals.states.has(`--${attr}`);
             },
             set(value) {
-                const et = this.initialized ? 'changed' : 'init';
-                const event = new SyncEvent(`${attr}:${et}`, {
+                const etb = this.initialized ? 'change' : 'init';
+                const before = new SyncEvent(`${attr}:${etb}`, {
                     detail: {
                         target: this,
                         value: value
                     }
                 });
+                const eta = this.initialized ? 'changed' : 'inited';
+                const after = new SyncEvent(`${attr}:${eta}`, {
+                    detail: {
+                        target: this,
+                        value: value
+                    }
+                });
+
                 (async () => {
-                    const [success, results] = await event.dispatchTo(this);
+                    const [success, results] = await before.dispatchTo(this);
                     if (!success) {
                         return;
                     }
                     //see https://developer.mozilla.org/en-US/docs/Web/API/CustomStateSet#using_double_dash_prefixed_idents
                     this.internals.states[value ? 'add' : 'delete'](`--${attr}`);
+
+                    await after.dispatchTo(this);
                 })();
             }
         });
