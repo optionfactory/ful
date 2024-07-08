@@ -88,17 +88,22 @@ class Form extends ParsedElement() {
         this.querySelectorAll('ful-spinner').forEach(el => el.hidden = !spin)
         this.querySelectorAll('[type=submit],[type=reset]').forEach(el => el.disabled = spin)
     }
-    async spinning(fn){
-        this.spinner(true)
-        try{
+    async remoting(fn) {
+        try {
             await fn();
-        }catch(e) {
+        } catch (e) {
             if (e instanceof Failure) {
                 this.errors = e.problems;
                 return;
             }
             throw e;
-        }finally{
+        }
+    }
+    async spinning(fn) {
+        this.spinner(true)
+        try {
+            await this.remoting(fn);
+        } finally {
             this.spinner(false);
         }
     }
