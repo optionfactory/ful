@@ -93,12 +93,23 @@ class Select extends ParsedElement({
             this.value = this.getAttribute("value");
         }
     }
-    set value(v) {
+    set value(value) {
+        const success = this.dispatchEvent(new CustomEvent("change", {
+            bubbles: true,
+            cancelable: true,
+            detail: {
+                target: this,
+                value: value
+            }
+        }));
+        if(!success){
+            return;
+        }
         (async () => {
             if (this._remote) {
-                await this._unwrappedRemoteLoad({ byId: v }, this.ts.loadCallback.bind(this.ts));
+                await this._unwrappedRemoteLoad({ byId: value }, this.ts.loadCallback.bind(this.ts));
             }
-            this.ts.setValue(v);
+            this.ts.setValue(value);
         })();
     }
     get value() {

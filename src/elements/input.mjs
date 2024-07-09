@@ -45,6 +45,17 @@ class Input extends ParsedElement({
         return this.input.value;
     }
     set value(value) {
+        const success = this.dispatchEvent(new CustomEvent("change", {
+            bubbles: true,
+            cancelable: true,
+            detail: {
+                target: this,
+                value: value
+            }
+        }));
+        if(!success){
+            return;
+        }
         this.input.value = value;
     }
 }

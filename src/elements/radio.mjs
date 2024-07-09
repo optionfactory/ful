@@ -48,6 +48,17 @@ class RadioGroup extends ParsedElement({
         return checked ? checked.value : null;
     }
     set value(value) {
+        const success = this.dispatchEvent(new CustomEvent("change", {
+            bubbles: true,
+            cancelable: true,
+            detail: {
+                target: this,
+                value: value
+            }
+        }));
+        if(!success){
+            return;
+        }
         this.querySelector(`input[type=radio][value=${CSS.escape(value)}]`).checked = true;
     }
 }
