@@ -40,6 +40,7 @@ class RadioGroup extends ParsedElement({
             const label = Fragments.fromChildNodes(el);
             return [input, label];
         });
+        radioEls.forEach(el => el.addEventListener('change', (evt) => evt.stopPropagation()));
         radioEls.forEach(el => el.remove());
         template.renderTo(this, {name, slots, inputsAndLabels});
     }

@@ -22,7 +22,7 @@ const makeInputFragment = (el, template, slots) => {
         return el;
     })();
     input.setAttribute('ful-validation-target', '');
-
+    input.addEventListener('change', (evt) => evt.stopPropagation());
     const id = input.getAttribute('id') || el.getAttribute('input-id') || Attributes.uid('ful-input');
     Attributes.forward('input-', el, slots.input)
     Attributes.defaultValue(slots.input, "id", id);

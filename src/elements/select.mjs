@@ -82,6 +82,7 @@ class Select extends ParsedElement({
             shouldLoad: (query) => this.shouldLoad ? this.shouldLoad(query) : true
         } : {}, tsDefaultConfig, this.tsConfig));
         //we remove the input to move it
+        input.addEventListener('change', (evt) => evt.stopPropagation());
         input.remove();
         template.renderTo(this, { id, tsId, name, input, slots });
     }
