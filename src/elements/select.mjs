@@ -9,16 +9,18 @@ class Select extends ParsedElement({
     observed: ["value"],
     slots: true,
     template: `
-        <label data-tpl-for="tsId" class="form-label">{{{{ slots.default }}}}</label>
-        {{{{ input }}}}
-        <div class="input-group">
-            <span data-tpl-if="slots.ibefore" class="input-group-text">{{{{ slots.ibefore }}}}</span>
-            <div data-tpl-if="slots.before" data-tpl-remove="tag">{{{{ slots.before }}}}</div>
-            {{{{ slots.input }}}} 
-            <div data-tpl-if="slots.after" data-tpl-remove="tag">{{{{ slots.after }}}}</div>
-            <span data-tpl-if="slots.iafter" class="input-group-text">{{{{ slots.iafter }}}}</span>
+        <div ful-validated-field>
+            <label data-tpl-for="tsId" class="form-label">{{{{ slots.default }}}}</label>
+            {{{{ input }}}}
+            <div class="input-group">
+                <span data-tpl-if="slots.ibefore" class="input-group-text">{{{{ slots.ibefore }}}}</span>
+                <div data-tpl-if="slots.before" data-tpl-remove="tag">{{{{ slots.before }}}}</div>
+                {{{{ slots.input }}}} 
+                <div data-tpl-if="slots.after" data-tpl-remove="tag">{{{{ slots.after }}}}</div>
+                <span data-tpl-if="slots.iafter" class="input-group-text">{{{{ slots.iafter }}}}</span>
+            </div>
+            <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>
         </div>
-        <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>            
     `
 }) {
     constructor(tsConfig) {

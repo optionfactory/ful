@@ -4,7 +4,7 @@ class RadioGroup extends ParsedElement({
     observed: ['value', 'disabled:bool'],
     slots: true,
     template: `
-        <fieldset>
+        <fieldset ful-validated-field>
             <legend class="form-label">
                 {{{{ slots.default }}}}
             </legend>

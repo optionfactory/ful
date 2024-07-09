@@ -148,7 +148,7 @@ class Form extends ParsedElement() {
         if (!this.hasAttribute('scroll-on-error')) {
             return;
         }
-        const ys = Array.from(this.querySelectorAll('ful-field-error'))
+        const ys = Array.from(this.querySelectorAll('[ful-validated-field]:has(.is-invalid) ful-field-error'))
             .map(el => el.parentElement ? el.parentElement : el)
             .map(el => el.getBoundingClientRect().y + window.scrollY);
         const miny = Math.min(...ys);

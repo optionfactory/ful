@@ -17,10 +17,7 @@ ful-field-error {
     display: none;
 }
 
-.validated-input:has(.is-invalid) ful-field-error,
-ful-input:has(.is-invalid) ful-field-error, 
-ful-select:has(.is-invalid) ful-field-error,
-ful-radio-group:has(.is-invalid) ful-field-error {
+[ful-validated-field]:has(.is-invalid) ful-field-error {
     display: block;
     margin-top: .25rem;
     font-size: .875em;
