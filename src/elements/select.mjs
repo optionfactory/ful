@@ -82,7 +82,9 @@ class Select extends ParsedElement({
             shouldLoad: (query) => this.shouldLoad ? this.shouldLoad(query) : true
         } : {}, tsDefaultConfig, this.tsConfig));
         //we remove the input to move it
-        input.addEventListener('change', (evt) => evt.stopPropagation());
+        input.addEventListener('change', (evt) => {
+            evt.stopPropagation();
+        });
         input.remove();
         template.renderTo(this, { id, tsId, name, input, slots });
     }
@@ -94,16 +96,12 @@ class Select extends ParsedElement({
             this.value = this.getAttribute("value");
         }
     }
+    get value() {
+        const v = this.ts.getValue();
+        return v === '' ? null : v;
+    }
     set value(value) {
-        const success = this.dispatchEvent(new CustomEvent("change", {
-            bubbles: true,
-            cancelable: true,
-            detail: {
-                target: this,
-                value: value
-            }
-        }));
-        if(!success){
+        if(!Events.dispatchChange(this, value)){
             return;
         }
         (async () => {
@@ -112,10 +110,6 @@ class Select extends ParsedElement({
             }
             this.ts.setValue(value);
         })();
-    }
-    get value() {
-        const v = this.ts.getValue();
-        return v === '' ? null : v;
     }
 }
 

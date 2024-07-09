@@ -122,6 +122,19 @@ class Nodes {
     }
 }
 
+class Events {
+    static dispatchChange(el, value){
+        return el.dispatchEvent(new CustomEvent("change", {
+            bubbles: true,
+            cancelable: true,
+            detail: {
+                target: el,
+                value: value
+            }
+        }));
+    }
+}
+
 class TemplatesRegistry {
     #idToFragment = {};
     #idToTemplate = {};
@@ -341,4 +354,4 @@ const ParsedElement = (conf) => {
     return k;
 }
 
-export { Fragments, Attributes, LightSlots, Nodes, TemplatesRegistry, ElementsRegistry, elements, ParsedElement };
+export { Fragments, Attributes, LightSlots, Nodes, Events, TemplatesRegistry, ElementsRegistry, elements, ParsedElement };

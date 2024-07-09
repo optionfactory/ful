@@ -152,7 +152,18 @@
 
 
 
+
+
         document.addEventListener("DOMContentLoaded", () => {
+
+            document.querySelector('[name="radio.horizontal"]').addEventListener('change', evt => {
+                console.log("event:val", evt);
+                console.log("event:val", evt.currentTarget);
+                console.log("event:val", evt.target);
+                console.log("event:val", evt);
+            });
+
+
             document.querySelectorAll('ful-form').forEach(form => {
                 form.submitter = async (data, form) => {
                     await sleep(2_000);

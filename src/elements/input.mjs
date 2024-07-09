@@ -1,4 +1,4 @@
-import { Attributes, ParsedElement } from "./elements.mjs"
+import { Attributes, Events, ParsedElement } from "./elements.mjs"
 
 
 const INPUT_TEMPLATE = `
@@ -22,7 +22,12 @@ const makeInputFragment = (el, template, slots) => {
         return el;
     })();
     input.setAttribute('ful-validation-target', '');
-    input.addEventListener('change', (evt) => evt.stopPropagation());
+    input.addEventListener('change', (evt) => {
+        evt.stopPropagation();
+        if(!Events.dispatchChange(el, this.value)){
+            evt.preventDefault();
+        }
+    });
     const id = input.getAttribute('id') || el.getAttribute('input-id') || Attributes.uid('ful-input');
     Attributes.forward('input-', el, slots.input)
     Attributes.defaultValue(slots.input, "id", id);
@@ -45,15 +50,7 @@ class Input extends ParsedElement({
         return this.input.value;
     }
     set value(value) {
-        const success = this.dispatchEvent(new CustomEvent("change", {
-            bubbles: true,
-            cancelable: true,
-            detail: {
-                target: this,
-                value: value
-            }
-        }));
-        if(!success){
+        if(!Events.dispatchChange(el, value)){
             return;
         }
         this.input.value = value;

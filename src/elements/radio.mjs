@@ -37,10 +37,19 @@ class RadioGroup extends ParsedElement({
             input.setAttribute('name', `${name}-ignore`);
             input.setAttribute('ful-validation-target', '');
             input.dataset['fulBindInclude'] = 'never';
+            input.addEventListener('change', (evt) => {
+                evt.stopPropagation();
+                console.log("stopped"); 
+            });           
+            input.addEventListener('click', (evt) => {
+                if(!Events.dispatchChange(this, this.value)){
+                    evt.preventDefault();
+                }
+            });
             const label = Fragments.fromChildNodes(el);
             return [input, label];
         });
-        radioEls.forEach(el => el.addEventListener('change', (evt) => evt.stopPropagation()));
+
         radioEls.forEach(el => el.remove());
         template.renderTo(this, {name, slots, inputsAndLabels});
     }
@@ -49,15 +58,7 @@ class RadioGroup extends ParsedElement({
         return checked ? checked.value : null;
     }
     set value(value) {
-        const success = this.dispatchEvent(new CustomEvent("change", {
-            bubbles: true,
-            cancelable: true,
-            detail: {
-                target: this,
-                value: value
-            }
-        }));
-        if(!success){
+        if(!Events.dispatchChange(this, value)){
             return;
         }
         this.querySelector(`input[type=radio][value=${CSS.escape(value)}]`).checked = true;
