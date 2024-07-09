@@ -50,7 +50,7 @@ class Input extends ParsedElement({
         return this.input.value;
     }
     set value(value) {
-        if(!Events.dispatchChange(el, value)){
+        if(!Events.dispatchChange(this, value)){
             return;
         }
         this.input.value = value;

@@ -37,10 +37,7 @@ class RadioGroup extends ParsedElement({
             input.setAttribute('name', `${name}-ignore`);
             input.setAttribute('ful-validation-target', '');
             input.dataset['fulBindInclude'] = 'never';
-            input.addEventListener('change', (evt) => {
-                evt.stopPropagation();
-                console.log("stopped"); 
-            });           
+            input.addEventListener('change', (evt) => evt.stopPropagation());           
             input.addEventListener('click', (evt) => {
                 if(!Events.dispatchChange(this, this.value)){
                     evt.preventDefault();
