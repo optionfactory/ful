@@ -24,7 +24,7 @@ const makeInputFragment = (el, template, slots) => {
     input.setAttribute('ful-validation-target', '');
     input.addEventListener('change', (evt) => {
         evt.stopPropagation();
-        if(!Events.dispatchChange(el, this.value)){
+        if(!Events.dispatchChange(el, el.value)){
             evt.preventDefault();
         }
     });
