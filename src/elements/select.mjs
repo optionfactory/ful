@@ -1,4 +1,4 @@
-import { Fragments, Attributes, ParsedElement } from "./elements.mjs"
+import { Fragments, Attributes, Events, ParsedElement } from "./elements.mjs"
 
 /**
  * <script src="tom-select.complete.js"></script>

@@ -1,4 +1,4 @@
-import { Attributes, Fragments, ParsedElement } from "./elements.mjs"
+import { Attributes, Fragments, Events, ParsedElement } from "./elements.mjs"
 
 class RadioGroup extends ParsedElement({
     observed: ['value', 'disabled:bool'],
