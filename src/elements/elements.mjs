@@ -87,6 +87,19 @@ class Attributes {
                 to.setAttribute(target, from.getAttribute(a))
             });
     }
+    /**
+     * 
+     * @param {HTMLElement} el 
+     * @param {stirng} attr 
+     * @param {boolean} value 
+     */
+    static toggle(el, attr, value) {
+        if (value) {
+            el.setAttribute(attr, '');
+        } else {
+            el.remvoeAttribute(attr);
+        }
+    }
 }
 
 class LightSlots {
@@ -123,7 +136,7 @@ class Nodes {
 }
 
 class Events {
-    static dispatchChange(el, value){
+    static dispatchChange(el, value) {
         return el.dispatchEvent(new CustomEvent("change", {
             bubbles: true,
             cancelable: true,
@@ -259,6 +272,7 @@ const ParsedElement = (conf) => {
         }
         #parsed;
         #initialized;
+        #reflecting;
         #internals;
         constructor(...args) {
             super(...args);
@@ -295,8 +309,19 @@ const ParsedElement = (conf) => {
             if (!this.#parsed || oldValue === newValue) {
                 return;
             }
+            if (this.#reflecting) {
+                return;
+            }
             const mapper = attrToMapper[attr];
             this[attr] = mapper(newValue);
+        }
+        reflect(fn) {
+            this.#reflecting = true;
+            try {
+                fn();
+            } finally {
+                this.#reflecting = false;
+            }
         }
         async upgrade() {
             if (this.#parsed) {
@@ -322,29 +347,16 @@ const ParsedElement = (conf) => {
                 return this.internals.states.has(`--${attr}`);
             },
             set(value) {
-                const etb = this.initialized ? 'change' : 'init';
-                const before = new SyncEvent(`${attr}:${etb}`, {
-                    detail: {
-                        target: this,
-                        value: value
-                    }
-                });
-                const eta = this.initialized ? 'changed' : 'inited';
-                const after = new SyncEvent(`${attr}:${eta}`, {
-                    detail: {
-                        target: this,
-                        value: value
-                    }
-                });
-
+                const detail = { target: this, value };
+                const before = new SyncEvent(`${attr}:${this.initialized ? 'change' : 'init'}`, { detail });
+                const after = new SyncEvent(`${attr}:${this.initialized ? 'changed' : 'inited'}`, { detail });
                 (async () => {
-                    const [success, results] = await before.dispatchTo(this);
-                    if (!success) {
+                    if (!await before.dispatchTo(this)) {
                         return;
                     }
                     //see https://developer.mozilla.org/en-US/docs/Web/API/CustomStateSet#using_double_dash_prefixed_idents
                     this.internals.states[value ? 'add' : 'delete'](`--${attr}`);
-
+                    this.reflect(() => Attributes.toggle(this, attr, value));
                     await after.dispatchTo(this);
                 })();
             }
