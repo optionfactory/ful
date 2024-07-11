@@ -8,4 +8,4 @@ class Deferred {
 }
 
 
-export { Deferred };
+export { Deferred }

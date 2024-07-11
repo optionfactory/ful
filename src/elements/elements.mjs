@@ -97,7 +97,7 @@ class Attributes {
         if (value) {
             el.setAttribute(attr, '');
         } else {
-            el.remvoeAttribute(attr);
+            el.removeAttribute(attr);
         }
     }
 }
