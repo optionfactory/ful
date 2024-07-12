@@ -16,7 +16,7 @@ const INPUT_TEMPLATE = `
 `;
 
 const makeInputFragment = (el, template, slots) => {
-    const input = el.input = slots.input = slots.input || (() => {
+    const input = el.input = slots.input = slots.input?.firstElementChild || (() => {
         const el = document.createElement("input")
         el.classList.add("form-control");
         return el;

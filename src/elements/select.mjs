@@ -32,7 +32,7 @@ class Select extends ParsedElement({
         const remote = type != 'local';
         const loadOnce = this.getAttribute('load') != 'always';
         const name = this.getAttribute('name');
-        const input = slots.input = slots.input || (() => {
+        const input = slots.input = slots.input?.firstElementChild || (() => {
             return document.createElement("select");
         })();
         input.setAttribute('ful-validation-target', '');
