@@ -99,6 +99,15 @@ class Form extends ParsedElement() {
             throw e;
         }
     }
+    async spinningUntilError(fn) {
+        this.spinner(true)
+        try {
+            await this.remoting(fn);
+        } catch(e) {
+            this.spinner(false);
+            throw e;
+        }
+    }
     async spinning(fn) {
         this.spinner(true)
         try {
