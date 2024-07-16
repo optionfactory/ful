@@ -94,7 +94,6 @@ class Form extends ParsedElement() {
         } catch (e) {
             if (e instanceof Failure) {
                 this.errors = e.problems;
-                return;
             }
             throw e;
         }
