@@ -100,6 +100,14 @@ class Attributes {
             el.removeAttribute(attr);
         }
     }
+    static flip(el, attr) {
+        if (el.hasAttribute(attr)) {
+            el.removeAttribute(attr);
+        } else {
+            el.setAttribute(attr, '');
+        }
+    }
+
 }
 
 class LightSlots {
