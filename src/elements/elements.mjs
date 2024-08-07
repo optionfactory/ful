@@ -8,11 +8,9 @@ class Fragments {
      * @returns 
      */
     static fromHtml(...html) {
-        const el = document.createElement("div");
+        const el = document.createElement("template");
         el.innerHTML = html.join("");
-        const fragment = new DocumentFragment();
-        fragment.append(...el.childNodes);
-        return fragment;
+        return el.content;
     }
     /**
      * 
@@ -20,9 +18,9 @@ class Fragments {
      * @returns 
      */
     static toHtml(fragment) {
-        var r = document.createElement("div");
-        r.appendChild(fragment);
-        return r.innerHTML;
+        var el = document.createElement("template");
+        el.content.appendChild(fragment);
+        return el.innerHTML;
     }
     /**
      * 
