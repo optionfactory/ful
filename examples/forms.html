@@ -156,11 +156,15 @@
 
         document.addEventListener("DOMContentLoaded", () => {
 
+
+            document.querySelectorAll('ful-select').forEach(el => {
+                el.addEventListener('change', evt => {
+                    console.log("ful-select changed", evt);
+                });
+            })
+
             document.querySelector('[name="radio.horizontal"]').addEventListener('change', evt => {
-                console.log("event:val", evt);
-                console.log("event:val", evt.currentTarget);
-                console.log("event:val", evt.target);
-                console.log("event:val", evt);
+                console.log("event:val", evt, evt.currentTarget, evt.target, "cancelable", evt.cancelable);
             });
 
 

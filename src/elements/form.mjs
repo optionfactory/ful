@@ -55,7 +55,7 @@ function extract(el) {
     if (el.dataset['fulBindType'] === 'boolean') {
         return !el.value ? null : el.value === 'true';
     }
-    return el.value || null;
+    return el.value === '' || el.value === undefined ? null : el.value;
 }
 
 function mutate(el, raw) {

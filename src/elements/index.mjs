@@ -4,7 +4,6 @@ export { makeInputFragment, INPUT_TEMPLATE, Input } from "./input.mjs";
 export { Select } from "./select.mjs";
 export { RadioGroup } from "./radio.mjs";
 export { Spinner } from "./spinner.mjs";
-export { Wizard } from "./wizard.mjs";
 
 import "./errors.scss"
 import "./form.scss"
@@ -12,5 +11,4 @@ import "./input.scss"
 import "./select.scss"
 import "./radio.scss"
 import "./spinner.scss"
-import "./wizard.scss"
 

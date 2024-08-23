@@ -24,9 +24,7 @@ const makeInputFragment = (el, template, slots) => {
     input.setAttribute('ful-validation-target', '');
     input.addEventListener('change', (evt) => {
         evt.stopPropagation();
-        if(!Events.dispatchChange(el, el.value)){
-            evt.preventDefault();
-        }
+        Events.dispatchChange(el, el.value);
     });
     const id = input.getAttribute('id') || el.getAttribute('input-id') || Attributes.uid('ful-input');
     Attributes.forward('input-', el, slots.input)
@@ -50,9 +48,6 @@ class Input extends ParsedElement({
         return this.input.value;
     }
     set value(value) {
-        if(!Events.dispatchChange(this, value)){
-            return;
-        }
         this.input.value = value;
     }
 }

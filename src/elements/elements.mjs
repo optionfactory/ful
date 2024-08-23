@@ -1,6 +1,3 @@
-import { SyncEvent } from "../events.mjs";
-
-
 class Fragments {
     /**
      * 
@@ -359,18 +356,8 @@ const ParsedElement = (conf) => {
                 return this.internals.states.has(`--${attr}`);
             },
             set(value) {
-                const detail = { target: this, value };
-                const before = new SyncEvent(`${attr}:${this.initialized ? 'change' : 'init'}`, { detail });
-                const after = new SyncEvent(`${attr}:${this.initialized ? 'changed' : 'inited'}`, { detail });
-                (async () => {
-                    if (!await before.dispatchTo(this)) {
-                        return;
-                    }
-                    //see https://developer.mozilla.org/en-US/docs/Web/API/CustomStateSet#using_double_dash_prefixed_idents
-                    this.internals.states[value ? 'add' : 'delete'](`--${attr}`);
-                    this.reflect(() => Attributes.toggle(this, attr, value));
-                    await after.dispatchTo(this);
-                })();
+                this.internals.states[value ? 'add' : 'delete'](`--${attr}`);
+                this.reflect(() => Attributes.toggle(this, attr, value));
             }
         });
     }

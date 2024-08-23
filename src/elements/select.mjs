@@ -74,13 +74,14 @@ class Select extends ParsedElement({
             }
             callback(data);
         };
-
-
         this.ts = new TomSelect(input, Object.assign(remote ? {
             preload: 'focus',
             load: this._unwrappedRemoteLoad,
             shouldLoad: (query) => this.shouldLoad ? this.shouldLoad(query) : true
         } : {}, tsDefaultConfig, this.tsConfig));
+        this.ts.on('change', value => {
+            Events.dispatchChange(this, this.value);
+        });
         //we remove the input to move it
         input.addEventListener('change', (evt) => {
             evt.stopPropagation();
@@ -89,10 +90,10 @@ class Select extends ParsedElement({
         template.renderTo(this, { id, tsId, name, input, slots });
     }
     #loader;
-    set loader(l){
+    set loader(l) {
         this.#loader = l;
         // loader can be configured later so we load now
-        if(this.hasAttribute('value')){
+        if (this.hasAttribute('value')) {
             this.value = this.getAttribute("value");
         }
     }
@@ -101,14 +102,12 @@ class Select extends ParsedElement({
         return v === '' ? null : v;
     }
     set value(value) {
-        if(!Events.dispatchChange(this, value)){
-            return;
-        }
         (async () => {
             if (this._remote) {
                 await this._unwrappedRemoteLoad({ byId: value }, this.ts.loadCallback.bind(this.ts));
             }
-            this.ts.setValue(value);
+            const silent = true;
+            this.ts.setValue(value, silent);
         })();
     }
 }

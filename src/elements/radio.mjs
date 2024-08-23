@@ -37,12 +37,11 @@ class RadioGroup extends ParsedElement({
             input.setAttribute('name', `${name}-ignore`);
             input.setAttribute('ful-validation-target', '');
             input.dataset['fulBindInclude'] = 'never';
-            input.addEventListener('change', (evt) => evt.stopPropagation());           
-            input.addEventListener('click', (evt) => {
-                if(!Events.dispatchChange(this, this.value)){
-                    evt.preventDefault();
-                }
-            });
+            input.addEventListener('change', evt => {
+                evt.stopPropagation();
+                //change is not cancelable
+                Events.dispatchChange(el, this.value);
+            });           
             const label = Fragments.fromChildNodes(el);
             return [input, label];
         });
