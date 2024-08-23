@@ -1,7 +1,7 @@
 import { Attributes, Fragments, Events, ParsedElement } from "./elements.mjs"
 
 class RadioGroup extends ParsedElement({
-    observed: ['value', 'disabled:bool'],
+    observed: ['value', 'disabled:state'],
     slots: true,
     template: `
         <fieldset ful-validated-field>

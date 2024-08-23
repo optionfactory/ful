@@ -253,7 +253,9 @@ const upgradeQueue = new UpgradeQueue();
 const mappers = {
     'string': attr => attr,
     'number': attr => attr === null ? null : Number(attr),
-    'bool': attr => attr !== null,
+    'presence': attr => attr !== null,
+    'state': attr => attr !== null,
+    'bool': attr => attr === 'true',
     'json': attr => JSON.parse(attr)
 };
 
@@ -348,7 +350,7 @@ const ParsedElement = (conf) => {
         }
     };
 
-    for (const [attr, type] of attrsAndTypes.filter(([a, t]) => t === 'bool')) {
+    for (const [attr, type] of attrsAndTypes.filter(([a, t]) => t === 'state')) {
         Object.defineProperty(k.prototype, attr, {
             enumerable: true,
             configurable: true,
