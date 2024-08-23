@@ -40,7 +40,7 @@ class RadioGroup extends ParsedElement({
             input.addEventListener('change', evt => {
                 evt.stopPropagation();
                 //change is not cancelable
-                Events.dispatchChange(el, this.value);
+                Events.dispatchChange(this, this.value);
             });           
             const label = Fragments.fromChildNodes(el);
             return [input, label];
