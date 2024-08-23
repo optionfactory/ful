@@ -1,4 +1,4 @@
-export { Fragments, Attributes, LightSlots, Nodes, TemplatesRegistry, ElementsRegistry, elements, ParsedElement } from "./elements.mjs";
+export { Fragments, Attributes, LightSlots, Nodes, Events, TemplatesRegistry, ElementsRegistry, elements, ParsedElement } from "./elements.mjs";
 export { Form } from "./form.mjs";
 export { makeInputFragment, INPUT_TEMPLATE, Input } from "./input.mjs";
 export { Select } from "./select.mjs";
