@@ -1,4 +1,4 @@
-import { Attributes, Fragments, Events, ParsedElement } from "./elements.mjs"
+import { Attributes, Fragments, ParsedElement } from "./elements.mjs"
 
 class RadioGroup extends ParsedElement({
     observed: ['value', 'disabled:state'],
@@ -40,7 +40,13 @@ class RadioGroup extends ParsedElement({
             input.addEventListener('change', evt => {
                 evt.stopPropagation();
                 //change is not cancelable
-                Events.dispatchChange(this, this.value);
+                this.dispatchEvent(new CustomEvent('change', { 
+                    bubbles: true, 
+                    cancelable: false, 
+                    detail: {
+                        value: this.value
+                    }
+                }));        
             });           
             const label = Fragments.fromChildNodes(el);
             return [input, label];
@@ -54,9 +60,6 @@ class RadioGroup extends ParsedElement({
         return checked ? checked.value : null;
     }
     set value(value) {
-        if(!Events.dispatchChange(this, value)){
-            return;
-        }
         this.querySelector(`input[type=radio][value=${CSS.escape(value)}]`).checked = true;
     }
 }

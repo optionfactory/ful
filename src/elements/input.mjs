@@ -1,4 +1,4 @@
-import { Attributes, Events, ParsedElement } from "./elements.mjs"
+import { Attributes, ParsedElement } from "./elements.mjs"
 
 
 const INPUT_TEMPLATE = `
@@ -24,7 +24,13 @@ const makeInputFragment = (el, template, slots) => {
     input.setAttribute('ful-validation-target', '');
     input.addEventListener('change', (evt) => {
         evt.stopPropagation();
-        Events.dispatchChange(el, el.value);
+        el.dispatchEvent(new CustomEvent('change', { 
+            bubbles: true, 
+            cancelable: false, 
+            detail: {
+                value: el.value
+            }
+        }));
     });
     const id = input.getAttribute('id') || el.getAttribute('input-id') || Attributes.uid('ful-input');
     Attributes.forward('input-', el, slots.input)

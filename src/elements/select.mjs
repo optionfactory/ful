@@ -1,4 +1,4 @@
-import { Fragments, Attributes, Events, ParsedElement } from "./elements.mjs"
+import { Fragments, Attributes, ParsedElement } from "./elements.mjs"
 
 /**
  * <script src="tom-select.complete.js"></script>
@@ -80,7 +80,13 @@ class Select extends ParsedElement({
             shouldLoad: (query) => this.shouldLoad ? this.shouldLoad(query) : true
         } : {}, tsDefaultConfig, this.tsConfig));
         this.ts.on('change', value => {
-            Events.dispatchChange(this, this.value);
+            this.dispatchEvent(new CustomEvent('change', { 
+                bubbles: true, 
+                cancelable: false, 
+                detail: {
+                    value: this.value
+                }
+            }));
         });
         //we remove the input to move it
         input.addEventListener('change', (evt) => {
