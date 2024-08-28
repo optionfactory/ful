@@ -55,7 +55,10 @@ function extract(el) {
     if (el.dataset['fulBindType'] === 'boolean') {
         return !el.value ? null : el.value === 'true';
     }
-    return el.value === '' || el.value === undefined ? null : el.value;
+    if (el.tagName === 'INPUT' || el.tagName === 'SELECT'){
+        return el.value === '' || el.value === undefined ? null : el.value;    
+    }
+    return el.value;
 }
 
 function mutate(el, raw) {
@@ -73,6 +76,7 @@ function mutate(el, raw) {
 class Form extends ParsedElement() {
     static IGNORED_CHILDREN_SELECTOR = '.d-none, [hidden]';
     static SCROLL_OFFSET = 50;
+    static INVALID_CLASS = 'is-invalid';
     render() {
         const form = document.createElement('form');
         form.replaceChildren(...this.childNodes);
@@ -135,7 +139,7 @@ class Form extends ParsedElement() {
     set errors(es) {
         const fieldErrors = es.filter((e) => e.type === 'FIELD_ERROR' || e.type === 'INVALID_FORMAT');
         const globalErrors = es.filter((e) => e.type !== 'FIELD_ERROR' && e.type !== 'INVALID_FORMAT');
-        this.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        this.querySelectorAll(`.${Form.INVALID_CLASS}`).forEach(el => el.classList.remove(Form.INVALID_CLASS));
         this.querySelectorAll("ful-errors").forEach(el => {
             el.replaceChildren();
             el.setAttribute('hidden', '');
@@ -143,7 +147,7 @@ class Form extends ParsedElement() {
         fieldErrors.forEach((e) => {
             const name = e.context.replace("[", ".").replace("].", ".");
             const validationTargetsSelector = `[name='${CSS.escape(name)}'] [ful-validation-target],[name='${CSS.escape(name)}']:not(:has([ful-validation-target]))`;
-            this.querySelectorAll(validationTargetsSelector).forEach(input => input.classList.add('is-invalid'));
+            this.querySelectorAll(validationTargetsSelector).forEach(input => input.classList.add(Form.INVALID_CLASS));
             const fieldErrorsSelector = `ful-field-error[field='${CSS.escape(name)}']`;
             this.querySelectorAll(fieldErrorsSelector).forEach(el => el.innerText = e.reason);
         });
@@ -156,7 +160,7 @@ class Form extends ParsedElement() {
         if (!this.hasAttribute('scroll-on-error')) {
             return;
         }
-        const ys = Array.from(this.querySelectorAll('[ful-validated-field]:has(.is-invalid) ful-field-error'))
+        const ys = Array.from(this.querySelectorAll(`[ful-validated-field]:has(.${Form.INVALID_CLASS}) ful-field-error`))
             .map(el => el.parentElement ? el.parentElement : el)
             .map(el => el.getBoundingClientRect().y + window.scrollY);
         const miny = Math.min(...ys);

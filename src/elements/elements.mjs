@@ -165,11 +165,11 @@ class TemplatesRegistry {
         }
         return tpl;
     }
-    configure(ec) {
+    configure(ec, ...data) {
         this.#ec = ec;
         for (const [k, fragment] of Object.entries(this.#idToFragment)) {
             delete this.#idToFragment[k];
-            this.#idToTemplate[k] = ftl.Template.fromFragment(fragment, ec);
+            this.#idToTemplate[k] = ftl.Template.fromFragment(fragment, ec, ...data);
         }
     }
 }
@@ -192,12 +192,6 @@ class ElementsRegistry {
         this.#templates.put(name, Fragments.fromHtml(html));
         return name;
     }
-    template(k) {
-        if (k === null || k === undefined) {
-            return undefined;
-        }
-        return this.#templates.get(k);
-    }
     define(tag, klass) {
         if (!this.#configured) {
             this.#tagToclass[tag] = klass;
@@ -206,13 +200,19 @@ class ElementsRegistry {
         customElements.define(tag, klass);
         return this;
     }
-    configure(ec) {
-        this.#templates.configure(ec);
+    configure(ec, ...data) {
+        this.#templates.configure(ec, ...data);
         for (const [tag, klass] of Object.entries(this.#tagToclass)) {
             customElements.define(tag, klass);
             delete this.#tagToclass[tag];
         }
         this.#configured = true;
+    }
+    template(k) {
+        if (k === null || k === undefined) {
+            return undefined;
+        }
+        return this.#templates.get(k);
     }
 }
 
