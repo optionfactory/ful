@@ -1,0 +1,26 @@
+ful-errors {
+    --ful-errors-color: var(--bs-danger-text-emphasis, #58151c);
+    --ful-errors-bg: var(--bs-danger-bg-subtle, #f8d7da);
+    --ful-errors-border-color: var(--bs-danger-border-subtle, #f1aeb5);
+    --ful-errors-border-radius: 0.375rem;
+
+    display: block;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    color: var(--ful-errors-color);
+    background-color: var(--ful-errors-bg);
+    border: 1px solid var(--ful-errors-border-color);
+    border-radius: var(--ful-errors-border-radius);
+}
+
+ful-field-error {
+    --ful-field-error-color-invalid: var(--bs-form-invalid-color, #dc3545);
+    display: none;
+
+    [ful-validated-field]:has(.is-invalid) & {
+        display: block;
+        margin-top: .25rem;
+        font-size: .875em;
+        color: var(--ful-field-error-color-invalid);
+    }
+}

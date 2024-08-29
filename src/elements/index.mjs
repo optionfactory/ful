@@ -5,10 +5,10 @@ export { Select } from "./select.mjs";
 export { RadioGroup } from "./radio.mjs";
 export { Spinner } from "./spinner.mjs";
 
-import "./errors.scss"
-import "./form.scss"
-import "./input.scss"
-import "./select.scss"
-import "./radio.scss"
-import "./spinner.scss"
+import "./errors.css"
+import "./form.css"
+import "./input.css"
+import "./select.css"
+import "./radio.css"
+import "./spinner.css"
 

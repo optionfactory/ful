@@ -1,0 +1,7 @@
+ful-input {
+    display: block;
+
+    &:not(:defined) {
+        visibility: hidden;
+    }
+}
