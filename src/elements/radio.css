@@ -1,10 +1,10 @@
 ful-radio-group {
     --ful-radio-group-label-border-color: var(--bs-border-color, #dee2e6);
     --ful-radio-group-label-border-color-checked: #46ce95;
-    --ful-radio-group-label-border-color-disabled: #cecece;
+    --ful-radio-group-label-border-color-disabled: var(--bs-border-color, #dee2e6);
     --ful-radio-group-label-background-color: inherit;
     --ful-radio-group-label-background-color-checked: #f5fffc;
-    --ful-radio-group-label-background-color-disabled: #f3f3f3;
+    --ful-radio-group-label-background-color-disabled: var(--bs-secondary-bg, #e9ecef);
     display: block;
 
     &:not(:defined) {
@@ -27,7 +27,7 @@ ful-radio-group {
                 border: 1px solid var(--ful-radio-group-label-border-color);
                 background-color: var(--ful-radio-group-label-background-color);
                 border-radius: 4px;
-                padding: 6px 10px;
+                padding: 8px 10px;
 
                 k &.is-invalid {
                     border-color: var(--bs-form-invalid-border-color);
