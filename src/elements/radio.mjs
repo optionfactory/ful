@@ -27,7 +27,7 @@ class RadioGroup extends ParsedElement({
     `
 }) {
     render(template, slots) {
-        const name = this.getAttribute('name') || Attributes.uid('ful-radiogroup');
+        const name = this.getAttribute('name') ?? Attributes.uid('ful-radiogroup');
         const radioEls = Array.from(slots.default.querySelectorAll('ful-radio'));
         const inputsAndLabels = radioEls.map(el => {
             const input = document.createElement('input');

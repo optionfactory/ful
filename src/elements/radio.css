@@ -1,8 +1,10 @@
 ful-radio-group {
     --ful-radio-group-label-border-color: var(--bs-border-color, #dee2e6);
     --ful-radio-group-label-border-color-checked: #46ce95;
+    --ful-radio-group-label-border-color-disabled: #cecece;
     --ful-radio-group-label-background-color: inherit;
     --ful-radio-group-label-background-color-checked: #f5fffc;
+    --ful-radio-group-label-background-color-disabled: #f3f3f3;
     display: block;
 
     &:not(:defined) {
@@ -36,7 +38,10 @@ ful-radio-group {
                 background-color: var(--ful-radio-group-label-background-color-checked);
                 border-color: var(--ful-radio-group-label-border-color-checked);
             }
-
+            & label:has(input[type=radio]:disabled) {
+                background-color: var(--ful-radio-group-label-background-color-disabled);
+                border-color: var(--ful-radio-group-label-border-color-disabled);
+            }
             & input[type=radio] {
                 margin-left: 8px;
                 margin-right: 12px;

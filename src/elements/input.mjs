@@ -16,7 +16,7 @@ const INPUT_TEMPLATE = `
 `;
 
 const makeInputFragment = (el, template, slots) => {
-    const input = el.input = slots.input = slots.input?.firstElementChild || (() => {
+    const input = el.input = slots.input = slots.input?.firstElementChild ?? (() => {
         const el = document.createElement("input")
         el.classList.add("form-control");
         return el;
@@ -32,7 +32,7 @@ const makeInputFragment = (el, template, slots) => {
             }
         }));
     });
-    const id = input.getAttribute('id') || el.getAttribute('input-id') || Attributes.uid('ful-input');
+    const id = input.getAttribute('id') ?? el.getAttribute('input-id') ?? Attributes.uid('ful-input');
     Attributes.forward('input-', el, slots.input)
     Attributes.defaultValue(slots.input, "id", id);
     Attributes.defaultValue(slots.input, "type", "text");

@@ -247,11 +247,11 @@ const mappers = {
 };
 
 const ParsedElement = (conf) => {
-    const { observed, template, slots } = conf || {};
+    const { observed, template, slots } = conf ?? {};
 
-    const attrsAndTypes = (observed || []).map(a => {
+    const attrsAndTypes = (observed ?? []).map(a => {
         const [attr, maybeType] = a.split(":");
-        const type = maybeType?.trim() || 'string';
+        const type = maybeType?.trim() ?? 'string';
         if (!(type in mappers)) {
             throw new Error(`unsupported attribute type: ${type}`);
         }

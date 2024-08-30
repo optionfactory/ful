@@ -28,16 +28,16 @@ class Select extends ParsedElement({
         this.tsConfig = tsConfig;
     }
     render(template, slots) {
-        const type = this.getAttribute("type") || 'local';
+        const type = this.getAttribute("type") ?? 'local';
         const remote = type != 'local';
         const loadOnce = this.getAttribute('load') != 'always';
         const name = this.getAttribute('name');
-        const input = slots.input = slots.input?.firstElementChild || (() => {
+        const input = slots.input = slots.input?.firstElementChild ?? (() => {
             return document.createElement("select");
         })();
         input.setAttribute('ful-validation-target', '');
 
-        const id = input.getAttribute('id') || this.getAttribute('input-id') || Attributes.uid('ful-select');
+        const id = input.getAttribute('id') ?? this.getAttribute('input-id') ?? Attributes.uid('ful-select');
         const tsId = `${id}-ts-control`;
         Attributes.forward('input-', this, input)
         Attributes.defaultValue(input, "id", id);
