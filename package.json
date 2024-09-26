@@ -18,14 +18,14 @@
         "clean": "rimraf dist && npm prune",
         "initialize": "npm install",
         "test": "mocha --recursive -R spec",
-        "build": "npx rollup --config rollup.conf.js"
+        "build": "npx rollup --config rollup.conf.mjs"
     },
     "devDependencies": {
         "@rollup/plugin-node-resolve": "^15.2.1",
-        "jsdom": "^24.1.0",
+        "jsdom": "^25.0.1",
         "mocha": "^10.2.0",
         "rollup-plugin-postcss": "^4.0.2",
-        "rollup-plugin-terser": "7.0.2",
+        "@rollup/plugin-terser": "^0.4.4",
         "sass": "^1.69.0",
         "terser": ">=5.14.2"
     }
