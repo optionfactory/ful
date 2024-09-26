@@ -2,11 +2,13 @@
     "name": "@optionfactory/ful",
     "version": "0.90.0",
     "main": "./dist/ful.iife.js",
-    "module":  "./dist/ful.mjs",
+    "module": "./dist/ful.mjs",
     "files": [
         "dist/**"
     ],
-    "repository": "https://github.com/optionfactory/ful",
+    "repository": {
+        "url": "git+https://github.com/optionfactory/ful.git"
+    },
     "keywords": [
         "ui",
         "browser"
