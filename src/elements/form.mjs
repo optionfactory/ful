@@ -1,5 +1,3 @@
-/* global Infinity, CSS */
-
 import { Failure } from "../http-client.mjs";
 import { ParsedElement } from "./elements.mjs"
 
@@ -160,7 +158,7 @@ class Form extends ParsedElement() {
         if (!this.hasAttribute('scroll-on-error')) {
             return;
         }
-        const ys = Array.from(this.querySelectorAll(`[ful-validated-field]:has(.${Form.INVALID_CLASS}) ful-field-error`))
+        const ys = Array.from(this.querySelectorAll(`ful-errors:not([hidden]), [ful-validated-field]:has(.${Form.INVALID_CLASS}) ful-field-error`))
             .map(el => el.parentElement ? el.parentElement : el)
             .map(el => el.getBoundingClientRect().y + window.scrollY);
         const miny = Math.min(...ys);
