@@ -124,7 +124,8 @@ class AuthorizationCodeFlowSession {
             ])
         });
         if (!response.ok) {
-            throw new Error("Error:" + response.status + ": " + response.text());
+            const text = await response.text();
+            throw new Error("Error:" + response.status + ": " + text);
         }
         const token = await response.json();
         this.token = token;
@@ -164,18 +165,19 @@ class AuthorizationCodeFlowSession {
 }
 
 class AuthorizationCodeFlowInterceptor {
+    #session;
+    #gracePeriodBefore;
+    #gracePeriodAfter;
     constructor(session, gracePeriodBefore, gracePeriodAfter) {
-        this.session = session;
-        this.gracePeriodBefore = gracePeriodBefore || 2000;
-        this.gracePeriodAfter = gracePeriodAfter || 30000;
+        this.#session = session;
+        this.#gracePeriodBefore = gracePeriodBefore || 2000;
+        this.#gracePeriodAfter = gracePeriodAfter || 30000;
     }
     async intercept(request, chain) {
-        await this.session.refreshIf(this.gracePeriodBefore);
-        const headers = new Headers(request.options.headers);
-        headers.set("Authorization", this.session.bearerToken());
-        request.options.headers = headers;
+        await this.#session.refreshIf(this.#gracePeriodBefore);
+        request.headers.set("Authorization", this.#session.bearerToken());
         const response = await chain.proceed(request);
-        await this.session.refreshIf(this.gracePeriodAfter);
+        await this.#session.refreshIf(this.#gracePeriodAfter);
         return response;
     }
 }
