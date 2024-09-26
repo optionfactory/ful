@@ -93,10 +93,10 @@ AuthorizationCodeFlow.PKCE_AND_STATE_KEY = "state-and-verifier";
 class AuthorizationCodeFlowSession {
     static parseToken(token) {
         const [rawHeader, rawPayload, signature] = token.split(".");
-        const ut8decoder = new TextDecoder("utf-8");
+        const utf8decoder = new TextDecoder("utf-8");
         return {
-            header: JSON.parse(ut8decoder.decode(Base64.decode(rawHeader, Base64.STANDARD))),
-            payload: JSON.parse(ut8decoder.decode(Base64.decode(rawPayload, Base64.STANDARD))),
+            header: JSON.parse(utf8decoder.decode(Base64.decode(rawHeader, Base64.STANDARD))),
+            payload: JSON.parse(utf8decoder.decode(Base64.decode(rawPayload, Base64.STANDARD))),
             signature: signature
         };
     }    
