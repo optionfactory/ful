@@ -1,18 +1,33 @@
-class Failure extends Error {
-    constructor(name, problems, cause) {
-        super(JSON.stringify(problems), { cause });
-        this.name = name;
-        this.problems = problems;
-    }
-}
+import { Failure } from "./failure.mjs";
+
+/**
+ * @typedef {Int8Array| Uint8Array| Uint8ClampedArray| Int16Array| Uint16Array| Int32Array| Uint32Array| Float32Array| Float64Array| BigInt64Array| BigUint64Array} TypedArray
+ */
+/**
+ * @typedef HttpInterceptor
+ * @property {function(Request,HttpInterceptorChain):Promise<Response>} intercept  
+ */
 
 class HttpClientError extends Failure {
-    constructor(status, problems, cause) {
-        super(`HttpClientError:${status}`, problems, cause);
+    /**
+     * @param {string} message
+     * @param {number} status
+     * @param {{ type: string; context: string?; reason: string; details: any?; }[]} problems
+     * @param {Error|undefined} [cause]
+     */
+    constructor(message, status, problems, cause) {
+        super(message, problems, cause);
+        this.name = 'HttpClientError';
         this.status = status;
     }
+    /**
+     * 
+     * @param {string} type 
+     * @param {any} cause 
+     * @returns 
+     */
     static of(type, cause) {
-        return new HttpClientError(0, [{
+        return new HttpClientError(cause.message, 0, [{
             type,
             context: null,
             reason: cause.message,
@@ -26,47 +41,61 @@ class HttpClientError extends Failure {
      */
     static async fromResponse(response) {
         const text = await response.text();
-        const def = [{
+        const message = `${response.status} ${response.statusText}: ${text}`;
+        const fallback = [{
             type: "GENERIC_PROBLEM",
             context: null,
-            reason: `${response.status} ${response.statusText}: ${text}`,
+            reason: message,
             details: null
         }];
         try {
-            return new HttpClientError(response.status, text ? JSON.parse(text) : def);
+            return new HttpClientError(message, response.status, text ? JSON.parse(text) : fallback);
         } catch (e) {
-            return new HttpClientError(response.status, def);
+            return new HttpClientError(message, response.status, fallback);
         }
     }
 }
 
+/**
+ * @implements {HttpInterceptor}
+ */
 class CsrfTokenInterceptor {
     #k; #v;
     constructor() {
-        this.#k = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
-        this.#v = document.querySelector("meta[name='_csrf']").getAttribute("content");
-    }
+        this.#k = document.querySelector("meta[name='_csrf_header']")?.getAttribute("content");
+        this.#v = document.querySelector("meta[name='_csrf']")?.getAttribute("content");
+    } 
     async intercept(request, chain) {
-        request.headers.set(this.#k, this.#v);
+        if(this.#k && this.#v) {
+            request.headers.set(this.#k, this.#v);
+        }
         return await chain.proceed(request);
     }
 }
-
+/**
+ * @implements {HttpInterceptor}
+ */
 class RedirectOnUnauthorizedInterceptor {
     #redirectUri;
+    /**
+     * @param {string} redirectUri
+     */
     constructor(redirectUri) {
         this.#redirectUri = redirectUri;
     }
     async intercept(request, chain) {
         const response = await chain.proceed(request);
-        if (response.status !== 401) {
-            return response;
+        if (response.status === 401) {
+            window.location.href = this.#redirectUri;
         }
-        window.location.href = this.#redirectUri;
+        return response;
     }
 }
 
 class HttpClientBuilder {
+    /**
+     * @type {HttpInterceptor[]}
+     */
     #interceptors;
     constructor() {
         this.#interceptors = [];
@@ -79,6 +108,9 @@ class HttpClientBuilder {
         this.#interceptors.push(new RedirectOnUnauthorizedInterceptor(redirectUri));
         return this;
     }
+    /**
+     * @param {...HttpInterceptor} interceptors
+     */
     withInterceptors(...interceptors) {
         this.#interceptors.push(...interceptors);
         return this;
@@ -88,27 +120,35 @@ class HttpClientBuilder {
     }
 }
 
+/**
+ * @implements {HttpInterceptor}
+ */
 class HttpCall {
-    /**
-     * 
-     * @async
-     * @param {Request} request 
-     * @param {HttpInterceptorChain} chain 
-     * @returns {Promise<Response>} the response
-     */
     async intercept(request, chain) {
         return await fetch(request);
     }
 }
 
 class HttpInterceptorChain {
+    #interceptors;
+    #current;
+    /**
+     * 
+     * @param {HttpInterceptor[]} interceptors 
+     * @param {number} current 
+     */
     constructor(interceptors, current) {
-        this.interceptors = interceptors;
-        this.current = current;
+        this.#interceptors = interceptors;
+        this.#current = current;
     }
+    /**
+     * 
+     * @param {Request} request 
+     * @returns {Promise<Response>} the response
+     */
     async proceed(request) {
-        const interceptor = this.interceptors[this.current];
-        return await interceptor.intercept(request, new HttpInterceptorChain(this.interceptors, this.current + 1));
+        const interceptor = this.#interceptors[this.#current];
+        return await interceptor.intercept(request, new HttpInterceptorChain(this.#interceptors, this.#current + 1));
     }
 }
 
@@ -116,14 +156,14 @@ class HttpClient {
     #interceptors;
     /**
      * Creates a builder for an HttpClient.
-     * @returns {HttpRequestBuilder} the client builder
+     * @returns {HttpClientBuilder} the client builder
      */
     static builder() {
         return new HttpClientBuilder();
     }
     /**
      * Creates an HttpClient.
-     * @returns {[HttpInterceptor]} interceptors - a list of interceptors to be registered for every request performed by the created client. 
+     * @param {HttpInterceptor[]|undefined} interceptors - a list of interceptors to be registered for every request performed by the created client. 
      */
     constructor(interceptors) {
         this.#interceptors = interceptors || [];
@@ -133,7 +173,7 @@ class HttpClient {
      * @async
      * @param {string} uri - the (possibly relative) request url
      * @param {RequestInit|undefined} options - fetch options
-     * @param {[any]|undefined} interceptors - the HttpInterceptors to be registered for this request.
+     * @param {HttpInterceptor[]|undefined} interceptors - the HttpInterceptors to be registered for this exchange.
      * @returns {Promise<Response>} the response
      */
     async exchange(uri, options, interceptors) {
@@ -200,12 +240,17 @@ class HttpClient {
     }
 }
 
-
+/**
+ * 
+ * @param {Response} response 
+ * @param {'text'|'json'|'blob'|'arrayBuffer'} type 
+ * @returns 
+ */
 const unmarshal = async (response, type) => {
     try {
         return await response[type]();
-    } catch (e) {
-        throw HttpClientError.of("UNMARSHALING_PROBLEM", e);
+    } catch (ex) {
+        throw HttpClientError.of("UNMARSHALING_PROBLEM", ex);
     }
 }
 
@@ -247,7 +292,7 @@ class HttpRequestBuilder {
      * @param {Headers} headers 
      * @param {any} body 
      * @param {Omit<RequestInit,"headers"|"method"|"body">} options 
-     * @param {[HttpInterceptor]} interceptors 
+     * @param {HttpInterceptor[]} interceptors 
      */
     constructor(client, method, uri, params, headers, body, options, interceptors) {
         this.#client = client;
@@ -261,7 +306,7 @@ class HttpRequestBuilder {
     }
     /**
      * Add all passed headers to the request, overriding existing ones if that key already exists.
-     * @param {headersInit} hs 
+     * @param {HeadersInit} hs 
      * @returns {HttpRequestBuilder} this builder
      */
     headers(hs) {
@@ -324,12 +369,24 @@ class HttpRequestBuilder {
         return this;
     }
     /**
+     * Sets the request body as a FormData configured using the callback.
+     * `Content-Type: multipart/form-data` header is automatically added by fetch if not explicitly set.
+     * @param {function(HttpMultipartRequestCustomizer):void} callback
+     */
+    multipart(callback) {
+        const formData = new FormData();
+        const builder = new HttpMultipartRequestCustomizer(formData);
+        callback(builder);
+        this.#body = formData;
+    }
+    /**
      * Sets a fetch options for the request.
      * @param {Omit<RequestInit,"headers"|"method"|"body">} kvs
      * @returns {HttpRequestBuilder} this builder
      */
     options(kvs) {
         for (const [k, v] of Object.entries(kvs)) {
+            // @ts-ignore
             this.#options[k] = v;
         }
         return this;
@@ -396,11 +453,11 @@ class HttpRequestBuilder {
                 throw await HttpClientError.fromResponse(response);
             }
             return response;
-        } catch (e) {
-            if (e instanceof Failure) {
-                throw e;
+        } catch (ex) {
+            if (ex instanceof Failure) {
+                throw ex;
             }
-            throw HttpClientError.of("CONNECTION_PROBLEM", e);
+            throw HttpClientError.of("CONNECTION_PROBLEM", ex);
         }
     }
     /**
@@ -421,14 +478,6 @@ class HttpRequestBuilder {
     }
     /**
      * Performs an HTTP exchange using the configured client request, and interceptos throwing a failure when response status is not in the 200-299 range.
-     * @returns {Promise<Uint8Array>} the response body, as an Uint8Array
-     */
-    async fetchBytes() {
-        const response = await this.fetch();
-        return await unmarshal(response, 'bytes');
-    }
-    /**
-     * Performs an HTTP exchange using the configured client request, and interceptos throwing a failure when response status is not in the 200-299 range.
      * @returns {Promise<Blob>} the response body, as a Blob
      */
     async fetchBlob() {
@@ -446,4 +495,52 @@ class HttpRequestBuilder {
 }
 
 
-export { HttpClient, Failure, HttpClientError };
+class HttpMultipartRequestCustomizer {
+    #formData;
+    /**
+     * 
+     * @param {FormData} formData 
+     */
+    constructor(formData){
+        this.#formData = formData;
+    }
+    /**
+     * Appends a value to the FormData.
+     * @param {string} name 
+     * @param {*} value 
+     * @returns this builder
+     */
+    field(name, value){
+        this.#formData.append(name, value);
+        return this;
+    }
+    /**
+     * Appends a Blob to the FormData. 
+     * If `filename` is omitted, FormData defaults are applied:
+     * The default filename for Blob objects is "blob"; 
+     * The default filename for File objects is the file's filename.
+     * @param {string} name 
+     * @param {Blob} value 
+     * @param {string|undefined} filename 
+     * @returns this builder
+     */
+    blob(name, value, filename){
+        this.#formData.append(name, value, filename);
+        return this;
+    }
+    /**
+     * Appends a JSON serialized blob to the FormData.
+     * @param {string} name 
+     * @param {any} value 
+     * @param {string|undefined} filename 
+     * @returns this builder
+     */
+    json(name, value, filename){
+        const blob = new Blob([JSON.stringify(value)], {type: 'application/json'});
+        this.#formData.append(name, blob, filename);
+        return this;
+    }
+}
+
+
+export { HttpClient, HttpClientError };

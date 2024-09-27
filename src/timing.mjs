@@ -28,7 +28,7 @@ const timing = {
         };
 
         return function () {
-            args = arguments;
+            args = [...arguments];
             previousTimestamp = new Date().getTime();
             if (tid === null) {
                 tid = setTimeout(later, timeoutMs);
@@ -62,7 +62,7 @@ const timing = {
                 previousTimestamp = now;
             }
             const remaining = timeoutMs - (now - previousTimestamp);
-            args = arguments;
+            args = [...arguments];
             if (remaining <= 0 || remaining > timeoutMs) {
                 if (tid !== null) {
                     clearTimeout(tid);

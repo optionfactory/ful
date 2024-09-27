@@ -38,7 +38,7 @@ class AuthorizationCodeFlow {
         Object.entries(additionalParams || {}).forEach(kv => {
             url.searchParams.set(kv[0], kv[1]);
         });
-        window.location = url;
+        window.location.href = url.toString();
     }
     async registration(additionalParams){
         await this.action(this.uri.registration, additionalParams);
@@ -48,7 +48,7 @@ class AuthorizationCodeFlow {
             kc_action: kcAction
         });
     }
-    async _tokenExchange(code, state) {
+    async #tokenExchange(code, state) {
         window.history.replaceState('', "", this.uri.redirect);
         const stateAndVerifier = this.storage.pop(AuthorizationCodeFlow.PKCE_AND_STATE_KEY);
         if (stateAndVerifier.state !== state) {
@@ -81,7 +81,7 @@ class AuthorizationCodeFlow {
         if (code && this.storage.load(AuthorizationCodeFlow.PKCE_AND_STATE_KEY)) {
             //if callback from keycloak and we have our state still stored
             const state = url.searchParams.get("state");
-            return await this._tokenExchange(code, state);
+            return await this.#tokenExchange(code, state);
         }
         //if not authorized
         await this.action(this.uri.auth, {});
@@ -152,7 +152,7 @@ class AuthorizationCodeFlowSession {
         const url = new URL(this.uri.logout);
         url.searchParams.set("post_logout_redirect_uri", this.uri.redirect);
         url.searchParams.set("id_token_hint", this.token.id_token);
-        window.location = url;
+        window.location.href = url.toString();
     }
 
     bearerToken() {

@@ -76,16 +76,18 @@ class Attributes {
             .forEach(a => {
                 const target = a.substring(prefix.length);
                 if (target === 'class') {
-                    to.classList.add(...from.getAttribute(prefix + "class").split(" ").filter(a => a.length));
+                    const classes = from.getAttribute(prefix + "class")?.split(" ").filter(a => a.length) ?? [];
+                    to.classList.add(...classes);
                     return;
                 }
-                to.setAttribute(target, from.getAttribute(a))
+                // @ts-ignore
+                to.setAttribute(target, from.getAttribute(a));
             });
     }
     /**
      * 
      * @param {HTMLElement} el 
-     * @param {stirng} attr 
+     * @param {string} attr 
      * @param {boolean} value 
      */
     static toggle(el, attr, value) {
@@ -112,19 +114,21 @@ class LightSlots {
      * @returns the slots
      */
     static from(el) {
+        /** @type [string, Element][] */
         const namedSlots = Array.from(el.childNodes)
-            .filter(el => el.matches && el.matches('[slot]'))
+            .filter(el => el instanceof Element)
+            .filter(el => el.matches('[slot]'))
             .map(el => {
                 el.remove();
                 const slot = el.getAttribute("slot");
                 el.removeAttribute("slot");
-                return [slot, el];
+                return [slot ?? 'unnamed', el];
             });
         const slots = {};
         slots.default = new DocumentFragment();
         slots.default.append(...el.childNodes);
-        for(const [name,el] of namedSlots){
-            if(!(name in slots)){
+        for (const [name, el] of namedSlots) {
+            if (!(name in slots)) {
                 slots[name] = new DocumentFragment();
             }
             slots[name].append(el);
@@ -150,7 +154,8 @@ class TemplatesRegistry {
     #ec;
     put(k, fragment) {
         if (this.#ec) {
-            this.#idToTemplate[k] = Template.fromFragment(fragment, ec);
+            // @ts-ignore
+            this.#idToTemplate[k] = ftl.Template.fromFragment(fragment, this.#ec);
             return;
         }
         this.#idToFragment[k] = fragment;
@@ -169,6 +174,7 @@ class TemplatesRegistry {
         this.#ec = ec;
         for (const [k, fragment] of Object.entries(this.#idToFragment)) {
             delete this.#idToFragment[k];
+            // @ts-ignore
             this.#idToTemplate[k] = ftl.Template.fromFragment(fragment, ec, ...data);
         }
     }
@@ -272,8 +278,8 @@ const ParsedElement = (conf) => {
         #initialized;
         #reflecting;
         #internals;
-        constructor(...args) {
-            super(...args);
+        constructor() {
+            super();
             this.#internals = this.attachInternals();
         }
         get initialized() {
@@ -301,6 +307,7 @@ const ParsedElement = (conf) => {
                 observer.disconnect();
                 upgradeQueue.enqueue(this);
             });
+            // @ts-ignore
             observer.observe(this.parentNode, { childList: true, subtree: true });
         }
         attributeChangedCallback(attr, oldValue, newValue) {
@@ -326,6 +333,7 @@ const ParsedElement = (conf) => {
                 return;
             }
             this.#parsed = true;
+            // @ts-ignore
             await this.render(elements.template(templateId), slots ? LightSlots.from(this) : undefined);
 
             for (const [attr, mapper] of attrsAndMappers) {

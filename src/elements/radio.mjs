@@ -40,27 +40,40 @@ class RadioGroup extends ParsedElement({
             input.addEventListener('change', evt => {
                 evt.stopPropagation();
                 //change is not cancelable
-                this.dispatchEvent(new CustomEvent('change', { 
-                    bubbles: true, 
-                    cancelable: false, 
+                this.dispatchEvent(new CustomEvent('change', {
+                    bubbles: true,
+                    cancelable: false,
                     detail: {
                         value: this.value
                     }
-                }));        
-            });           
+                }));
+            });
             const label = Fragments.fromChildNodes(el);
             return [input, label];
         });
 
         radioEls.forEach(el => el.remove());
-        template.renderTo(this, {name, slots, inputsAndLabels});
+        template.renderTo(this, { name, slots, inputsAndLabels });
     }
     get value() {
+        /** @type {HTMLInputElement|null} */
         const checked = this.querySelector('input[type=radio]:checked');
         return checked ? checked.value : null;
     }
     set value(value) {
-        this.querySelector(`input[type=radio][value=${CSS.escape(value)}]`).checked = true;
+        if (value === null) {
+            /** @type {HTMLInputElement[]} */
+            this.querySelectorAll(`input[type=radio]`).forEach(el => {
+                // @ts-ignore
+                el.checked = false
+            });
+            return;
+        }
+        /** @type {HTMLInputElement|null} */
+        const el = this.querySelector(`input[type=radio][value=${CSS.escape(value)}]`);
+        if (el) {
+            el.checked = true;
+        }
     }
 }
 

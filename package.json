@@ -17,6 +17,7 @@
     "author": "rferranti",
     "contributors": [],
     "scripts": {
+        "check": "tsc --project ./jsconfig.json", 
         "clean": "rimraf dist && npm prune",
         "initialize": "npm install",
         "test": "mocha --recursive -R spec",

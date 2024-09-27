@@ -46,6 +46,7 @@ class Input extends ParsedElement({
     slots: true,
     template: INPUT_TEMPLATE
 }){
+    input;
     render(template, slots) {
         const fragment = makeInputFragment(this, template, slots);
         this.replaceChildren(fragment);

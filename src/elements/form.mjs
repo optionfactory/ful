@@ -1,4 +1,4 @@
-import { Failure } from "../http-client.mjs";
+import { Failure } from "../failure.mjs";
 import { ParsedElement } from "./elements.mjs"
 
 function flatten(obj, prefix) {
@@ -124,7 +124,7 @@ class Form extends ParsedElement() {
     }
     get values() {
         return Array.from(this.querySelectorAll('[name]'))
-            .filter((el) => {
+            .filter(el => {
                 if (el.dataset['fulBindInclude'] === 'never') {
                     return false;
                 }
@@ -135,14 +135,14 @@ class Form extends ParsedElement() {
             }, {});
     }
     set errors(es) {
-        const fieldErrors = es.filter((e) => e.type === 'FIELD_ERROR' || e.type === 'INVALID_FORMAT');
-        const globalErrors = es.filter((e) => e.type !== 'FIELD_ERROR' && e.type !== 'INVALID_FORMAT');
+        const fieldErrors = es.filter(e => e.type === 'FIELD_ERROR' || e.type === 'INVALID_FORMAT');
+        const globalErrors = es.filter(e => e.type !== 'FIELD_ERROR' && e.type !== 'INVALID_FORMAT');
         this.querySelectorAll(`.${Form.INVALID_CLASS}`).forEach(el => el.classList.remove(Form.INVALID_CLASS));
         this.querySelectorAll("ful-errors").forEach(el => {
             el.replaceChildren();
             el.setAttribute('hidden', '');
         });
-        fieldErrors.forEach((e) => {
+        fieldErrors.forEach(e => {
             const name = e.context.replace("[", ".").replace("].", ".");
             const validationTargetsSelector = `[name='${CSS.escape(name)}'] [ful-validation-target],[name='${CSS.escape(name)}']:not(:has([ful-validation-target]))`;
             this.querySelectorAll(validationTargetsSelector).forEach(input => input.classList.add(Form.INVALID_CLASS));
