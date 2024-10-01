@@ -75,6 +75,7 @@ class Form extends ParsedElement() {
     static IGNORED_CHILDREN_SELECTOR = '.d-none, [hidden]';
     static SCROLL_OFFSET = 50;
     static INVALID_CLASS = 'is-invalid';
+    submitter;
     render() {
         const form = document.createElement('form');
         form.replaceChildren(...this.childNodes);
@@ -87,8 +88,14 @@ class Form extends ParsedElement() {
         this.replaceChildren(form);
     }
     spinner(spin) {
-        this.querySelectorAll('ful-spinner').forEach(el => el.hidden = !spin)
-        this.querySelectorAll('[type=submit],[type=reset]').forEach(el => el.disabled = spin)
+        this.querySelectorAll('ful-spinner').forEach(el => {
+            const hel = /** @type HTMLElement} */ (el);
+            hel.hidden = !spin;
+        })
+        this.querySelectorAll('[type=submit],[type=reset]').forEach(el => {
+            const hel = /** @type HTMLButtonElement} */ (el);
+            hel.disabled = spin
+        })
     }
     async remoting(fn) {
         try {
@@ -123,7 +130,7 @@ class Form extends ParsedElement() {
         }
     }
     get values() {
-        return Array.from(this.querySelectorAll('[name]'))
+        return Array.from(/** @type {NodeListOf<HTMLElement>} */ (this.querySelectorAll('[name]')))
             .filter(el => {
                 if (el.dataset['fulBindInclude'] === 'never') {
                     return false;
@@ -147,10 +154,14 @@ class Form extends ParsedElement() {
             const validationTargetsSelector = `[name='${CSS.escape(name)}'] [ful-validation-target],[name='${CSS.escape(name)}']:not(:has([ful-validation-target]))`;
             this.querySelectorAll(validationTargetsSelector).forEach(input => input.classList.add(Form.INVALID_CLASS));
             const fieldErrorsSelector = `ful-field-error[field='${CSS.escape(name)}']`;
-            this.querySelectorAll(fieldErrorsSelector).forEach(el => el.innerText = e.reason);
+            this.querySelectorAll(fieldErrorsSelector).forEach(el => {
+                const hel = /** @type HTMLElement} */ (el);
+                hel.innerText = e.reason
+            });
         });
         this.querySelectorAll("ful-errors").forEach(el => {
-            el.innerText = globalErrors.map(e => e.reason).join("\n");
+            const hel = /** @type HTMLElement} */ (el);
+            hel.innerText = globalErrors.map(e => e.reason).join("\n");
             if (globalErrors.length !== 0) {
                 el.removeAttribute('hidden');
             }

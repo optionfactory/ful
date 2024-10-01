@@ -378,6 +378,7 @@ class HttpRequestBuilder {
         const builder = new HttpMultipartRequestCustomizer(formData);
         callback(builder);
         this.#body = formData;
+        return this;
     }
     /**
      * Sets a fetch options for the request.
@@ -527,7 +528,21 @@ class HttpMultipartRequestCustomizer {
     blob(name, value, filename){
         this.#formData.append(name, value, filename);
         return this;
-    }
+    }    
+    /**
+     * Appends multiple Blobs to the FormData with the same name. 
+     * The default filename for Blob objects is "blob"; 
+     * The default filename for File objects is the file's filename.
+     * @param {string} name 
+     * @param {Blob[]} values
+     * @returns this builder
+     */    
+    blobs(name, values){
+        for(let v of values){
+            this.#formData.append(name, v);
+        }
+        return this;
+    }    
     /**
      * Appends a JSON serialized blob to the FormData.
      * @param {string} name 

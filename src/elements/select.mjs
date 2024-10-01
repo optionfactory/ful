@@ -23,6 +23,8 @@ class Select extends ParsedElement({
         </div>
     `
 }) {
+    shouldLoad;
+    _unwrappedRemoteLoad;
     constructor(tsConfig) {
         super();
         this.tsConfig = tsConfig;
@@ -74,6 +76,7 @@ class Select extends ParsedElement({
             }
             callback(data);
         };
+        // @ts-ignore
         this.ts = new TomSelect(input, Object.assign(remote ? {
             preload: 'focus',
             load: this._unwrappedRemoteLoad,
