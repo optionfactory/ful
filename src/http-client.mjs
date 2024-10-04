@@ -1,5 +1,37 @@
 import { Failure } from "./failure.mjs";
 
+class MediaType {
+    #type;
+    #subtype;
+    constructor(type, subtype) {
+        this.#type = type;
+        this.#subtype = subtype;
+    }
+    get normalized(){
+        return `${this.#type}/${this.#subtype}`;
+    }
+    get type() {
+        return this.#type;
+    }
+    get subtype() {
+        return this.#subtype;
+    }
+    /**
+     * 
+     * @param {string|null|undefined} v 
+     * @returns 
+     */
+    static parse(v) {
+        if (!v) {
+            return new MediaType("unknown", "unknown");
+        }
+        const [prefix, _] = v.split(";");
+        const [ptype, psubtype] = prefix.trim().split("/");
+        return new MediaType(ptype.toLowerCase(), psubtype?.toLowerCase());
+    }
+}
+
+
 /**
  * @typedef {Int8Array| Uint8Array| Uint8ClampedArray| Int16Array| Uint16Array| Int32Array| Uint32Array| Float32Array| Float64Array| BigInt64Array| BigUint64Array} TypedArray
  */
@@ -40,18 +72,32 @@ class HttpClientError extends Failure {
      * @returns an HttpClientError
      */
     static async fromResponse(response) {
-        const text = await response.text();
-        const message = `${response.status} ${response.statusText}: ${text}`;
-        const fallback = [{
-            type: "GENERIC_PROBLEM",
-            context: null,
-            reason: message,
-            details: null
-        }];
-        try {
-            return new HttpClientError(message, response.status, text ? JSON.parse(text) : fallback);
-        } catch (e) {
-            return new HttpClientError(message, response.status, fallback);
+        switch(MediaType.parse(response.headers.get("Content-Type")).normalized){
+            case 'application/failures+json': {
+                const data = await response.json();
+                const message = `${response.status} ${response.statusText}: ${data.length} failures`;
+                return new HttpClientError(message, response.status, data);
+            }
+            case 'application/problem+json': {
+                const data = await response.json();
+                const message = `${response.status} ${response.statusText}: ${data.title} ${data.detail}`;
+                return new HttpClientError(message, response.status, data.problems || [{
+                    type: "GENERIC_PROBLEM",
+                    context: null,
+                    reason: message,
+                    details: null
+                }]);
+            }
+            default: {
+                const text = await response.text();
+                const message = `${response.status} ${response.statusText}: ${text}`;
+                return new HttpClientError(message, response.status, [{
+                    type: "GENERIC_PROBLEM",
+                    context: null,
+                    reason: message,
+                    details: null
+                }]);
+            }
         }
     }
 }
@@ -64,9 +110,9 @@ class CsrfTokenInterceptor {
     constructor() {
         this.#k = document.querySelector("meta[name='_csrf_header']")?.getAttribute("content");
         this.#v = document.querySelector("meta[name='_csrf']")?.getAttribute("content");
-    } 
+    }
     async intercept(request, chain) {
-        if(this.#k && this.#v) {
+        if (this.#k && this.#v) {
             request.headers.set(this.#k, this.#v);
         }
         return await chain.proceed(request);
@@ -502,7 +548,7 @@ class HttpMultipartRequestCustomizer {
      * 
      * @param {FormData} formData 
      */
-    constructor(formData){
+    constructor(formData) {
         this.#formData = formData;
     }
     /**
@@ -511,7 +557,7 @@ class HttpMultipartRequestCustomizer {
      * @param {*} value 
      * @returns this builder
      */
-    field(name, value){
+    field(name, value) {
         this.#formData.append(name, value);
         return this;
     }
@@ -525,10 +571,10 @@ class HttpMultipartRequestCustomizer {
      * @param {string|undefined} filename 
      * @returns this builder
      */
-    blob(name, value, filename){
+    blob(name, value, filename) {
         this.#formData.append(name, value, filename);
         return this;
-    }    
+    }
     /**
      * Appends multiple Blobs to the FormData with the same name. 
      * The default filename for Blob objects is "blob"; 
@@ -536,13 +582,13 @@ class HttpMultipartRequestCustomizer {
      * @param {string} name 
      * @param {Blob[]} values
      * @returns this builder
-     */    
-    blobs(name, values){
-        for(let v of values){
+     */
+    blobs(name, values) {
+        for (let v of values) {
             this.#formData.append(name, v);
         }
         return this;
-    }    
+    }
     /**
      * Appends a JSON serialized blob to the FormData.
      * @param {string} name 
@@ -550,12 +596,12 @@ class HttpMultipartRequestCustomizer {
      * @param {string|undefined} filename 
      * @returns this builder
      */
-    json(name, value, filename){
-        const blob = new Blob([JSON.stringify(value)], {type: 'application/json'});
+    json(name, value, filename) {
+        const blob = new Blob([JSON.stringify(value)], { type: 'application/json' });
         this.#formData.append(name, blob, filename);
         return this;
     }
 }
 
 
-export { HttpClient, HttpClientError };
+export { MediaType, HttpClient, HttpClientError };
