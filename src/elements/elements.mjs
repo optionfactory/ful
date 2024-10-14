@@ -350,10 +350,10 @@ const ParsedElement = (conf) => {
             enumerable: true,
             configurable: true,
             get() {
-                return this.internals.states.has(`--${attr}`);
+                return this.internals.states ? this.internals.states.has(`--${attr}`) : this.hasAttribute(attr);
             },
             set(value) {
-                this.internals.states[value ? 'add' : 'delete'](`--${attr}`);
+                this.internals.states?.[value ? 'add' : 'delete'](`--${attr}`);
                 this.reflect(() => Attributes.toggle(this, attr, value));
             }
         });
