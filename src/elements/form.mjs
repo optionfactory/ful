@@ -85,15 +85,23 @@ class Form extends ParsedElement() {
                 await this.submitter?.(this.values, this);
             });
         })
+        if(this.hasAttribute("clear-invalid-on-change")){
+            this.addEventListener('change', evt => {
+                const target = /** @type HTMLElement */ (evt.target);
+                target?.querySelectorAll(`.${CSS.escape(Form.INVALID_CLASS)}`).forEach(el => {
+                    el.classList.remove(Form.INVALID_CLASS);
+                });        
+            });
+        }
         this.replaceChildren(form);
     }
     spinner(spin) {
         this.querySelectorAll('ful-spinner').forEach(el => {
-            const hel = /** @type HTMLElement} */ (el);
+            const hel = /** @type HTMLElement */ (el);
             hel.hidden = !spin;
         })
         this.querySelectorAll('[type=submit],[type=reset]').forEach(el => {
-            const hel = /** @type HTMLButtonElement} */ (el);
+            const hel = /** @type HTMLButtonElement */ (el);
             hel.disabled = spin
         })
     }
