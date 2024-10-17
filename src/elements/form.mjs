@@ -1,5 +1,5 @@
 import { Failure } from "../failure.mjs";
-import { ParsedElement } from "./elements.mjs"
+import { ParsedElement, Attributes } from "./elements.mjs"
 
 function flatten(obj, prefix) {
     return Object.keys(obj).reduce((acc, k) => {
@@ -78,6 +78,7 @@ class Form extends ParsedElement() {
     submitter;
     render() {
         const form = document.createElement('form');
+        Attributes.forward('form-', this, form);
         form.replaceChildren(...this.childNodes);
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
