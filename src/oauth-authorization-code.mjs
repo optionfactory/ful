@@ -43,9 +43,10 @@ class AuthorizationCodeFlow {
     async registration(additionalParams){
         await this.action(this.uri.registration, additionalParams);
     }
-    async applicationInitiatedAction(kcAction){
+    async applicationInitiatedAction(kcAction, additionalParams){
         await this.action(this.uri.auth, {
-            kc_action: kcAction
+            ...additionalParams,
+            kc_action: kcAction,
         });
     }
     async #tokenExchange(code, state) {
