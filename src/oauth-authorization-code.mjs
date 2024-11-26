@@ -104,6 +104,7 @@ class AuthorizationCodeFlowSession {
     constructor(clientId, t, {token, logout, redirect}) {
         this.clientId = clientId;
         this.token = t;
+        this.idToken = AuthorizationCodeFlowSession.parseToken(t.id_token);
         this.accessToken = AuthorizationCodeFlowSession.parseToken(t.access_token);
         this.refreshToken = AuthorizationCodeFlowSession.parseToken(t.refresh_token);
         this.uri = { token, logout, redirect }
@@ -130,6 +131,7 @@ class AuthorizationCodeFlowSession {
         }
         const token = await response.json();
         this.token = token;
+        this.idToken = AuthorizationCodeFlowSession.parseToken(token.id_token);
         this.accessToken = AuthorizationCodeFlowSession.parseToken(token.access_token);
         this.refreshToken = AuthorizationCodeFlowSession.parseToken(token.refresh_token);
         if (this.refreshCallback) {
