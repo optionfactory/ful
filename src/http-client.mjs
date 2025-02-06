@@ -7,7 +7,7 @@ class MediaType {
         this.#type = type;
         this.#subtype = subtype;
     }
-    get normalized(){
+    get normalized() {
         return `${this.#type}/${this.#subtype}`;
     }
     get type() {
@@ -72,7 +72,7 @@ class HttpClientError extends Failure {
      * @returns an HttpClientError
      */
     static async fromResponse(response) {
-        switch(MediaType.parse(response.headers.get("Content-Type")).normalized){
+        switch (MediaType.parse(response.headers.get("Content-Type")).normalized) {
             case 'application/failures+json': {
                 const data = await response.json();
                 const message = `${response.status} ${response.statusText}: ${data.length} failures`;
@@ -351,45 +351,61 @@ class HttpRequestBuilder {
         this.#interceptors = interceptors;
     }
     /**
-     * Add all passed headers to the request, overriding existing ones if that key already exists.
+     * Add all passed headers to the request, overriding existing ones if that key already exists. Null and undefined values cause the key to be removed.
      * @param {HeadersInit} hs 
      * @returns {HttpRequestBuilder} this builder
      */
     headers(hs) {
         for (const [k, v] of new Headers(hs).entries()) {
-            this.#headers.set(k, v);
+            if (v === null || v === undefined) {
+                this.#headers.delete(k);
+            } else {
+                this.#headers.set(k, v);
+            }    
         }
         return this;
     }
     /**
-     * Adds an header to the request, overriding it if it already exists.
+     * Adds an header to the request, overriding it if it already exists. Null and undefined values cause the key to be removed
      * @param {string} k 
      * @param {string} v 
      * @returns {HttpRequestBuilder} this builder
      */
     header(k, v) {
-        this.#headers.set(k, v);
+        if (v === null || v === undefined) {
+            this.#headers.delete(k);
+        } else {
+            this.#headers.set(k, v);
+        }
         return this;
     }
     /**
-     * Add all query parameters to the request, overriding existing ones if that key already exists.
+     * Add all query parameters to the request, overriding existing ones if that key already exists. Null and undefined values cause the key to be removed
      * @param {URLSearchParams|Record<string,string>|string[][]|string} ps 
      * @returns {HttpRequestBuilder} this builder
      */
     params(ps) {
         for (const [k, v] of new URLSearchParams(ps).entries()) {
-            this.#params.set(k, v);
+            if (v === null || v === undefined) {
+                this.#params.delete(k);
+            } else {
+                this.#params.set(k, v);
+            }
         }
         return this;
     }
     /**
-     * Adds a query parameter to the request, overriding it if it already exists.
+     * Adds a query parameter to the request, overriding it if it already exists. Null and undefined values cause the key to be removed.
      * @param {string} k 
      * @param {string} v 
      * @returns {HttpRequestBuilder} this builder
      */
     param(k, v) {
-        this.#params.set(k, v);
+        if (v === null || v === undefined) {
+            this.#params.delete(k);
+        } else {
+            this.#params.set(k, v);
+        }
         return this;
     }
     /**
