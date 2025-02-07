@@ -115,8 +115,7 @@ class LightSlots {
      */
     static from(el) {
         /** @type [string, Element][] */
-        const namedSlots = Array.from(el.childNodes)
-            .filter(el => el instanceof Element)
+        const namedSlots = Array.from(el.children)
             .filter(el => el.matches('[slot]'))
             .map(el => {
                 el.remove();
@@ -145,6 +144,23 @@ class Nodes {
             }
         }
         return false;
+    }
+    static queryChildren(node, selector) {
+        for (const c of node.children) {
+            if (c.matches(selector)) {
+                return c;
+            }
+        }
+        return null;
+    }
+    queryChildrenAll(node, selector) {
+        const r = [];
+        for (const c of node.children) {
+            if (c.matches(selector)) {
+                r.push(c);
+            }
+        }
+        return r;
     }
 }
 
