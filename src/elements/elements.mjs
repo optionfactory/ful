@@ -138,7 +138,7 @@ class LightSlots {
 
 class Nodes {
     static isParsed(el) {
-        for (var c = el; c; c = c.parentNode) {
+        for (let c = el; c; c = c.parentNode) {
             if (c.nextSibling) {
                 return true;
             }
@@ -153,7 +153,7 @@ class Nodes {
         }
         return null;
     }
-    queryChildrenAll(node, selector) {
+    static queryChildrenAll(node, selector) {
         const r = [];
         for (const c of node.children) {
             if (c.matches(selector)) {
