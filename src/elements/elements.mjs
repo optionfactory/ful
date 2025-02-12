@@ -165,34 +165,26 @@ class Nodes {
 }
 
 class TemplatesRegistry {
-    #idToFragment = {};
     #idToTemplate = {};
-    #ec;
+    #modules;
+    #data;
     put(k, fragment) {
-        if (this.#ec) {
-            // @ts-ignore
-            this.#idToTemplate[k] = ftl.Template.fromFragment(fragment, this.#ec);
-            return;
-        }
-        this.#idToFragment[k] = fragment;
+        // @ts-ignore
+        this.#idToTemplate[k] = ftl.Template.fromFragment(fragment);
     }
     get(k) {
-        if (!this.#ec) {
+        if (!this.#data) {
             throw new Error("TemplatesRegistry is not configured");
         }
         const tpl = this.#idToTemplate[k];
         if (!tpl) {
             throw new Error(`missing template: '${k}'`);
         }
-        return tpl;
+        return tpl.withData(this.#data).withModules(this.#modules);
     }
-    configure(ec, ...data) {
-        this.#ec = ec;
-        for (const [k, fragment] of Object.entries(this.#idToFragment)) {
-            delete this.#idToFragment[k];
-            // @ts-ignore
-            this.#idToTemplate[k] = ftl.Template.fromFragment(fragment, ec, ...data);
-        }
+    configure(modules, ...data) {
+        this.#modules = modules;
+        this.#data = data;
     }
 }
 
@@ -222,8 +214,8 @@ class ElementsRegistry {
         customElements.define(tag, klass);
         return this;
     }
-    configure(ec, ...data) {
-        this.#templates.configure(ec, ...data);
+    configure(modules, ...data) {
+        this.#templates.configure(modules, ...data);
         for (const [tag, klass] of Object.entries(this.#tagToclass)) {
             customElements.define(tag, klass);
             delete this.#tagToclass[tag];
@@ -269,7 +261,7 @@ const mappers = {
 };
 
 const ParsedElement = (conf) => {
-    const { observed, template, slots } = conf ?? {};
+    const { observed, template, templates, slots } = conf ?? {};
 
     const attrsAndTypes = (observed ?? []).map(a => {
         const [attr, maybeType] = a.split(":");
@@ -281,28 +273,27 @@ const ParsedElement = (conf) => {
     });
 
     const attrsAndMappers = attrsAndTypes.map(([attr, type]) => [attr, mappers[type]]);
-
     const attrToMapper = Object.fromEntries(attrsAndMappers);
 
-    const templateId = elements.defineTemplate(template);
+    const templateNamesAndIds = Object.entries(Object.assign({}, templates, {default: template}) ?? {}).map(([k, v]) => [k, elements.defineTemplate(v)]);
+    const templateNameToId = Object.fromEntries(templateNamesAndIds);
 
     const k = class extends HTMLElement {
         static get observedAttributes() {
             return Object.keys(attrToMapper);
         }
         #parsed;
-        #initialized;
         #reflecting;
         #internals;
         constructor() {
             super();
             this.#internals = this.attachInternals();
         }
-        get initialized() {
-            return this.#initialized;
-        }
         get internals() {
             return this.#internals;
+        }
+        template(name){
+            return elements.template(templateNameToId[name ?? 'default']);
         }
         connectedCallback() {
             if (this.#parsed) {
@@ -349,15 +340,20 @@ const ParsedElement = (conf) => {
                 return;
             }
             this.#parsed = true;
+
+            const ovalues = attrsAndMappers.map(([attribute,mapper]) => [attribute, mapper(this.getAttribute(attribute))]);
+
             // @ts-ignore
-            await this.render(elements.template(templateId), slots ? LightSlots.from(this) : undefined);
+            await this.render({
+                slots: slots ? LightSlots.from(this) : undefined,
+                observed: Object.fromEntries(ovalues),
+            });
 
             for (const [attr, mapper] of attrsAndMappers) {
                 if (this.hasAttribute(attr)) {
                     this[attr] = mapper(this.getAttribute(attr));
                 }
             }
-            this.#initialized = true;
         }
     };
 

@@ -38,7 +38,7 @@ const makeInputFragment = (el, template, slots) => {
     Attributes.defaultValue(slots.input, "type", "text");
     Attributes.defaultValue(slots.input, "placeholder", " ");
     const name = el.getAttribute('name');
-    return template.render(el, { id, name, slots });
+    return template.withOverlay(el, { id, name, slots }).render();
 }
 
 class Input extends ParsedElement({
@@ -47,8 +47,8 @@ class Input extends ParsedElement({
     template: INPUT_TEMPLATE
 }){
     input;
-    render(template, slots) {
-        const fragment = makeInputFragment(this, template, slots);
+    render({slots}) {
+        const fragment = makeInputFragment(this, this.template(), slots);
         this.replaceChildren(fragment);
     }
     get value() {

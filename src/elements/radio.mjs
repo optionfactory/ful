@@ -26,7 +26,7 @@ class RadioGroup extends ParsedElement({
         </fieldset>
     `
 }) {
-    render(template, slots) {
+    render({slots}) {
         const name = this.getAttribute('name') ?? Attributes.uid('ful-radiogroup');
         const radioEls = Array.from(slots.default.querySelectorAll('ful-radio'));
         const inputsAndLabels = radioEls.map(el => {
@@ -53,7 +53,7 @@ class RadioGroup extends ParsedElement({
         });
 
         radioEls.forEach(el => el.remove());
-        template.renderTo(this, { name, slots, inputsAndLabels });
+        this.template().withOverlay({ name, slots, inputsAndLabels }).renderTo(this);
     }
     get value() {
         /** @type {HTMLInputElement|null} */

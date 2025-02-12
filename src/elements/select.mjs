@@ -29,7 +29,7 @@ class Select extends ParsedElement({
         super();
         this.tsConfig = tsConfig;
     }
-    render(template, slots) {
+    render({slots}) {
         const type = this.getAttribute("type") ?? 'local';
         const remote = type != 'local';
         const loadOnce = this.getAttribute('load') != 'always';
@@ -96,7 +96,7 @@ class Select extends ParsedElement({
             evt.stopPropagation();
         });
         input.remove();
-        template.renderTo(this, { id, tsId, name, input, slots });
+        this.template().withOverlay({ id, tsId, name, input, slots }).renderTo(this);
     }
     #loader;
     set loader(l) {

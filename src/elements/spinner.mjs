@@ -9,8 +9,8 @@ class Spinner extends ParsedElement({
         </div>
     `
 }) {
-    render(template, slots) {
-        template.renderTo(this, { slots });
+    render({slots}) {
+        this.template().withOverlay({ slots }).renderTo(this);
     }
 }
 
