@@ -23,6 +23,10 @@
         "test": "mocha --recursive -R spec",
         "build": "npx rollup --config rollup.conf.mjs"
     },
+    "dependencies": {
+        "@optionfactory/ftl": "^1.0.0",
+        "tom-select": "^2.4.3"
+    },
     "devDependencies": {
         "@rollup/plugin-node-resolve": "^16.0.0",
         "jsdom": "^26.0.0",

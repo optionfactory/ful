@@ -1,5 +1,5 @@
 import { Fragments, Attributes, ParsedElement } from "./elements.mjs"
-
+import TomSelect  from "tom-select";
 /**
  * <script src="tom-select.complete.js"></script>
  * <link href="tom-select.bootstrap5.css" rel="stylesheet" />
@@ -76,7 +76,6 @@ class Select extends ParsedElement({
             }
             callback(data);
         };
-        // @ts-ignore
         this.ts = new TomSelect(input, Object.assign(remote ? {
             preload: 'focus',
             load: this._unwrappedRemoteLoad,

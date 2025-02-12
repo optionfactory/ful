@@ -1,3 +1,5 @@
+import { Template } from "@optionfactory/ftl"
+
 class Fragments {
     /**
      * 
@@ -169,8 +171,7 @@ class TemplatesRegistry {
     #modules;
     #data;
     put(k, fragment) {
-        // @ts-ignore
-        this.#idToTemplate[k] = ftl.Template.fromFragment(fragment);
+        this.#idToTemplate[k] = Template.fromFragment(fragment);
     }
     get(k) {
         if (!this.#data) {

@@ -22,6 +22,7 @@ export default [{
     ]
 }, {
     input: 'src/index.mjs',
+    external: ['@optionfactory/ftl', 'tom-select'],
     output: [{
         sourcemap: true,
         file: 'dist/ful.min.mjs',
@@ -38,6 +39,10 @@ export default [{
         file: 'dist/ful.iife.min.js',
         name: 'ful',
         format: 'iife',
+        globals: {
+            '@optionfactory/ftl': 'ftl',
+            'tom-select': 'TomSelect'
+        },
         plugins: [
             terser()
         ]
@@ -45,7 +50,11 @@ export default [{
         sourcemap: true,
         file: 'dist/ful.iife.js',
         name: 'ful',
-        format: 'iife'
+        format: 'iife',
+        globals: {
+            '@optionfactory/ftl': 'ftl',
+            'tom-select': 'TomSelect'
+        },
     }],
     treeshake: true,
     plugins: [
