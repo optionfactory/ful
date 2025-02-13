@@ -126,7 +126,7 @@ const ParsedElement = (conf) => {
                 observer.disconnect();
                 upgradeQueue.enqueue(this);
             });
-            const parent = /** @type {!Node} */ (this.parentNode);
+            const parent = /** @type {Node} */ (this.parentNode);
             observer.observe(parent, { childList: true, subtree: true });
         }
         attributeChangedCallback(attr, oldValue, newValue) {

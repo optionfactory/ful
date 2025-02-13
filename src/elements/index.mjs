@@ -1,3 +1,4 @@
+export { Bindings } from "./bindings.mjs";
 export { Fragments, Attributes, LightSlots, Nodes } from "./dom.mjs";
 export { ElementsRegistry, elements, ParsedElement } from "./elements.mjs";
 export { Form } from "./form.mjs";

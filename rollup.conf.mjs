@@ -41,7 +41,7 @@ export default [{
         format: 'iife',
         globals: {
             '@optionfactory/ftl': 'ftl',
-            'tom-select': 'TomSelect'
+            'tom-select': 'window?.TomSelect || {}'
         },
         plugins: [
             terser()
@@ -53,7 +53,7 @@ export default [{
         format: 'iife',
         globals: {
             '@optionfactory/ftl': 'ftl',
-            'tom-select': 'TomSelect'
+            'tom-select': 'window?.TomSelect || {}'
         },
     }],
     treeshake: true,
