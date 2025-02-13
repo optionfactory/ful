@@ -1,5 +1,6 @@
 import { Failure } from "../failure.mjs";
-import { ParsedElement, Attributes } from "./elements.mjs"
+import { Attributes } from "./dom.mjs"
+import { ParsedElement } from "./elements.mjs"
 
 function flatten(obj, prefix) {
     return Object.keys(obj).reduce((acc, k) => {
@@ -53,8 +54,8 @@ function extract(el) {
     if (el.dataset['fulBindType'] === 'boolean') {
         return !el.value ? null : el.value === 'true';
     }
-    if (el.tagName === 'INPUT' || el.tagName === 'SELECT'){
-        return el.value === '' || el.value === undefined ? null : el.value;    
+    if (el.tagName === 'INPUT' || el.tagName === 'SELECT') {
+        return el.value === '' || el.value === undefined ? null : el.value;
     }
     return el.value;
 }
@@ -86,12 +87,12 @@ class Form extends ParsedElement() {
                 await this.submitter?.(this.values, this);
             });
         })
-        if(this.hasAttribute("clear-invalid-on-change")){
+        if (this.hasAttribute("clear-invalid-on-change")) {
             this.addEventListener('change', evt => {
                 const target = /** @type HTMLElement */ (evt.target);
                 target?.querySelectorAll(`.${CSS.escape(Form.INVALID_CLASS)}`).forEach(el => {
                     el.classList.remove(Form.INVALID_CLASS);
-                });        
+                });
             });
         }
         this.replaceChildren(form);
@@ -120,7 +121,7 @@ class Form extends ParsedElement() {
         this.spinner(true)
         try {
             await this.remoting(fn);
-        } catch(e) {
+        } catch (e) {
             this.spinner(false);
             throw e;
         }
@@ -139,7 +140,7 @@ class Form extends ParsedElement() {
         }
     }
     get values() {
-        return Array.from(/** @type {NodeListOf<HTMLElement>} */ (this.querySelectorAll('[name]')))
+        return Array.from(/** @type {NodeListOf<HTMLElement>} */(this.querySelectorAll('[name]')))
             .filter(el => {
                 if (el.dataset['fulBindInclude'] === 'never') {
                     return false;

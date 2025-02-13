@@ -1,7 +1,8 @@
-import { Attributes, Fragments, ParsedElement } from "./elements.mjs"
+import { Attributes, Fragments } from "./dom.mjs"
+import { ParsedElement } from "./elements.mjs"
 
 class RadioGroup extends ParsedElement({
-    observed: ['value', 'disabled:state'],
+    observed: ['value', 'disabled:presence'],
     slots: true,
     template: `
         <fieldset ful-validated-field>
@@ -55,6 +56,12 @@ class RadioGroup extends ParsedElement({
         radioEls.forEach(el => el.remove());
         this.template().withOverlay({ name, slots, inputsAndLabels }).renderTo(this);
     }
+    get disabled() {
+        return this.hasAttribute('disabled');
+    }
+    set disabled(value) {
+        this.reflect(() => Attributes.toggle(this, 'disabled', value));
+    }    
     get value() {
         /** @type {HTMLInputElement|null} */
         const checked = this.querySelector('input[type=radio]:checked');
@@ -62,10 +69,8 @@ class RadioGroup extends ParsedElement({
     }
     set value(value) {
         if (value === null) {
-            /** @type {HTMLInputElement[]} */
             this.querySelectorAll(`input[type=radio]`).forEach(el => {
-                // @ts-ignore
-                el.checked = false
+                (/** @type {HTMLInputElement} */(el)).checked = false
             });
             return;
         }

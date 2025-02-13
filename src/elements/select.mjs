@@ -1,4 +1,5 @@
-import { Fragments, Attributes, ParsedElement } from "./elements.mjs"
+import { Fragments, Attributes } from "./dom.mjs"
+import { ParsedElement } from "./elements.mjs"
 import TomSelect  from "tom-select";
 /**
  * <script src="tom-select.complete.js"></script>
@@ -25,6 +26,7 @@ class Select extends ParsedElement({
 }) {
     shouldLoad;
     _unwrappedRemoteLoad;
+    ts;
     constructor(tsConfig) {
         super();
         this.tsConfig = tsConfig;

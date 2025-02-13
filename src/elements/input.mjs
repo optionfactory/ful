@@ -1,4 +1,5 @@
-import { Attributes, ParsedElement } from "./elements.mjs"
+import { Attributes  } from "./dom.mjs"
+import { ParsedElement } from "./elements.mjs"
 
 
 const INPUT_TEMPLATE = `
