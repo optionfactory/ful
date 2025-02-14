@@ -1,5 +1,4 @@
-import { Fragments, Attributes } from "./dom.mjs"
-import { ParsedElement } from "./elements.mjs"
+import { Fragments, Attributes, ParsedElement } from "@optionfactory/ftl"
 import TomSelect  from "tom-select";
 /**
  * <script src="tom-select.complete.js"></script>

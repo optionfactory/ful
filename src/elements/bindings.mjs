@@ -89,6 +89,20 @@ class Bindings {
         }
         el.value = raw;
     }
+
+    static values(root, ignoredChildrenSelector){
+        const result = {};
+        for(const el of /** @type {NodeListOf<HTMLElement>} */(root.querySelectorAll('[name]'))){
+            if (el.dataset['fulBindInclude'] === 'never') {
+                continue;
+            }
+            if(ignoredChildrenSelector && el.dataset['fulBindInclude'] !== 'always' && el.closest(ignoredChildrenSelector) !== null){
+                continue;
+            }
+            Bindings.providePath(result, /** @type {string} */(el.getAttribute('name')), Bindings.extract(el))
+        }
+        return result;
+    }
 }
 
 

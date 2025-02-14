@@ -1,5 +1,4 @@
-import { Attributes, Fragments } from "./dom.mjs"
-import { ParsedElement } from "./elements.mjs"
+import { Attributes, Fragments, ParsedElement  } from "@optionfactory/ftl"
 
 class RadioGroup extends ParsedElement({
     observed: ['value', 'disabled:presence'],

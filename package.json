@@ -1,8 +1,12 @@
 {
     "name": "@optionfactory/ful",
     "version": "1.0.0-dev.0",
-    "main": "./dist/ful.iife.js",
-    "module": "./dist/ful.mjs",
+    "main": "dist/ful.iife.js",
+    "module": "dist/ful.mjs",
+    "exports": {
+        "import": "./dist/ful.mjs",
+        "require": "./dist/ful.iife.js"
+    },
     "files": [
         "dist/**"
     ],
@@ -11,7 +15,9 @@
     },
     "keywords": [
         "ui",
-        "browser"
+        "browser",
+        "webcomponents",
+        "httpclient"
     ],
     "license": "MIT",
     "author": "rferranti",
@@ -20,17 +26,16 @@
         "check": "tsc --project ./jsconfig.json",
         "clean": "rimraf dist && npm prune",
         "initialize": "npm install",
-        "test": "mocha --recursive -R spec",
+        "test": "node --test --experimental-test-coverage --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=test/lcov.info",
         "build": "npx rollup --config rollup.conf.mjs"
     },
     "dependencies": {
-        "@optionfactory/ftl": "^1.0.1",
+        "@optionfactory/ftl": "^1.0.3",
         "tom-select": "^2.4.3"
     },
     "devDependencies": {
         "@rollup/plugin-node-resolve": "^16.0.0",
         "jsdom": "^26.0.0",
-        "mocha": "^11.1.0",
         "rollup-plugin-postcss": "^4.0.2",
         "@rollup/plugin-terser": "^0.4.4",
         "sass": "^1.69.0",

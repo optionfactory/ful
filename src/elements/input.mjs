@@ -1,6 +1,4 @@
-import { Attributes  } from "./dom.mjs"
-import { ParsedElement } from "./elements.mjs"
-
+import { Attributes, ParsedElement  } from "@optionfactory/ftl"
 
 const INPUT_TEMPLATE = `
 <div ful-validated-field>
