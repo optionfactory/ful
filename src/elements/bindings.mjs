@@ -73,16 +73,29 @@ class Bindings {
         return el.value;
     }
 
+    /**
+     * Extracts all values from a root element.
+     * null values are extracted as null.
+     * undefined values are not extracted.
+     * @param {Element} root 
+     * @param {string} ignoredChildrenSelector 
+     * @returns 
+     */
     static extractFrom(root, ignoredChildrenSelector){
         let result = {};
         for(const el of /** @type {NodeListOf<HTMLElement>} */(root.querySelectorAll('[name]'))){
-            if (el.dataset['fulBindInclude'] === 'never') {
+            if (el.dataset.fulBindInclude === 'never') {
                 continue;
             }
-            if(ignoredChildrenSelector && el.dataset['fulBindInclude'] !== 'always' && el.closest(ignoredChildrenSelector) !== null){
+            if(ignoredChildrenSelector && el.dataset.fulBindInclude !== 'always' && el.closest(ignoredChildrenSelector) !== null){
                 continue;
             }
-            result = Bindings.providePath(result, /** @type {string} */(el.getAttribute('name')), Bindings.extract(el))
+            const value = Bindings.extract(el);
+            if(value === undefined){
+                continue;
+            } 
+            const name = /** @type {string} */(el.getAttribute('name'));
+            result = Bindings.providePath(result, name, value);
         }
         return result;
     }
