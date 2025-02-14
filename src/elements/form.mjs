@@ -65,21 +65,10 @@ class Form extends ParsedElement() {
         }
     }
     set values(vs) {
-        for (const [flattenedKey, value] of Object.entries(Bindings.flatten(vs, ''))) {
-            this.querySelectorAll(`[name='${CSS.escape(flattenedKey)}']`).forEach(el => Bindings.mutate(el, value));
-        }
+        Bindings.mutateIn(this, vs);
     }
     get values() {
-        return Array.from(/** @type {NodeListOf<HTMLElement>} */(this.querySelectorAll('[name]')))
-            .filter(el => {
-                if (el.dataset['fulBindInclude'] === 'never') {
-                    return false;
-                }
-                return el.dataset['fulBindInclude'] === 'always' || el.closest(Form.IGNORED_CHILDREN_SELECTOR) === null;
-            })
-            .reduce((result, el) => {
-                return Bindings.providePath(result, /** @type {string} */(el.getAttribute('name')), Bindings.extract(el));
-            }, {});
+        return Bindings.extractFrom(this, Form.IGNORED_CHILDREN_SELECTOR);
     }
     set errors(es) {
         const fieldErrors = es.filter(e => e.type === 'FIELD_ERROR' || e.type === 'INVALID_FORMAT');

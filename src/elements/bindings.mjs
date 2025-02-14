@@ -24,8 +24,8 @@ class Bindings {
      * @param {any} value
      */
     static providePath(result, path, value) {
-        const keys = path.split(".").map((k) => k.match(/^[0-9]+$/) ? +k : k);
-        let current = result;
+        const keys = path.split(".").map((k) => /^[0-9]+$/.test(k) ? +k : k);
+        let current = result ?? {};
         let previous = null;
         for (let i = 0; ; ++i) {
             const ckey = keys[i];
@@ -72,7 +72,21 @@ class Bindings {
         }
         return el.value;
     }
-    
+
+    static extractFrom(root, ignoredChildrenSelector){
+        let result = {};
+        for(const el of /** @type {NodeListOf<HTMLElement>} */(root.querySelectorAll('[name]'))){
+            if (el.dataset['fulBindInclude'] === 'never') {
+                continue;
+            }
+            if(ignoredChildrenSelector && el.dataset['fulBindInclude'] !== 'always' && el.closest(ignoredChildrenSelector) !== null){
+                continue;
+            }
+            result = Bindings.providePath(result, /** @type {string} */(el.getAttribute('name')), Bindings.extract(el))
+        }
+        return result;
+    }
+   
     /**
      * 
      * @param {Element  & {checked?: boolean} & {value?: any}} el 
@@ -90,18 +104,12 @@ class Bindings {
         el.value = raw;
     }
 
-    static values(root, ignoredChildrenSelector){
-        const result = {};
-        for(const el of /** @type {NodeListOf<HTMLElement>} */(root.querySelectorAll('[name]'))){
-            if (el.dataset['fulBindInclude'] === 'never') {
-                continue;
+    static mutateIn(root, values){
+        for (const [flattenedKey, value] of Object.entries(Bindings.flatten(values, ''))) {
+            for(const el of root.querySelectorAll(`[name='${CSS.escape(flattenedKey)}']`)){
+                Bindings.mutate(el, value)
             }
-            if(ignoredChildrenSelector && el.dataset['fulBindInclude'] !== 'always' && el.closest(ignoredChildrenSelector) !== null){
-                continue;
-            }
-            Bindings.providePath(result, /** @type {string} */(el.getAttribute('name')), Bindings.extract(el))
         }
-        return result;
     }
 }
 
