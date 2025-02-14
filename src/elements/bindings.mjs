@@ -111,6 +111,36 @@ class Bindings {
             }
         }
     }
+
+
+    static errors(root, es, invalidClass){
+        const fieldErrors = es.filter(e => e.type === 'FIELD_ERROR' || e.type === 'INVALID_FORMAT');
+        const globalErrors = es.filter(e => e.type !== 'FIELD_ERROR' && e.type !== 'INVALID_FORMAT');
+        root.querySelectorAll(`.${CSS.escape(invalidClass)}`).forEach(el => el.classList.remove(invalidClass));
+        root.querySelectorAll("ful-errors").forEach(el => {
+            el.replaceChildren();
+            el.setAttribute('hidden', '');
+        });
+        fieldErrors.forEach(e => {
+            const name = e.context.replace("[", ".").replace("].", ".");
+            const validationTargetsSelector = `[name='${CSS.escape(name)}'] [ful-validation-target],[name='${CSS.escape(name)}']:not(:has([ful-validation-target]))`;
+            root.querySelectorAll(validationTargetsSelector).forEach(input => input.classList.add(invalidClass));
+            const fieldErrorsSelector = `ful-field-error[field='${CSS.escape(name)}']`;
+            root.querySelectorAll(fieldErrorsSelector).forEach(el => {
+                const hel = /** @type HTMLElement} */ (el);
+                hel.innerText = e.reason
+            });
+        });
+        root.querySelectorAll("ful-errors").forEach(el => {
+            const hel = /** @type HTMLElement} */ (el);
+            hel.innerText = globalErrors.map(e => e.reason).join("\n");
+            if (globalErrors.length !== 0) {
+                el.removeAttribute('hidden');
+            }
+        });
+
+
+    }
 }
 
 

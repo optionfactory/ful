@@ -71,31 +71,8 @@ class Form extends ParsedElement() {
         return Bindings.extractFrom(this, Form.IGNORED_CHILDREN_SELECTOR);
     }
     set errors(es) {
-        const fieldErrors = es.filter(e => e.type === 'FIELD_ERROR' || e.type === 'INVALID_FORMAT');
-        const globalErrors = es.filter(e => e.type !== 'FIELD_ERROR' && e.type !== 'INVALID_FORMAT');
-        this.querySelectorAll(`.${Form.INVALID_CLASS}`).forEach(el => el.classList.remove(Form.INVALID_CLASS));
-        this.querySelectorAll("ful-errors").forEach(el => {
-            el.replaceChildren();
-            el.setAttribute('hidden', '');
-        });
-        fieldErrors.forEach(e => {
-            const name = e.context.replace("[", ".").replace("].", ".");
-            const validationTargetsSelector = `[name='${CSS.escape(name)}'] [ful-validation-target],[name='${CSS.escape(name)}']:not(:has([ful-validation-target]))`;
-            this.querySelectorAll(validationTargetsSelector).forEach(input => input.classList.add(Form.INVALID_CLASS));
-            const fieldErrorsSelector = `ful-field-error[field='${CSS.escape(name)}']`;
-            this.querySelectorAll(fieldErrorsSelector).forEach(el => {
-                const hel = /** @type HTMLElement} */ (el);
-                hel.innerText = e.reason
-            });
-        });
-        this.querySelectorAll("ful-errors").forEach(el => {
-            const hel = /** @type HTMLElement} */ (el);
-            hel.innerText = globalErrors.map(e => e.reason).join("\n");
-            if (globalErrors.length !== 0) {
-                el.removeAttribute('hidden');
-            }
-        });
-        if (!this.hasAttribute('scroll-on-error')) {
+        Bindings.errors(this, es, Form.INVALID_CLASS);
+        if (es.length == 0 || !this.hasAttribute('scroll-on-error')) {
             return;
         }
         const ys = Array.from(this.querySelectorAll(`ful-errors:not([hidden]), [ful-validated-field]:has(.${Form.INVALID_CLASS}) ful-field-error`))
