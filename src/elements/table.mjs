@@ -69,7 +69,7 @@ class Pagination extends ParsedElement({
     render({ observed }) {
         this.#paginationLabel = this.hasAttribute('pagination-label');
         this.update(observed.current ?? 0, observed.total ?? 0);
-        this.addEventListener('click', (evt) => {
+        this.addEventListener('click', (/** @type any */evt) => {
             const el = evt.target.closest('a');
             if (!el) {
                 return;
@@ -263,7 +263,7 @@ class Table extends ParsedElement({
         await Nodes.waitForUpgrades();
         const orderFromSchema = schema.find(v => v.order);
 
-        const maybeForm = /** @type Form */(Nodes.queryChildren(this, 'ful-form'));
+        const maybeForm = /** @type any */(Nodes.queryChildren(this, 'ful-form'));
         this.#latestRequest = {
             pageRequest: {
                 page: 0,
@@ -280,13 +280,13 @@ class Table extends ParsedElement({
                 }, this.#latestRequest.sortRequest, filterRequest);
             }
         }
-        this.addEventListener('page-requested', async (e) => {
+        this.addEventListener('page-requested', async (/** @type any */e) => {
             await this.load({
                 page: e.detail.value,
                 size: this.#latestRequest.pageRequest.size
             }, this.#latestRequest.sortRequest, this.#latestRequest.filterRequest);
         });
-        this.addEventListener('sort-requested', async (e) => {
+        this.addEventListener('sort-requested', async (/** @type any */e) => {
             await this.load(this.#latestRequest.pageRequest, e.detail.value, this.#latestRequest.filterRequest);
             this.#sorters.forEach(s => s.order = null);
             e.target.order = e.detail.value.order;
@@ -308,7 +308,7 @@ class Table extends ParsedElement({
             const pageResponse = await this.remoting(pageRequest, sortRequest, filterRequest);
             this.#latestRequest = { pageRequest, sortRequest, filterRequest };
             this.update(pageRequest, sortRequest, filterRequest, pageResponse);
-        } catch (error) {
+        } catch (/** @type any */error) {
             this.#loading.setAttribute("hidden", "");
             this.#feedback.removeAttribute("hidden", "");
             if (!error.problems) {
@@ -322,6 +322,7 @@ class Table extends ParsedElement({
 
     async remoting(pageRequest, sortRequest, filterRequest) {
         const fre = Object.entries(filterRequest).filter(([k, v]) => v);
+        //@ts-ignore
         return await http.request(this.getAttribute("method") || "GET", this.getAttribute("src"))
             .param("page", pageRequest.page)
             .param("size", pageRequest.size)

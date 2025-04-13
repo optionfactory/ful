@@ -13,4 +13,5 @@ import "./spinner.css"
 
 export { SortButton, Table, TableSchemaParser, Pagination } from "./table.mjs";
 export { InstantFilter, TextFilter } from "./filters.mjs";
+import "./table.css"
 

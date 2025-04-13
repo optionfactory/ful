@@ -34,14 +34,15 @@ class InstantFilter extends ParsedElement({
         this.#value2 = fragment.querySelector('[data-ref=value2]');
         this.replaceChildren(fragment);
         this.addEventListener('click', (evt) => {
-            if (!evt.target.matches('ul > li > a')) {
+            const target = /** @type HTMLElement */ (evt.target);
+            if (!target.matches('ul > li > a')) {
                 return;
             }
-            const btn = evt.target.closest('ul').previousElementSibling;
-            const value = evt.target.getAttribute("value");
+            const btn = /** @type HTMLButtonElement */ (target.closest('ul')?.previousElementSibling);
+            const value = /** @type String */ (target.getAttribute("value"));
             Attributes.toggle(this.#value2, 'hidden', value !== 'BETWEEN');
             btn.setAttribute('value', value);
-            btn.innerHTML = evt.target.innerHTML;
+            btn.innerHTML = target.innerHTML;
         })
     }
 
@@ -51,6 +52,14 @@ class InstantFilter extends ParsedElement({
         return values.some(v => v === '') ? undefined : [operator, ...values.map(v => new Date(v).toISOString())];
     }
     set value(v) {
+        if(v === null || v === undefined){
+            this.#value1.value = '';
+            this.#value2.value = '';
+            this.reflect(() => {
+                this.removeAttribute('value');
+            });    
+            return;
+        }
         const [operator, ...values] = v;
         this.#operator.setAttribute('value', operator);
         this.#value1.value = values[0] ? InstantFilter.isoToLocal(values[0]) : values[0];
@@ -108,8 +117,8 @@ class TextFilter extends ParsedElement({
             if (!target.matches('ul > li > a')) {
                 return;
             }
-            const btn = target.closest('ul').previousElementSibling;
-            const value = target.getAttribute("value");
+            const btn = /** @type HTMLButtonElement */ (target.closest('ul')?.previousElementSibling);
+            const value = /** @type String */ (target.getAttribute("value"));
             btn.setAttribute('value', value);
             btn.innerHTML = target.innerHTML;
         })
@@ -121,6 +130,13 @@ class TextFilter extends ParsedElement({
     }
 
     set value(v) {
+        if(v === null || v === undefined){
+            this.#value.value = '';
+            this.reflect(() => {
+                this.removeAttribute('value');
+            });    
+            return;
+        }
         const [operator, sensitivity, value] = v;
         this.#operator.setAttribute('value', operator);
         this.#value.value = value;
