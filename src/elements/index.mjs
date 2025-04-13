@@ -8,6 +8,9 @@ export { Select } from "./select.mjs";
 import "./select.css"
 export { RadioGroup } from "./radio.mjs";
 import "./radio.css"
+export { Checkbox } from "./checkbox.mjs";
+import "./checkbox.css"
+
 export { Spinner } from "./spinner.mjs";
 import "./spinner.css"
 

@@ -13,8 +13,8 @@ class InstantFilter extends ParsedElement({
                     <li><a class="dropdown-item" role="button" value="GTE">≽</a></li>
                     <li><a class="dropdown-item" role="button" value="BETWEEN">↔</a></li>
                 </ul>
-                <input data-tpl-id="id" data-ref="value1" type="datetime-local" class="form-control" aria-label="asd">
-                <input data-ref="value2" type="datetime-local" class="form-control" aria-label="asd" hidden>
+                <input data-tpl-id="id" data-ref="value1" type="datetime-local" class="form-control" >
+                <input data-ref="value2" type="datetime-local" class="form-control"  hidden>
                 <span class="input-group-text"><i class="bi bi-search"></i></span>
             </div>
             <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>
@@ -94,7 +94,7 @@ class TextFilter extends ParsedElement({
                     <li><a class="dropdown-item" role="button" value="ENDS_WITH">…a</a></li>
                     <li><a class="dropdown-item" role="button" value="EQ">=</a></li>
                 </ul>
-                <input data-tpl-id="id" data-ref="value" type="text" class="form-control" aria-label="asd">
+                <input data-tpl-id="id" data-ref="value" type="text" class="form-control">
                 <span class="input-group-text"><i class="bi bi-search"></i></span>
 
             </div>
