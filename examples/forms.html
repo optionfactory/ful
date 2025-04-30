@@ -20,6 +20,7 @@
             .define('ful-radio-group', ful.RadioGroup)
             .define('ful-select', ful.Select)
             .define('ful-form', ful.Form)
+            .define('ful-checkbox', ful.Checkbox)
             .configure();
     </script>
 </head>
@@ -112,6 +113,14 @@
                     <ful-radio value="one">One</ful-radio>
                     <ful-radio value="two">Two</ful-radio>
                 </ful-radio-group>
+
+                <ful-checkbox name="checkbox.normal" class="mb-3">
+                    A checkbox
+                </ful-checkbox>
+
+                <ful-checkbox type="switch" name="checkbox.switch" class="mb-3">
+                    A switch
+                </ful-checkbox>
 
 
                 <ful-errors hidden></ful-errors>
@@ -224,6 +233,14 @@
                         type: 'FIELD_ERROR',
                         context: 'radio.horizontal',
                         reason: 'Horizontal radio validation error message'
+                    }, {
+                        type: 'FIELD_ERROR',
+                        context: 'checkbox.normal',
+                        reason: 'Checkbox validation error message'
+                    }, {
+                        type: 'FIELD_ERROR',
+                        context: 'checkbox.switch',
+                        reason: 'Switch validation error message'
                     }, {
                         type: 'GLOBAL_ERROR',
                         reason: 'globally broken'

@@ -10,7 +10,7 @@ const INPUT_TEMPLATE = `
         <div data-tpl-if="slots.after" data-tpl-remove="tag">{{{{ slots.after }}}}</div>
         <span data-tpl-if="slots.iafter" class="input-group-text">{{{{ slots.iafter }}}}</span>
     </div>
-    <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>
+    <ful-field-error data-tpl-if="name" data-tpl-field="name" data-tpl-id="fieldErrorId"></ful-field-error>
 </div>
 `;
 
@@ -32,12 +32,14 @@ const makeInputFragment = (el, template, slots) => {
         }));
     });
     const id = input.getAttribute('id') ?? el.getAttribute('input-id') ?? Attributes.uid('ful-input');
+    const fieldErrorId = `${id}-error`;
     Attributes.forward('input-', el, slots.input)
     Attributes.defaultValue(slots.input, "id", id);
     Attributes.defaultValue(slots.input, "type", "text");
     Attributes.defaultValue(slots.input, "placeholder", " ");
+    Attributes.defaultValue(slots.input, "aria-describedby", fieldErrorId);
     const name = el.getAttribute('name');
-    return template.withOverlay(el, { id, name, slots }).render();
+    return template.withOverlay(el, { id, fieldErrorId, name, slots }).render();
 }
 
 class Input extends ParsedElement({

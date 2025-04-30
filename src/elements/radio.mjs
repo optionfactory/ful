@@ -4,7 +4,7 @@ class RadioGroup extends ParsedElement({
     observed: ['value', 'disabled:presence'],
     slots: true,
     template: `
-        <fieldset ful-validated-field>
+        <fieldset ful-validated-field data-tpl-aria-describedby="fieldErrorId">
             <legend class="form-label">
                 {{{{ slots.default }}}}
             </legend>
@@ -19,7 +19,7 @@ class RadioGroup extends ParsedElement({
                     </label>
                 </div>
             </section>
-            <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>
+            <ful-field-error data-tpl-if="name" data-tpl-field="name" data-tpl-id="fieldErrorId"></ful-field-error>
             <footer data-tpl-if="slots.footer">
                 {{{{ slots.footer }}}}
             </footer>
@@ -53,7 +53,8 @@ class RadioGroup extends ParsedElement({
         });
 
         radioEls.forEach(el => el.remove());
-        this.template().withOverlay({ name, slots, inputsAndLabels }).renderTo(this);
+        const fieldErrorId = Attributes.uid("ful-error")
+        this.template().withOverlay({ name, fieldErrorId, slots, inputsAndLabels }).renderTo(this);
     }
     get disabled() {
         return this.hasAttribute('disabled');

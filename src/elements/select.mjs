@@ -19,7 +19,7 @@ class Select extends ParsedElement({
                 <div data-tpl-if="slots.after" data-tpl-remove="tag">{{{{ slots.after }}}}</div>
                 <span data-tpl-if="slots.iafter" class="input-group-text">{{{{ slots.iafter }}}}</span>
             </div>
-            <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>
+            <ful-field-error data-tpl-if="name" data-tpl-field="name" data-tpl-id="fieldErrorId"></ful-field-error>
         </div>
     `
 }) {
@@ -41,10 +41,13 @@ class Select extends ParsedElement({
         input.setAttribute('ful-validation-target', '');
 
         const id = input.getAttribute('id') ?? this.getAttribute('input-id') ?? Attributes.uid('ful-select');
+        const fieldErrorId = `${id}-error`;
         const tsId = `${id}-ts-control`;
         Attributes.forward('input-', this, input)
         Attributes.defaultValue(input, "id", id);
         Attributes.defaultValue(input, "placeholder", " ");
+        Attributes.defaultValue(input, "aria-describedby", fieldErrorId);
+
 
         //tomselect needs the input to have a parent.
         //se we move the input to a fragment

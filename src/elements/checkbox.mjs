@@ -1,4 +1,4 @@
-import { Fragments, ParsedElement } from "@optionfactory/ftl";
+import { Attributes, Fragments, ParsedElement } from "@optionfactory/ftl";
 import { makeInputFragment } from "./input.mjs";
 
 class Checkbox extends ParsedElement({
@@ -10,7 +10,7 @@ class Checkbox extends ParsedElement({
                 {{{{ slots.input }}}}
                 <label data-tpl-for="id" class="form-check-label">{{{{ slots.default }}}}</label>
             </div>
-            <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>
+            <ful-field-error data-tpl-if="name" data-tpl-field="name" ></ful-field-error>
         </div>
     `
 }) {
