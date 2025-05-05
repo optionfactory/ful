@@ -9,26 +9,26 @@ class Select extends ParsedElement({
     observed: ["value"],
     slots: true,
     template: `
-        <div ful-validated-field>
-            <label data-tpl-for="tsId" class="form-label">{{{{ slots.default }}}}</label>
-            {{{{ input }}}}
-            <div class="input-group">
-                <span data-tpl-if="slots.ibefore" class="input-group-text">{{{{ slots.ibefore }}}}</span>
-                <div data-tpl-if="slots.before" data-tpl-remove="tag">{{{{ slots.before }}}}</div>
-                {{{{ slots.input }}}} 
-                <div data-tpl-if="slots.after" data-tpl-remove="tag">{{{{ slots.after }}}}</div>
-                <span data-tpl-if="slots.iafter" class="input-group-text">{{{{ slots.iafter }}}}</span>
-            </div>
-            <ful-field-error data-tpl-if="name" data-tpl-field="name" data-tpl-id="fieldErrorId"></ful-field-error>
+        <label data-tpl-for="tsId" class="form-label">{{{{ slots.default }}}}</label>
+        {{{{ input }}}}
+        <div class="input-group">
+            <span data-tpl-if="slots.ibefore" class="input-group-text">{{{{ slots.ibefore }}}}</span>
+            <div data-tpl-if="slots.before" data-tpl-remove="tag">{{{{ slots.before }}}}</div>
+            {{{{ slots.input }}}}
+            <div data-tpl-if="slots.after" data-tpl-remove="tag">{{{{ slots.after }}}}</div>
+            <span data-tpl-if="slots.iafter" class="input-group-text">{{{{ slots.iafter }}}}</span>
         </div>
+        <ful-field-error data-tpl-if="name" data-tpl-field="name" data-tpl-id="fieldErrorId"></ful-field-error>
     `
 }) {
     shouldLoad;
     _unwrappedRemoteLoad;
     ts;
+    static formAssociated = true;
     constructor(tsConfig) {
         super();
         this.tsConfig = tsConfig;
+        this.internals = this.attachInternals();
     }
     render({slots}) {
         const type = this.getAttribute("type") ?? 'local';
@@ -38,7 +38,7 @@ class Select extends ParsedElement({
         const input = slots.input = slots.input?.firstElementChild ?? (() => {
             return document.createElement("select");
         })();
-        input.setAttribute('ful-validation-target', '');
+        input.setAttribute("form", "");
 
         const id = input.getAttribute('id') ?? this.getAttribute('input-id') ?? Attributes.uid('ful-select');
         const fieldErrorId = `${id}-error`;
@@ -47,7 +47,6 @@ class Select extends ParsedElement({
         Attributes.defaultValue(input, "id", id);
         Attributes.defaultValue(input, "placeholder", " ");
         Attributes.defaultValue(input, "aria-describedby", fieldErrorId);
-
 
         //tomselect needs the input to have a parent.
         //se we move the input to a fragment
@@ -85,10 +84,11 @@ class Select extends ParsedElement({
             load: this._unwrappedRemoteLoad,
             shouldLoad: (query) => this.shouldLoad ? this.shouldLoad(query) : true
         } : {}, tsDefaultConfig, this.tsConfig));
+        this.ts.control_input.setAttribute("form", "");
         this.ts.on('change', value => {
-            this.dispatchEvent(new CustomEvent('change', { 
-                bubbles: true, 
-                cancelable: false, 
+            this.dispatchEvent(new CustomEvent('change', {
+                bubbles: true,
+                cancelable: false,
                 detail: {
                     value: this.value
                 }
@@ -121,6 +121,18 @@ class Select extends ParsedElement({
             const silent = true;
             this.ts.setValue(value, silent);
         })();
+    }
+    focus(options){
+        this.ts.focus();
+    }
+    setCustomValidity(error){
+        if(!error){
+            this.internals.setValidity({});
+            this.querySelector('ful-field-error').innerText = "";
+            return;
+        }
+        this.internals.setValidity({customError: true}, " ");
+        this.querySelector('ful-field-error').innerText = error;
     }
 }
 

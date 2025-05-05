@@ -17,10 +17,10 @@ ful-field-error {
     --ful-field-error-color-invalid: var(--bs-form-invalid-color, #dc3545);
     display: none;
 
-    [ful-validated-field]:has(.is-invalid) & {
+    :invalid & {
         display: block;
         margin-top: .25rem;
         font-size: .875em;
         color: var(--ful-field-error-color-invalid);
-    }
+    }    
 }

@@ -4,21 +4,19 @@ class InstantFilter extends ParsedElement({
     observed: ["value:json"],
     slots: true,
     template: `
-        <div ful-validated-field>
-            <label data-tpl-for="id" class="form-label" data-tpl-if="label">{{{{ label }}}}</label>
-            <div class="input-group">
-                <button data-ref="operator" class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" value="LTE">≼</button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" role="button" value="LTE">≼</a></li>
-                    <li><a class="dropdown-item" role="button" value="GTE">≽</a></li>
-                    <li><a class="dropdown-item" role="button" value="BETWEEN">↔</a></li>
-                </ul>
-                <input data-tpl-id="id" data-ref="value1" type="datetime-local" class="form-control" >
-                <input data-ref="value2" type="datetime-local" class="form-control"  hidden>
-                <span class="input-group-text"><i class="bi bi-search"></i></span>
-            </div>
-            <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>
+        <label data-tpl-for="id" class="form-label" data-tpl-if="label">{{{{ label }}}}</label>
+        <div class="input-group">
+            <button data-ref="operator" class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" value="LTE">≼</button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" role="button" value="LTE">≼</a></li>
+                <li><a class="dropdown-item" role="button" value="GTE">≽</a></li>
+                <li><a class="dropdown-item" role="button" value="BETWEEN">↔</a></li>
+            </ul>
+            <input data-tpl-id="id" data-ref="value1" type="datetime-local" class="form-control" >
+            <input data-ref="value2" type="datetime-local" class="form-control"  hidden>
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
         </div>
+        <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>
     `
 }) {
     #operator;
@@ -85,26 +83,24 @@ class LocalDateFilter extends ParsedElement({
     observed: ["value:json"],
     slots: true,
     template: `
-        <div ful-validated-field>
-            <label data-tpl-for="id" class="form-label" data-tpl-if="label">{{{{ label }}}}</label>
-            <div class="input-group">
-                <button data-ref="operator" class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" value="EQ">=</button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" role="button" value="EQ">=</a></li>
-                    <li><a class="dropdown-item" role="button" value="NEQ">≠</a></li>
-                    <li><a class="dropdown-item" role="button" value="LT">≺</a></li>
-                    <li><a class="dropdown-item" role="button" value="GT">≻</a></li>
-                    <li><a class="dropdown-item" role="button" value="LTE">≼</a></li>
-                    <li><a class="dropdown-item" role="button" value="GTE">≽</a></li>
-                    <li><a class="dropdown-item" role="button" value="BETWEEN">↔</a></li>
-                </ul>
-                <input data-tpl-id="id" data-ref="value1" type="date" class="form-control" aria-label="asd">                        
-                <input data-ref="value2" type="date" class="form-control" aria-label="asd" hidden>                        
-                <span class="input-group-text"><i class="bi bi-search"></i></span>
+        <label data-tpl-for="id" class="form-label" data-tpl-if="label">{{{{ label }}}}</label>
+        <div class="input-group">
+            <button data-ref="operator" class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" value="EQ">=</button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" role="button" value="EQ">=</a></li>
+                <li><a class="dropdown-item" role="button" value="NEQ">≠</a></li>
+                <li><a class="dropdown-item" role="button" value="LT">≺</a></li>
+                <li><a class="dropdown-item" role="button" value="GT">≻</a></li>
+                <li><a class="dropdown-item" role="button" value="LTE">≼</a></li>
+                <li><a class="dropdown-item" role="button" value="GTE">≽</a></li>
+                <li><a class="dropdown-item" role="button" value="BETWEEN">↔</a></li>
+            </ul>
+            <input data-tpl-id="id" data-ref="value1" type="date" class="form-control" aria-label="asd">                        
+            <input data-ref="value2" type="date" class="form-control" aria-label="asd" hidden>                        
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
 
-            </div>
-            <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>
-        </div>            
+        </div>
+        <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>
     `
 }) {
     #operator;
@@ -159,22 +155,20 @@ class TextFilter extends ParsedElement({
     observed: ["value:json"],
     slots: true,
     template: `
-        <div ful-validated-field>
-            <label data-tpl-for="id" class="form-label" data-tpl-if="label">{{{{ label }}}}</label>
-            <div class="input-group">
-                <button data-ref="operator" class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" value="CONTAINS">…a…</button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" role="button" value="CONTAINS">…a…</a></li>
-                    <li><a class="dropdown-item" role="button" value="STARTS_WITH">a…</a></li>
-                    <li><a class="dropdown-item" role="button" value="ENDS_WITH">…a</a></li>
-                    <li><a class="dropdown-item" role="button" value="EQ">=</a></li>
-                </ul>
-                <input data-tpl-id="id" data-ref="value" type="text" class="form-control">
-                <span class="input-group-text"><i class="bi bi-search"></i></span>
+        <label data-tpl-for="id" class="form-label" data-tpl-if="label">{{{{ label }}}}</label>
+        <div class="input-group">
+            <button data-ref="operator" class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" value="CONTAINS">…a…</button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" role="button" value="CONTAINS">…a…</a></li>
+                <li><a class="dropdown-item" role="button" value="STARTS_WITH">a…</a></li>
+                <li><a class="dropdown-item" role="button" value="ENDS_WITH">…a</a></li>
+                <li><a class="dropdown-item" role="button" value="EQ">=</a></li>
+            </ul>
+            <input data-tpl-id="id" data-ref="value" type="text" class="form-control">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
 
-            </div>
-            <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>
         </div>
+        <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>
     `
 }) {
     #operator;

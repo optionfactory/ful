@@ -73,13 +73,15 @@ class Bindings {
         return el.value;
     }
 
-    static extractFrom(root, ignoredChildrenSelector){
+    /**
+     * 
+     * @param {HTMLFormElement} form 
+     * @returns 
+     */
+    static extractFrom(form){
         let result = {};
-        for(const el of /** @type {NodeListOf<HTMLElement>} */(root.querySelectorAll('[name]'))){
-            if (el.dataset['fulBindInclude'] === 'never') {
-                continue;
-            }
-            if(ignoredChildrenSelector && el.dataset['fulBindInclude'] !== 'always' && el.closest(ignoredChildrenSelector) !== null){
+        for(const el of form.elements){
+            if(!el.hasAttribute("name") || el.matches(":disabled")){
                 continue;
             }
             result = Bindings.providePath(result, /** @type {string} */(el.getAttribute('name')), Bindings.extract(el))
@@ -104,42 +106,41 @@ class Bindings {
         el.value = raw;
     }
 
-    static mutateIn(root, values){
+    static mutateIn(form, values){
         for (const [flattenedKey, value] of Object.entries(Bindings.flatten(values, ''))) {
-            for(const el of root.querySelectorAll(`[name='${CSS.escape(flattenedKey)}']`)){
+            for(const el of form.querySelectorAll(`[name='${CSS.escape(flattenedKey)}']`)){
                 Bindings.mutate(el, value)
             }
         }
     }
 
 
-    static errors(root, es, invalidClass){
+    static errors(form, es, scrollOnError){
         const fieldErrors = es.filter(e => e.type === 'FIELD_ERROR' || e.type === 'INVALID_FORMAT');
         const globalErrors = es.filter(e => e.type !== 'FIELD_ERROR' && e.type !== 'INVALID_FORMAT');
-        root.querySelectorAll(`.${CSS.escape(invalidClass)}`).forEach(el => el.classList.remove(invalidClass));
-        root.querySelectorAll("ful-errors").forEach(el => {
+        form.querySelectorAll(`[name]`).forEach(el => el.setCustomValidity?.(""));
+        form.querySelectorAll("ful-errors").forEach(el => {
             el.replaceChildren();
             el.setAttribute('hidden', '');
         });
         fieldErrors.forEach(e => {
             const name = e.context.replace("[", ".").replace("].", ".");
-            const validationTargetsSelector = `[name='${CSS.escape(name)}'] [ful-validation-target],[name='${CSS.escape(name)}']:not(:has([ful-validation-target]))`;
-            root.querySelectorAll(validationTargetsSelector).forEach(input => input.classList.add(invalidClass));
-            const fieldErrorsSelector = `ful-field-error[field='${CSS.escape(name)}']`;
-            root.querySelectorAll(fieldErrorsSelector).forEach(el => {
-                const hel = /** @type HTMLElement} */ (el);
-                hel.innerText = e.reason
-            });
+            form.querySelectorAll(`[name='${CSS.escape(name)}']`).forEach(input => input.setCustomValidity?.(e.reason));
         });
-        root.querySelectorAll("ful-errors").forEach(el => {
+        form.querySelectorAll("ful-errors").forEach(el => {
             const hel = /** @type HTMLElement} */ (el);
             hel.innerText = globalErrors.map(e => e.reason).join("\n");
             if (globalErrors.length !== 0) {
                 el.removeAttribute('hidden');
             }
         });
-
-
+        if (es.length == 0 || !scrollOnError) {
+            return;
+        }
+        Array.from(form.querySelectorAll(`:invalid`))
+            .sort((a,b) => 
+                a.getBoundingClientRect().y - b.getBoundingClientRect().y
+            )[0]?.focus();
     }
 }
 

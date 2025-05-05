@@ -4,7 +4,7 @@ class RadioGroup extends ParsedElement({
     observed: ['value', 'disabled:presence'],
     slots: true,
     template: `
-        <fieldset ful-validated-field data-tpl-aria-describedby="fieldErrorId">
+        <fieldset data-tpl-aria-describedby="fieldErrorId">
             <legend class="form-label">
                 {{{{ slots.default }}}}
             </legend>
@@ -26,6 +26,11 @@ class RadioGroup extends ParsedElement({
         </fieldset>
     `
 }) {
+    static formAssociated = true;
+    constructor(){
+        super();
+        this.internals = this.attachInternals();
+    }
     render({slots}) {
         const name = this.getAttribute('name') ?? Attributes.uid('ful-radiogroup');
         const radioEls = Array.from(slots.default.querySelectorAll('ful-radio'));
@@ -35,8 +40,7 @@ class RadioGroup extends ParsedElement({
             Attributes.forward('input-', this, input);
             Attributes.forward('', el, input);
             input.setAttribute('name', `${name}-ignore`);
-            input.setAttribute('ful-validation-target', '');
-            input.dataset['fulBindInclude'] = 'never';
+            input.setAttribute('form', ``);
             input.addEventListener('change', evt => {
                 evt.stopPropagation();
                 //change is not cancelable
@@ -80,6 +84,18 @@ class RadioGroup extends ParsedElement({
             el.checked = true;
         }
     }
+    focus(options){
+        this.querySelector('input').focus(options);
+    }    
+    setCustomValidity(error){
+        if(!error){
+            this.internals.setValidity({});
+            this.querySelector('ful-field-error').innerText = "";    
+            return;
+        }
+        this.internals.setValidity({customError: true}, " ");
+        this.querySelector('ful-field-error').innerText = error;
+    }        
 }
 
 

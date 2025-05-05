@@ -1,7 +1,6 @@
 import { Attributes, ParsedElement  } from "@optionfactory/ftl"
 
 const INPUT_TEMPLATE = `
-<div ful-validated-field>
     <label data-tpl-for="id" class="form-label">{{{{ slots.default }}}}</label>
     <div class="input-group">
         <span data-tpl-if="slots.ibefore" class="input-group-text">{{{{ slots.ibefore }}}}</span>
@@ -11,7 +10,6 @@ const INPUT_TEMPLATE = `
         <span data-tpl-if="slots.iafter" class="input-group-text">{{{{ slots.iafter }}}}</span>
     </div>
     <ful-field-error data-tpl-if="name" data-tpl-field="name" data-tpl-id="fieldErrorId"></ful-field-error>
-</div>
 `;
 
 const makeInputFragment = (el, template, slots) => {
@@ -20,7 +18,6 @@ const makeInputFragment = (el, template, slots) => {
         el.classList.add("form-control");
         return el;
     })();
-    input.setAttribute('ful-validation-target', '');
     input.addEventListener('change', (evt) => {
         evt.stopPropagation();
         el.dispatchEvent(new CustomEvent('change', { 
@@ -38,6 +35,7 @@ const makeInputFragment = (el, template, slots) => {
     Attributes.defaultValue(slots.input, "type", "text");
     Attributes.defaultValue(slots.input, "placeholder", " ");
     Attributes.defaultValue(slots.input, "aria-describedby", fieldErrorId);
+    Attributes.defaultValue(slots.input, "form", "");
     const name = el.getAttribute('name');
     return template.withOverlay(el, { id, fieldErrorId, name, slots }).render();
 }
@@ -47,7 +45,12 @@ class Input extends ParsedElement({
     slots: true,
     template: INPUT_TEMPLATE
 }){
+    static formAssociated = true;
     input;
+    constructor(){
+        super();
+        this.internals = this.attachInternals();
+    }
     render({slots}) {
         const fragment = makeInputFragment(this, this.template(), slots);
         this.replaceChildren(fragment);
@@ -58,6 +61,18 @@ class Input extends ParsedElement({
     set value(value) {
         this.input.value = value;
     }
+    focus(options){
+        this.input.focus(options);
+    }    
+    setCustomValidity(error){
+        if(!error){
+            this.internals.setValidity({});
+            this.querySelector('ful-field-error').innerText = "";    
+            return;
+        }
+        this.internals.setValidity({customError: true}, " ");
+        this.querySelector('ful-field-error').innerText = error;
+    }    
 }
 
 export { makeInputFragment, INPUT_TEMPLATE, Input };

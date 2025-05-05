@@ -18,3 +18,4 @@ export { SortButton, Table, TableSchemaParser, Pagination } from "./table.mjs";
 export { InstantFilter, LocalDateFilter, TextFilter } from "./filters.mjs";
 import "./table.css"
 
+export { Plugin } from "./plugin.mjs"
