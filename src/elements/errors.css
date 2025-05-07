@@ -14,7 +14,7 @@ ful-errors {
 }
 
 ful-field-error {
-    --ful-field-error-color-invalid: var(--bs-form-invalid-color, #dc3545);
+    --ful-field-error-color-invalid: var(--ful-invalid-color);
     display: none;
 
     :invalid & {

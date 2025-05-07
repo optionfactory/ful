@@ -2,20 +2,13 @@
 <html lang="it">
 
 <head>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-        crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css"
-        crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css"
-        integrity="sha256-4MwGlgBoHJALXjs2YKZb4sMqhSw7+yMymHAoa0cwJGE=" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"
-        integrity="sha256-KNeF6xW5o/tW1oae5XlS4JCNADoM+RHqrnoUqL6pvHY=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" integrity="sha256-oxqX0LQclbvrsJt8IymkxnISn4Np2Wy2rY9jjoQlDEg=" crossorigin="anonymous">    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha256-y3ibfOyBqlgBd+GzwFYQEVOZdNJD06HeDXihongBXKs=" crossorigin="anonymous"></script>    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/css/tom-select.bootstrap5.min.css" integrity="sha256-lQMtfzgdbG8ufMCU5UThXG65Wsv5CIXGkHFGCHA68ME=" crossorigin="anonymous">    
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/js/tom-select.complete.min.js" integrity="sha256-t5cAXPIzePs4RIuA3FejMxOlxXe4QXZXQ7sfKJxNU+Y=" crossorigin="anonymous"></script>    
 
-    <script src="https://cdn.jsdelivr.net/npm/@optionfactory/ftl@1.0.3/dist/ftl.iife.min.js"
-        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@optionfactory/ftl@1.0.7/dist/ftl.iife.min.js" crossorigin="anonymous"></script>
 
     <link href="../dist/ful.css" rel="stylesheet">
     <script src="../dist/ful.iife.min.js"></script>
@@ -24,26 +17,8 @@
         const Failure = ful.Failure;
 
 
-        class TestInput extends ftl.ParsedElement({
-            observed: []
-        }) {
-            static formAssociated = true;
-            constructor() {
-                super();
-                this.internals = this.attachInternals();
-            }
-            render() {
-                this.innerHTML = 'test';
-            }
-        }
-
-        ftl.elements.define('ful-spinner', ful.Spinner)
-            .define('ful-input', ful.Input)
-            .define('ful-radio-group', ful.RadioGroup)
-            .define('ful-select', ful.Select)
-            .define('ful-form', ful.Form)
-            .define('ful-checkbox', ful.Checkbox)
-            .define('test-input', TestInput)
+        ftl.elements
+            .plugin(new ful.Plugin())
             .configure();
     </script>
 </head>
@@ -145,6 +120,15 @@
                     A switch
                 </ful-checkbox>
 
+                <ful-filter-text name="filter.text" class="mb-3">
+
+                </ful-filter-text>
+                <ful-filter-local-date name="filter.text" class="mb-3">
+                    
+                </ful-filter-local-date>
+                <ful-filter-instant name="filter.text" class="mb-3">
+                    
+                </ful-filter-instant>
 
                 <ful-errors hidden></ful-errors>
 
@@ -170,16 +154,6 @@
                     <i slot="ibefore" class="bi bi-envelope-at"></i>
                     <i slot="iafter" class="bi bi-envelope-at"></i>
                 </ful-select>
-                <fieldset disabled>
-                    <style>
-                        test-input:disabled {
-                            color: grey;
-                        }
-                    </style>
-                    <test-input>
-                        aaaa
-                    </test-input>
-                </fieldset>
             </ful-form>
         </div>
     </div>

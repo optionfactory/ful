@@ -17,12 +17,8 @@ class Form extends ParsedElement() {
             });
         })
         if (this.hasAttribute("clear-invalid-on-change")) {
-            this.addEventListener('change', evt => {
-                const target = /** @type HTMLElement */ (evt.target);
-                target.setCustomValidity?.("");
-                //target?.querySelectorAll(`.${CSS.escape(Form.INVALID_CLASS)}`).forEach(el => {
-                //    el.classList.remove(Form.INVALID_CLASS);
-                //});
+            this.addEventListener('change', (/** @type any */evt) => {
+                evt.target.setCustomValidity?.("");
             });
         }
         this.replaceChildren(form);

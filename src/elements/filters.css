@@ -1,0 +1,7 @@
+ful-filter-text, ful-filter-instant, ful-filter-local-date {
+    display: block;
+
+    &:not(:defined) {
+        visibility: hidden;
+    }
+}

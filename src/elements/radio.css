@@ -22,16 +22,12 @@ ful-radio-group {
             gap: 10px;
             grid-template-columns: 1fr;
 
-            & label:has(input[type=radio]) {
+            & label {
                 display: block;
                 border: 1px solid var(--ful-radio-group-label-border-color);
                 background-color: var(--ful-radio-group-label-background-color);
                 border-radius: 4px;
                 padding: 8px 10px;
-
-                k &.is-invalid {
-                    border-color: var(--bs-form-invalid-border-color);
-                }
             }
 
             & label:has(input[type=radio]:checked) {
@@ -55,6 +51,10 @@ ful-radio-group {
     &.horizontal>fieldset>section {
         gap: 16px;
         grid-template-columns: 1fr 1fr;
+    }
+
+    &:invalid > fieldset > section label {
+        border-color: var(--ful-invalid-border-color);
     }
 }
 

@@ -1,0 +1,5 @@
+:root {
+    --ful-invalid-border-color: var(--bs-form-invalid-border-color);
+    --ful-invalid-box-shadow: 0 0 0 .25rem rgba(var(--bs-danger-rgb), .25);
+    --ful-invalid-color: var(--bs-form-invalid-color, #dc3545);
+}

@@ -12,11 +12,11 @@ class Plugin {
     configure(registry) {
         registry
             .define('ful-spinner', Spinner)
+            .define('ful-form', Form)
             .define('ful-checkbox', Checkbox)
             .define('ful-input', Input)
             .define('ful-radio-group', RadioGroup)
             .define('ful-select', Select)
-            .define('ful-form', Form)
             .define('ful-table', Table)
             .define('ful-filter-instant', InstantFilter)
             .define('ful-filter-local-date', LocalDateFilter)

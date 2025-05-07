@@ -124,7 +124,7 @@ class Bindings {
             el.setAttribute('hidden', '');
         });
         fieldErrors.forEach(e => {
-            const name = e.context.replace("[", ".").replace("].", ".");
+            const name = e.context.replace("[", ".").replace("].", ".").replace("]", "");
             form.querySelectorAll(`[name='${CSS.escape(name)}']`).forEach(input => input.setCustomValidity?.(e.reason));
         });
         form.querySelectorAll("ful-errors").forEach(el => {
@@ -137,10 +137,7 @@ class Bindings {
         if (es.length == 0 || !scrollOnError) {
             return;
         }
-        Array.from(form.querySelectorAll(`:invalid`))
-            .sort((a,b) => 
-                a.getBoundingClientRect().y - b.getBoundingClientRect().y
-            )[0]?.focus();
+        Array.from(form.querySelectorAll(`:invalid`)).sort((a,b) => a.getBoundingClientRect().y - b.getBoundingClientRect().y)[0]?.focus();
     }
 }
 

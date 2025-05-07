@@ -47,6 +47,7 @@ class Input extends ParsedElement({
 }){
     static formAssociated = true;
     input;
+    #fieldError;
     constructor(){
         super();
         this.internals = this.attachInternals();
@@ -54,6 +55,7 @@ class Input extends ParsedElement({
     render({slots}) {
         const fragment = makeInputFragment(this, this.template(), slots);
         this.replaceChildren(fragment);
+        this.#fieldError = this.querySelector('ful-field-error');
     }
     get value() {
         return this.input.value;
@@ -67,11 +69,11 @@ class Input extends ParsedElement({
     setCustomValidity(error){
         if(!error){
             this.internals.setValidity({});
-            this.querySelector('ful-field-error').innerText = "";    
+            this.#fieldError.innerText = "";    
             return;
         }
         this.internals.setValidity({customError: true}, " ");
-        this.querySelector('ful-field-error').innerText = error;
+        this.#fieldError.innerText = error;
     }    
 }
 

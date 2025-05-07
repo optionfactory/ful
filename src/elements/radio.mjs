@@ -27,6 +27,8 @@ class RadioGroup extends ParsedElement({
     `
 }) {
     static formAssociated = true;
+    #fieldError;
+    #firstRadio;
     constructor(){
         super();
         this.internals = this.attachInternals();
@@ -59,6 +61,8 @@ class RadioGroup extends ParsedElement({
         radioEls.forEach(el => el.remove());
         const fieldErrorId = Attributes.uid("ful-error")
         this.template().withOverlay({ name, fieldErrorId, slots, inputsAndLabels }).renderTo(this);
+        this.#fieldError = this.querySelector('ful-field-error');
+        this.#firstRadio = this.querySelector('input[type=radio]');
     }
     get disabled() {
         return this.hasAttribute('disabled');
@@ -85,16 +89,16 @@ class RadioGroup extends ParsedElement({
         }
     }
     focus(options){
-        this.querySelector('input').focus(options);
+        this.#firstRadio.focus(options);
     }    
     setCustomValidity(error){
         if(!error){
             this.internals.setValidity({});
-            this.querySelector('ful-field-error').innerText = "";    
+            this.#fieldError.innerText = "";    
             return;
         }
         this.internals.setValidity({customError: true}, " ");
-        this.querySelector('ful-field-error').innerText = error;
+        this.#fieldError.innerText = error;
     }        
 }
 

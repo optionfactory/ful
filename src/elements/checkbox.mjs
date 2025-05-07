@@ -1,8 +1,8 @@
-import { Attributes, Fragments, ParsedElement } from "@optionfactory/ftl";
+import { Fragments, ParsedElement } from "@optionfactory/ftl";
 import { makeInputFragment } from "./input.mjs";
 
 class Checkbox extends ParsedElement({
-    observed: ['value:bool', 'name'],
+    observed: ['value:bool'],
     slots: true,
     template: `
         <div data-tpl-class="klass">
@@ -13,6 +13,7 @@ class Checkbox extends ParsedElement({
     `
 }) {
     input;
+    #fieldError;
     static formAssociated = true;
     constructor() {
         super();
@@ -28,8 +29,7 @@ class Checkbox extends ParsedElement({
         const klass = this.getAttribute('type') == 'switch' ? "form-check form-switch" : "form-check";
         const fragment = makeInputFragment(this, this.template().withOverlay({ klass }), { ...slots, input: Fragments.from(input) });
         this.replaceChildren(fragment);
-        //this.internals.setValidity({customError: true}, "borked", input);
-        
+        this.#fieldError = this.querySelector('ful-field-error');        
     }
     get value() {
         return this.input.checked;
@@ -43,11 +43,11 @@ class Checkbox extends ParsedElement({
     setCustomValidity(error){
         if(!error){
             this.internals.setValidity({});
-            this.querySelector('ful-field-error').innerText = "";    
+            this.#fieldError.innerText = "";    
             return;
         }
         this.internals.setValidity({customError: true}, " ");
-        this.querySelector('ful-field-error').innerText = error;
+        this.#fieldError.innerText = error;
     }
 }
 

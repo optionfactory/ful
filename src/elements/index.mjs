@@ -15,7 +15,8 @@ export { Spinner } from "./spinner.mjs";
 import "./spinner.css"
 
 export { SortButton, Table, TableSchemaParser, Pagination } from "./table.mjs";
-export { InstantFilter, LocalDateFilter, TextFilter } from "./filters.mjs";
 import "./table.css"
+export { InstantFilter, LocalDateFilter, TextFilter } from "./filters.mjs";
+import "./filters.css"
 
 export { Plugin } from "./plugin.mjs"

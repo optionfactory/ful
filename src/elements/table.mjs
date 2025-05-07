@@ -39,28 +39,28 @@ class SortButton extends ParsedElement({ observed: ["order"] }) {
 class Pagination extends ParsedElement({
     observed: ["total:number", "current:number"],
     template: `
-                <nav aria-label="Page navigation" class="user-select-none">
-                    <ul class="pagination">
-                        <li class="page-item ms-auto me-2" data-tpl-if="paginationLabel"> Showing page {{ curr.label }} of {{ total }}</li>
-                        <li class="page-item ms-auto me-2" data-tpl-if="!paginationLabel"></li>
-                        <li class="page-item">
-                            <a data-tpl-class="prev.enabled?'page-link':'page-link disabled'" aria-label="Previous" role="button" data-tpl-data-page="prev.index">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                        <li class="page-item" data-tpl-each="pages" data-tpl-var="page">
-                            <a data-tpl-class="curr.index != page.index ? 'page-link': 'page-link disabled'" role="button" data-tpl-data-page="page.index" >
-                                {{ page.label }}
-                            </a>
-                        </li>
-                        <li class="page-item">
-                            <a data-tpl-class="next.enabled?'page-link':'page-link disabled'" aria-label="Next" role="button" data-tpl-data-page="next.index">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            `
+        <nav aria-label="Page navigation" class="user-select-none">
+            <ul class="pagination">
+                <li class="page-item ms-auto me-2" data-tpl-if="paginationLabel"> Showing page {{ curr.label }} of {{ total }}</li>
+                <li class="page-item ms-auto me-2" data-tpl-if="!paginationLabel"></li>
+                <li class="page-item">
+                    <a data-tpl-class="prev.enabled?'page-link':'page-link disabled'" aria-label="Previous" role="button" data-tpl-data-page="prev.index">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item" data-tpl-each="pages" data-tpl-var="page">
+                    <a data-tpl-class="curr.index != page.index ? 'page-link': 'page-link disabled'" role="button" data-tpl-data-page="page.index" >
+                        {{ page.label }}
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a data-tpl-class="next.enabled?'page-link':'page-link disabled'" aria-label="Next" role="button" data-tpl-data-page="next.index">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    `
 }) {
     #paginationLabel;
     #total = 0;

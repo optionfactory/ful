@@ -24,6 +24,7 @@ class Select extends ParsedElement({
     shouldLoad;
     _unwrappedRemoteLoad;
     ts;
+    #fieldError;
     static formAssociated = true;
     constructor(tsConfig) {
         super();
@@ -100,6 +101,7 @@ class Select extends ParsedElement({
         });
         input.remove();
         this.template().withOverlay({ id, tsId, name, input, slots }).renderTo(this);
+        this.#fieldError = this.querySelector('ful-field-error');
     }
     #loader;
     set loader(l) {
@@ -128,11 +130,11 @@ class Select extends ParsedElement({
     setCustomValidity(error){
         if(!error){
             this.internals.setValidity({});
-            this.querySelector('ful-field-error').innerText = "";
+            this.#fieldError.innerText = "";
             return;
         }
         this.internals.setValidity({customError: true}, " ");
-        this.querySelector('ful-field-error').innerText = error;
+        this.#fieldError.innerText = error;
     }
 }
 

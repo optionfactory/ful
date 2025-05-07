@@ -1,3 +1,22 @@
 ful-checkbox {
     display: block;
+
+    &:not(:defined) {
+        visibility: hidden;
+    }
+
+
+    &:invalid > div > input[type=checkbox] {
+        border-color: var(--ful-invalid-border-color);
+
+        &:checked{
+            background-color: var(--ful-invalid-color);
+        }
+    
+        &:focus {
+            box-shadow: var(--ful-invalid-box-shadow);
+        }    
+    } 
+
+   
 }
