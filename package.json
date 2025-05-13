@@ -30,7 +30,7 @@
         "build": "npx rollup --config rollup.conf.mjs"
     },
     "dependencies": {
-        "@optionfactory/ftl": "^1.0.7",
+        "@optionfactory/ftl": "^1.0.8",
         "tom-select": "^2.4.3"
     },
     "devDependencies": {

@@ -1,3 +1,4 @@
+import { HttpClient } from "../http-client.mjs";
 import { Checkbox } from "./checkbox.mjs";
 import { InstantFilter, LocalDateFilter, TextFilter } from "./filters.mjs";
 import { Form } from "./form.mjs";
@@ -10,17 +11,24 @@ import { Table } from "./table.mjs";
 
 class Plugin {
     configure(registry) {
+        const httpClient = HttpClient.builder()
+            .withCsrfToken()
+            .withRedirectOnUnauthorized("/")
+            .build();
+
+
         registry
-            .define('ful-spinner', Spinner)
-            .define('ful-form', Form)
-            .define('ful-checkbox', Checkbox)
-            .define('ful-input', Input)
-            .define('ful-radio-group', RadioGroup)
-            .define('ful-select', Select)
-            .define('ful-table', Table)
-            .define('ful-filter-instant', InstantFilter)
-            .define('ful-filter-local-date', LocalDateFilter)
-            .define('ful-filter-text', TextFilter);
+            .defineComponent('http-client', httpClient)
+            .defineElement('ful-spinner', Spinner)
+            .defineElement('ful-form', Form)
+            .defineElement('ful-checkbox', Checkbox)
+            .defineElement('ful-input', Input)
+            .defineElement('ful-radio-group', RadioGroup)
+            .defineElement('ful-select', Select)
+            .defineElement('ful-table', Table)
+            .defineElement('ful-filter-instant', InstantFilter)
+            .defineElement('ful-filter-local-date', LocalDateFilter)
+            .defineElement('ful-filter-text', TextFilter);
     }
 }
 
