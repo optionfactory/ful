@@ -157,7 +157,7 @@ class TableSchemaParser {
         if (maybeTitleTag) {
             maybeTitleTag.remove();
         }
-        const fragment = maybeTitleTag ? template.withFragment(Fragments.fromChildNodes(maybeTitleTag)).render() : document.createTextNode(el.getAttribute("title"));
+        const fragment = maybeTitleTag ? template.withFragment(Fragments.fromChildNodes(maybeTitleTag)).render() : document.createTextNode(el.getAttribute("title") ?? '');
         return {
             classes: el.getAttribute("th-class"),
             fragment
