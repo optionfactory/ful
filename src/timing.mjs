@@ -1,15 +1,24 @@
-
 const timing = {
     sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     },
     DEBOUNCE_DEFAULT: 0,
     DEBOUNCE_IMMEDIATE: 1,
+    /**
+     * Executes only after a period of inactivity (pause in events).
+     * Delays execution until events stop for a set duration.
+     * Consolidates multiple rapid events into a single execution.
+     * Respond to the "end" of a series of events.
+     * @param {*} timeoutMs 
+     * @param {*} func 
+     * @param {*} options 
+     * @returns {[function, function]}
+     */
     debounce(timeoutMs, func, options) {
+        const opts = options ?? timing.DEBOUNCE_DEFAULT;
         let tid = null;
         let args = [];
         let previousTimestamp = 0;
-        let opts = options || timing.DEBOUNCE_DEFAULT;
 
         const later = () => {
             const elapsed = new Date().getTime() - previousTimestamp;
@@ -27,7 +36,7 @@ const timing = {
             }
         };
 
-        return function () {
+        const debounced = function () {
             args = [...arguments];
             previousTimestamp = new Date().getTime();
             if (tid === null) {
@@ -37,15 +46,23 @@ const timing = {
                 }
             }
         };
+        const abort = () => clearTimeout(tid);
+        return [debounced, abort];
     },
     THROTTLE_DEFAULT: 0,
     THROTTLE_NO_LEADING: 1,
     THROTTLE_NO_TRAILING: 2,
+    /**
+     * Executes at most once per specified time interval, regardless of ongoing events.
+     * Executes regularly as long as events are firing, but at a controlled rate.
+     * Allows execution periodically during a burst of events.
+     * Ensure a function doesn't fire too frequently during continuous events.
+     */
     throttle(timeoutMs, func, options) {
+        const opts = options ?? timing.THROTTLE_DEFAULT;
         let tid = null;
         let args = [];
         let previousTimestamp = 0;
-        let opts = options || timing.THROTTLE_DEFAULT;
 
         const later = () => {
             previousTimestamp = (opts & timing.THROTTLE_NO_LEADING) ? 0 : new Date().getTime();
@@ -55,8 +72,7 @@ const timing = {
                 args = [];
             }
         };
-
-        return function () {
+        const throttled = function () {
             const now = new Date().getTime();
             if (!previousTimestamp && (opts & timing.THROTTLE_NO_LEADING)) {
                 previousTimestamp = now;
@@ -77,7 +93,8 @@ const timing = {
                 tid = setTimeout(later, remaining);
             }
         };
-
+        const abort = () => clearTimeout(tid);
+        return [throttled, abort];
     }
 };
 
