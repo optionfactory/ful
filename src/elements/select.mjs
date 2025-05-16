@@ -18,7 +18,7 @@ class Select extends ParsedElement({
             <div data-tpl-if="slots.after" data-tpl-remove="tag">{{{{ slots.after }}}}</div>
             <span data-tpl-if="slots.iafter" class="input-group-text">{{{{ slots.iafter }}}}</span>
         </div>
-        <ful-field-error data-tpl-if="name" data-tpl-field="name" data-tpl-id="fieldErrorId"></ful-field-error>
+        <ful-field-error data-tpl-id="fieldErrorId"></ful-field-error>
     `
 }) {
     shouldLoad;

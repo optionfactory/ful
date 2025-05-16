@@ -20,7 +20,7 @@ class InstantFilter extends ParsedElement({
             <input data-ref="value2" type="datetime-local" class="form-control" form="" hidden>
             <span class="input-group-text"><i class="bi bi-search"></i></span>
         </div>
-        <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>
+        <ful-field-error></ful-field-error>
     `
 }) {
     static formAssociated = true;
@@ -123,7 +123,7 @@ class LocalDateFilter extends ParsedElement({
             <span class="input-group-text"><i class="bi bi-search"></i></span>
 
         </div>
-        <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>
+        <ful-field-error></ful-field-error>
     `
 }) {
     static formAssociated = true;
@@ -210,7 +210,7 @@ class TextFilter extends ParsedElement({
             <input data-tpl-id="id" data-ref="value" type="text" class="form-control" form="">
             <span class="input-group-text"><i class="bi bi-search"></i></span>
         </div>
-        <ful-field-error data-tpl-if="name" data-tpl-field="name"></ful-field-error>
+        <ful-field-error></ful-field-error>
     `
 }) {
     static formAssociated = true;

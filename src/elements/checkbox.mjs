@@ -9,7 +9,7 @@ class Checkbox extends ParsedElement({
             {{{{ slots.input }}}}
             <label data-tpl-for="id" class="form-check-label">{{{{ slots.default }}}}</label>
         </div>
-        <ful-field-error data-tpl-if="name" data-tpl-field="name" ></ful-field-error>
+        <ful-field-error></ful-field-error>
     `
 }) {
     input;

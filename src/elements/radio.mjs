@@ -19,7 +19,7 @@ class RadioGroup extends ParsedElement({
                     </label>
                 </div>
             </section>
-            <ful-field-error data-tpl-if="name" data-tpl-field="name" data-tpl-id="fieldErrorId"></ful-field-error>
+            <ful-field-error data-tpl-id="fieldErrorId"></ful-field-error>
             <footer data-tpl-if="slots.footer">
                 {{{{ slots.footer }}}}
             </footer>
