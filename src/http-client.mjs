@@ -395,16 +395,17 @@ class HttpRequestBuilder {
         return this;
     }
     /**
-     * Adds a query parameter to the request, overriding it if it already exists. Null and undefined values cause the key to be removed.
+     * Adds a query parameter to the request, overriding it if it already exists. Empty vs, or a single null or undefined value cause the key to be removed.
      * @param {string} k 
-     * @param {string} v 
+     * @param {...string} vs
      * @returns {HttpRequestBuilder} this builder
      */
-    param(k, v) {
-        if (v === null || v === undefined) {
+    param(k, ...vs) {
+        if(vs.length === 0 || vs[0] === null || vs[0] === undefined){
             this.#params.delete(k);
-        } else {
-            this.#params.set(k, v);
+        }
+        for(const v of vs){
+            this.#params.append(k, v);
         }
         return this;
     }
