@@ -1,9 +1,9 @@
-import { Attributes, Fragments, ParsedElement  } from "@optionfactory/ftl"
+import { Attributes, Fragments, ParsedElement } from "@optionfactory/ftl"
 
-class RadioGroup extends ParsedElement({
-    observed: ['value', 'disabled:presence'],
-    slots: true,
-    template: `
+class RadioGroup extends ParsedElement {
+    static observed = ['value'];
+    static slots = true;
+    static template = `
         <fieldset data-tpl-aria-describedby="fieldErrorId">
             <legend class="form-label">
                 {{{{ slots.default }}}}
@@ -24,16 +24,15 @@ class RadioGroup extends ParsedElement({
                 {{{{ slots.footer }}}}
             </footer>
         </fieldset>
-    `
-}) {
+    `;
     static formAssociated = true;
     #fieldError;
     #firstRadio;
-    constructor(){
+    constructor() {
         super();
         this.internals = this.attachInternals();
     }
-    render({slots}) {
+    render({ slots }) {
         const name = this.getAttribute('name') ?? Attributes.uid('ful-radiogroup');
         const radioEls = Array.from(slots.default.querySelectorAll('ful-radio'));
         const inputsAndLabels = radioEls.map(el => {
@@ -64,12 +63,6 @@ class RadioGroup extends ParsedElement({
         this.#fieldError = this.querySelector('ful-field-error');
         this.#firstRadio = this.querySelector('input[type=radio]');
     }
-    get disabled() {
-        return this.hasAttribute('disabled');
-    }
-    set disabled(value) {
-        this.reflect(() => Attributes.toggle(this, 'disabled', value));
-    }    
     get value() {
         /** @type {HTMLInputElement|null} */
         const checked = this.querySelector('input[type=radio]:checked');
@@ -88,19 +81,18 @@ class RadioGroup extends ParsedElement({
             el.checked = true;
         }
     }
-    focus(options){
+    focus(options) {
         this.#firstRadio.focus(options);
-    }    
-    setCustomValidity(error){
-        if(!error){
+    }
+    setCustomValidity(error) {
+        if (!error) {
             this.internals.setValidity({});
-            this.#fieldError.innerText = "";    
+            this.#fieldError.innerText = "";
             return;
         }
-        this.internals.setValidity({customError: true}, " ");
+        this.internals.setValidity({ customError: true }, " ");
         this.#fieldError.innerText = error;
-    }        
+    }
 }
-
 
 export { RadioGroup };

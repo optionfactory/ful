@@ -1,8 +1,8 @@
-import { Attributes, ParsedElement  } from "@optionfactory/ftl"
+import { Attributes, ParsedElement } from "@optionfactory/ftl"
 import { Failure } from "../failure.mjs";
 import { Bindings } from "./bindings.mjs"
 
-class Form extends ParsedElement() {
+class Form extends ParsedElement {
     submitter;
     form;
     render() {

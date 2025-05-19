@@ -1,141 +1,371 @@
-import { Fragments, Attributes, ParsedElement } from "@optionfactory/ftl"
-import TomSelect  from "tom-select";
-/**
- * <script src="tom-select.complete.js"></script>
- * <link href="tom-select.bootstrap5.css" rel="stylesheet" />
- */
+import { Attributes, ParsedElement, registry } from "@optionfactory/ftl"
+import { timing } from "../timing.mjs";
 
-class Select extends ParsedElement({
-    observed: ["value"],
-    slots: true,
-    template: `
-        <label data-tpl-for="tsId" class="form-label">{{{{ slots.default }}}}</label>
-        {{{{ input }}}}
-        <div class="input-group">
-            <span data-tpl-if="slots.ibefore" class="input-group-text">{{{{ slots.ibefore }}}}</span>
-            <div data-tpl-if="slots.before" data-tpl-remove="tag">{{{{ slots.before }}}}</div>
-            {{{{ slots.input }}}}
-            <div data-tpl-if="slots.after" data-tpl-remove="tag">{{{{ slots.after }}}}</div>
-            <span data-tpl-if="slots.iafter" class="input-group-text">{{{{ slots.iafter }}}}</span>
-        </div>
-        <ful-field-error data-tpl-id="fieldErrorId"></ful-field-error>
-    `
-}) {
-    shouldLoad;
-    _unwrappedRemoteLoad;
-    ts;
-    #fieldError;
-    static formAssociated = true;
-    constructor(tsConfig) {
-        super();
-        this.tsConfig = tsConfig;
-        this.internals = this.attachInternals();
+
+class CompleteSelectLoader {
+    #http;
+    #url;
+    #method;
+    #mapper;
+    #prefetch;
+    #data;
+    constructor(http, url, method, mapper, prefetch) {
+        this.#http = http;
+        this.#url = url;
+        this.#method = method;
+        this.#mapper = mapper;
+        this.#prefetch = prefetch;
+        this.#data = null;
     }
-    render({slots}) {
-        const type = this.getAttribute("type") ?? 'local';
-        const remote = type != 'local';
-        const loadOnce = this.getAttribute('load') != 'always';
-        const name = this.getAttribute('name');
-        const input = slots.input = slots.input?.firstElementChild ?? (() => {
-            return document.createElement("select");
-        })();
-        input.setAttribute("form", "");
-
-        const id = input.getAttribute('id') ?? this.getAttribute('input-id') ?? Attributes.uid('ful-select');
-        const fieldErrorId = `${id}-error`;
-        const tsId = `${id}-ts-control`;
-        Attributes.forward('input-', this, input)
-        Attributes.defaultValue(input, "id", id);
-        Attributes.defaultValue(input, "placeholder", " ");
-        Attributes.defaultValue(input, "aria-describedby", fieldErrorId);
-
-        //tomselect needs the input to have a parent.
-        //se we move the input to a fragment
-        slots.input = Fragments.from(input);
-
-        this.loaded = !remote;
-
-        const tsDefaultConfig = {
-            render: {
-                loading: () => '<ful-spinner class="centered p-2"></ful-spinner>'
-            }
+    async prefetch() {
+        if (!this.#prefetch) {
+            return;
         }
+        await this.#ensureFetched();
+    }
+    async exact(...keys) {
+        await this.#ensureFetched();
+        return this.#data.filter(([k, v]) => keys.includes(k));
+    }
+    async load(needle) {
+        await this.#ensureFetched();
+        return this.#data.filter(([k, v]) => v.includes(needle?.toLowerCase()));
+    }
+    async #ensureFetched() {
+        if (this.#data !== null) {
+            return
+        }
+        const data = await this.#http.request(this.#method, this.#url)
+            .fetchJson()
+        this.#data = this.#mapper(data);
+    }
+    static create({ el, http, mapper }) {
+        return new CompleteSelectLoader(
+            http,
+            el.getAttribute("src"),
+            el.getAttribute("method") ?? 'POST',
+            mapper,
+            el.hasAttribute("preload")
+        );
+    }
+}
 
-        this._remote = remote;
-        // we need to await this load in setValue when remote is configured and the option
-        // is not loaded yet.
-        // tomselect settings.load does not retun a promise as it wraps the configured load function
-        // with a debouncer
-        this._unwrappedRemoteLoad = async (query, callback) => {
+class ChunkedSelectLoader {
+    #http;
+    #url;
+    #method;
+    #mapper;
+    constructor(http, url, method, mapper) {
+        this.#http = http;
+        this.#url = url;
+        this.#method = method;
+        this.#mapper = mapper;
+    }
+    async exact(...keys) {
+        const data = await this.#http.request(this.#method, this.#url)
+            .param("k", ...keys)
+            .fetchJson()
+        return this.#mapper(data);
+    }
+    async load(needle) {
+        const data = await this.#http.request(this.#method, this.#url)
+            .param("s", needle)
+            .fetchJson()
+        return this.#mapper(data);
+    }
+    static create({ el, http, mapper }) {
+        return new ChunkedSelectLoader(
+            http,
+            el.getAttribute("src"),
+            el.getAttribute("method") ?? 'POST',
+            mapper
+        );
+    }
+}
 
-            if (!remote || remote && loadOnce && this.loaded) {
-                callback();
+class OptionsSlotSelectLoader {
+    #data
+    constructor(data) {
+        this.#data = data;
+    }
+    async exact(...keys) {
+        await timing.sleep(500);
+        return this.#data.filter(([k, v]) => keys.includes(k));
+    }
+    async load(needle) {
+        await timing.sleep(500);
+        return this.#data.filter(([k, v]) => v.includes(needle?.toLowerCase()));
+    }
+    static create({ el, options }) {
+        const els = Array.from(options.options?.querySelectorAll('option') ?? []);
+        const data = els.map(e => {
+            return [e.getAttribute("value") ?? e.innerText.trim(), e.innerText.trim()];
+        })
+        return new OptionsSlotSelectLoader(data);
+    }
+}
+
+class Loaders {
+    static fromAttributes(el, defaultLoader, options) {
+        const http = registry.component("http-client");
+        const mapper = el.hasAttribute("mapper") ? registry.component(el.getAttribute("mapper")) : v => v;
+        const loaderClass = registry.component(el.getAttribute("loader") ?? defaultLoader);
+        return loaderClass.create({
+            el,
+            http,
+            mapper,
+            options: options ?? {}
+        });
+    }
+}
+
+class Dropdown extends ParsedElement {
+    static slots = true
+    static template = `
+        <ful-spinner class="centered" hidden></ful-spinner>
+        <menu tabindex="-1" hidden></menu>
+    `;
+    #spinner
+    #menu
+    render({ slots }) {
+        const fragment = this.template().render();
+        this.#spinner = fragment.querySelector("ful-spinner");
+        this.#menu = fragment.querySelector("menu");
+        this.#menu.addEventListener('click', evt => {
+            evt.stopPropagation();
+            if (!evt.target.matches('li')) {
+                this.hide();
                 return;
             }
-            const type = query && query.hasOwnProperty('byId') ? 'id' : 'query';
-            const qvalue = type === 'id' ? query.byId : query;
-            const data = await (this.#loader ? this.#loader(qvalue, type) : []);
-            if (type !== 'id') {
-                this.loaded = true;
-            }
-            callback(data);
-        };
-        this.ts = new TomSelect(input, Object.assign(remote ? {
-            preload: 'focus',
-            load: this._unwrappedRemoteLoad,
-            shouldLoad: (query) => this.shouldLoad ? this.shouldLoad(query) : true
-        } : {}, tsDefaultConfig, this.tsConfig));
-        this.ts.control_input.setAttribute("form", "");
-        this.ts.on('change', value => {
-            this.dispatchEvent(new CustomEvent('change', {
-                bubbles: true,
-                cancelable: false,
-                detail: {
-                    value: this.value
-                }
-            }));
+            this.#change(evt.target);
         });
-        //we remove the input to move it
-        input.addEventListener('change', (evt) => {
-            evt.stopPropagation();
-        });
-        input.remove();
-        this.template().withOverlay({ id, tsId, name, input, slots }).renderTo(this);
-        this.#fieldError = this.querySelector('ful-field-error');
+        this.replaceChildren(fragment);
     }
-    #loader;
-    set loader(l) {
-        this.#loader = l;
-        // loader can be configured later so we load now
-        if (this.hasAttribute('value')) {
-            this.value = this.getAttribute("value");
+    acceptSelection() {
+        const selected = this.#menu.querySelector('[selected]') ?? this.#menu.firstElementChild;
+        this.#change(selected);
+    }
+    update(values) {
+        if (values === undefined) {
+            throw new Error("null data");
+        }
+        if (values.length === 0) {
+            const el = document.createElement('div');
+            el.classList.add('text-center', 'py-2', 'bi', 'bi-database-slash');
+            this.#menu.replaceChildren(el);
+            return;
+        }
+        this.#menu.replaceChildren(...values.map(([k, v], i) => {
+            const el = document.createElement('li');
+            if (i === 0) {
+                el.setAttribute("selected", '');
+            }
+            el.setAttribute("value", k);
+            el.innerText = v;
+            return el;
+        }));
+    }
+    #change(target) {
+        const value = target.getAttribute('value');
+        const label = target.innerText
+        this.hide();
+        this.dispatchEvent(new CustomEvent('change', {
+            bubbles: true,
+            cancelable: false,
+            detail: { label, value }
+        }));
+    }
+    hide() {
+        this.setAttribute('hidden', '')
+    }
+    async show(loader) {
+        this.removeAttribute('hidden');
+        this.#menu.setAttribute('hidden', '');
+        this.#spinner.removeAttribute('hidden');
+        try {
+            const data = await loader();
+            this.update(data);
+        } finally {
+            this.#spinner.setAttribute('hidden', '');
+            this.#menu.removeAttribute('hidden');
         }
     }
-    get value() {
-        const v = this.ts.getValue();
-        return v === '' ? null : v;
+    async moveOrShow(forward, loader) {
+        if (!this.hasAttribute("hidden")) {
+            const selected = this.#menu.querySelector('[selected]') ?? this.#menu.firstElementChild;
+            const candidate = selected[`${forward ? 'next' : 'previous'}ElementSibling`];
+            if (candidate) {
+                selected.removeAttribute('selected');
+                candidate.setAttribute("selected", "");
+            }
+            return;
+        }
+        await this.show(loader);
+    }
+}
+
+class Select extends ParsedElement {
+    static observed = ['value:csvm']
+    static slots = true
+    static template = `
+        <label data-tpl-for="id" class="form-label">{{{{ slots.default }}}}</label>
+        <div class="input-group flex-nowrap">
+            <span data-tpl-if="slots.ibefore" class="input-group-text">{{{{ slots.ibefore }}}}</span>
+            {{{{ slots.before }}}}
+            <div class="ful-select-input">
+                <badges></badges>
+                <input data-tpl-id="id" data-tpl-ariadesribed-by="fieldErrorId" type="text" form="">
+            </div>
+            {{{{ slots.after }}}}
+            <span data-tpl-if="slots.iafter" class="input-group-text">{{{{ slots.iafter }}}}</span>
+        </div>
+        <ful-dropdown hidden></ful-dropdown>
+        <ful-field-error data-tpl-id="fieldErrorId"></ful-field-error>
+    `;
+    static mappers = {
+        "csvm": (v, name, el) => {
+            if (el.hasAttribute("multiple")) {
+                return v === null ? [] : v.split(",").map(e => e.trim()).filter(e => e)
+            }
+            return v === null || v === '' ? null : v
+        }
+    };
+    static formAssociated = true
+    internals
+    #loader
+    #badges
+    #ddmenu
+    #input
+    #multiple
+    #fieldError
+    #values = new Map()
+    constructor() {
+        super();
+        this.internals = this.attachInternals();
+    }
+    async render({ slots, observed }) {
+        const name = this.getAttribute("name");
+        const id = Attributes.uid('ful-select');
+        const fieldErrorId = id + "-error";
+        this.#loader = Loaders.fromAttributes(this, 'loaders:select:options', { options: slots.options });
+        await this.#loader.prefetch?.();
+        const fragment = this.template().withOverlay({ slots, name, id, fieldErrorId }).render();
+        this.#input = fragment.querySelector('input');
+        this.#badges = fragment.querySelector('badges');
+        this.#ddmenu = fragment.querySelector('ful-dropdown');
+        this.#multiple = this.hasAttribute("multiple");
+        this.#fieldError = fragment.querySelector('ful-field-error');
+        
+        const self = this;
+        const [dload, abortdload] = timing.debounce(400, () => self.#ddmenu.show(() => self.#loader.load(self.#input.value)));
+        this.addEventListener('click', (e) => {
+            this.#input.blur(); //we blur so we always trigger the focus event
+            this.#input.focus();
+        })
+        this.#badges.addEventListener('click', (e) => {
+            const idx = [...this.#badges.children].indexOf(e.target);
+            if (idx === -1) {
+                return;
+            }
+            this.#values.delete(Array.from(this.#values.keys()).pop())
+            this.#syncBadges();
+        })
+        this.#input.addEventListener('focus', e => {
+            this.#ddmenu.show(() => this.#loader.load(this.#input.value));
+        });
+
+        this.#input.addEventListener('blur', e => {
+            if (e.relatedTarget && this.contains(e.relatedTarget)) {
+                return;
+            }
+            abortdload();
+            this.#ddmenu.hide();
+            this.#input.value = '';
+        });
+        this.#input.addEventListener('keydown', e => {
+            switch (e.code) {
+                case 'ArrowUp': {
+                    this.#ddmenu.moveOrShow(false, () => self.#loader.load(self.#input.value));
+                    break;
+                }
+                case 'ArrowDown': {
+                    this.#ddmenu.moveOrShow(true, () => self.#loader.load(self.#input.value));
+                    break;
+                }
+                case 'Escape': {
+                    this.#ddmenu.hide();
+                    break;
+                }
+                case 'Enter': {
+                    this.#ddmenu.acceptSelection();
+                    this.#input.value = '';
+                    break;
+                }
+                case 'Backspace': {
+                    //remove last if caret a position 0
+                    if (this.#values.size && this.#input.selectionStart === 0 && this.#input.selectionEnd === 0) {
+                        this.#values.delete(Array.from(this.#values.keys()).pop())
+                        this.#syncBadges();
+                    }
+                    break;
+                }
+                case 'Tab': {
+                    this.#ddmenu.hide();
+                    abortdload();
+                    break;
+                }
+            }
+        });
+        this.#input.addEventListener('input', e => {
+            dload();
+        });
+        this.#ddmenu.addEventListener('change', (e) => {
+            if (!this.#multiple) {
+                this.#values.clear();
+            }
+            this.#values.set(e.detail.value, e.detail.label);
+            this.#syncBadges();
+            this.#input.focus();
+            this.#ddmenu.hide();
+        });
+        this.replaceChildren(fragment);
+    }
+    #syncBadges() {
+        const badges = Array.from(this.#values.entries()).map(([k, v]) => {
+            const b = document.createElement('badge');
+            b.setAttribute("role", "button");
+            b.setAttribute("value", k);
+            b.innerText = v;
+            return b;
+        });
+        this.#badges.innerHTML = '';
+        this.#badges.append(...badges);
     }
     set value(value) {
         (async () => {
-            if (this._remote) {
-                await this._unwrappedRemoteLoad({ byId: value }, this.ts.loadCallback.bind(this.ts));
-            }
-            const silent = true;
-            this.ts.setValue(value, silent);
+            const entries = await (this.#multiple ? this.#loader.exact(...value) : this.#loader.exact(value));
+            this.#values = new Map(entries);
+            this.#syncBadges();
         })();
     }
-    focus(options){
-        this.ts.focus();
+    get value() {
+        if (this.#multiple) {
+            return [...this.#values.keys()];
+        }
+        return [...this.#values.keys()][0] ?? null;
     }
-    setCustomValidity(error){
-        if(!error){
+    focus(options) {
+        this.#input.focus(options);
+    }
+    setCustomValidity(error) {
+        if (!error) {
             this.internals.setValidity({});
             this.#fieldError.innerText = "";
             return;
         }
-        this.internals.setValidity({customError: true}, " ");
+        this.internals.setValidity({ customError: true }, " ");
         this.#fieldError.innerText = error;
     }
 }
 
-export { Select };
+export { Loaders, CompleteSelectLoader, ChunkedSelectLoader, OptionsSlotSelectLoader, Select, Dropdown };

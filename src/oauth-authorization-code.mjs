@@ -3,7 +3,7 @@ import { SessionStorage } from "./storage.mjs";
 
 
 class AuthorizationCodeFlow {
-    static forKeycloak(clientId, realmBaseUrl, redirectUri){
+    static forKeycloak(clientId, realmBaseUrl, redirectUri) {
         const scope = "openid profile";
         return new AuthorizationCodeFlow(clientId, scope, {
             auth: new URL("protocol/openid-connect/auth", realmBaseUrl),
@@ -11,15 +11,15 @@ class AuthorizationCodeFlow {
             logout: new URL("protocol/openid-connect/logout", realmBaseUrl),
             registration: new URL("protocol/openid-connect/registrations", realmBaseUrl),
             redirect: redirectUri
-        });        
+        });
     }
-    constructor(clientId, scope, {auth, token, registration, logout, redirect}) {
+    constructor(clientId, scope, { auth, token, registration, logout, redirect }) {
         this.storage = new SessionStorage(clientId);
         this.clientId = clientId;
         this.scope = scope;
-        this.uri = {auth, token, registration, logout, redirect};
+        this.uri = { auth, token, registration, logout, redirect };
     }
-    async action(uri, additionalParams){
+    async action(uri, additionalParams) {
         const pkceVerifier = Base64.encode(crypto.getRandomValues(new Uint8Array(32)).buffer);
         const pkceChallenge = Base64.encode(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(pkceVerifier)));
         const state = this.clientId + Base64.encode(crypto.getRandomValues(new Uint8Array(16)).buffer);
@@ -40,10 +40,10 @@ class AuthorizationCodeFlow {
         });
         window.location.href = url.toString();
     }
-    async registration(additionalParams){
+    async registration(additionalParams) {
         await this.action(this.uri.registration, additionalParams);
     }
-    async applicationInitiatedAction(kcAction, additionalParams){
+    async applicationInitiatedAction(kcAction, additionalParams) {
         await this.action(this.uri.auth, {
             ...additionalParams,
             kc_action: kcAction,
@@ -100,8 +100,8 @@ class AuthorizationCodeFlowSession {
             payload: JSON.parse(utf8decoder.decode(Base64.decode(rawPayload, Base64.STANDARD))),
             signature: signature
         };
-    }    
-    constructor(clientId, t, {token, logout, redirect}) {
+    }
+    constructor(clientId, t, { token, logout, redirect }) {
         this.clientId = clientId;
         this.token = t;
         this.idToken = AuthorizationCodeFlowSession.parseToken(t.id_token);
@@ -161,9 +161,9 @@ class AuthorizationCodeFlowSession {
     bearerToken() {
         return `Bearer ${this.token.access_token}`;
     }
-    
-    interceptor(gracePeriodBefore, gracePeriodAfter){
-        return new AuthorizationCodeFlowInterceptor(this, gracePeriodBefore, gracePeriodAfter);        
+
+    interceptor(gracePeriodBefore, gracePeriodAfter) {
+        return new AuthorizationCodeFlowInterceptor(this, gracePeriodBefore, gracePeriodAfter);
     }
 }
 
@@ -185,5 +185,4 @@ class AuthorizationCodeFlowInterceptor {
     }
 }
 
-
-export {AuthorizationCodeFlow, AuthorizationCodeFlowSession, AuthorizationCodeFlowInterceptor };
+export { AuthorizationCodeFlow, AuthorizationCodeFlowSession, AuthorizationCodeFlowInterceptor };

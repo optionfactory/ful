@@ -11,7 +11,7 @@ const timing = {
      * Respond to the "end" of a series of events.
      * @param {*} timeoutMs 
      * @param {*} func 
-     * @param {*} options 
+     * @param {*} [options]
      * @returns {[function, function]}
      */
     debounce(timeoutMs, func, options) {
@@ -97,6 +97,5 @@ const timing = {
         return [throttled, abort];
     }
 };
-
 
 export { timing };

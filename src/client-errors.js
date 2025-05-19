@@ -1,4 +1,4 @@
-function ful_report_error(evt){
+function ful_report_error(evt) {
     function meta_content(name) {
         var metaEls = document.getElementsByTagName("meta");
         var content = [].slice.call(metaEls).filter(function (v) {
@@ -8,38 +8,38 @@ function ful_report_error(evt){
         });
         return content[0];
     }
-    function configured_report_uri(){
+    function configured_report_uri() {
         var scriptEl = document.querySelector('script[data-report-client-errors-uri]');
-        if(!scriptEl){
+        if (!scriptEl) {
             console && console.error && console.error("missing attribute data-report-client-errors-uri");
             return null;
         }
         return scriptEl.dataset['reportClientErrorsUri'];
     }
-    function split_stack(){
-        if(evt.error && evt.error.stack && evt.error.stack.split){
+    function split_stack() {
+        if (evt.error && evt.error.stack && evt.error.stack.split) {
             return evt.error.stack.split("\n");
         }
-        if(evt.reason && evt.reason.stack && evt.reason.stack.split){
+        if (evt.reason && evt.reason.stack && evt.reason.stack.split) {
             return evt.reason.stack.split("\n");
         }
         return undefined
     }
-    function message(){
-        if(evt.message){
+    function message() {
+        if (evt.message) {
             return evt.message;
         }
-        if(evt.reason && evt.reason.message){
+        if (evt.reason && evt.reason.message) {
             return evt.reason.message;
         }
-        if(evt.error && evt.error.message){
+        if (evt.error && evt.error.message) {
             return evt.error.message;
         }
         return undefined;
     }
 
     var uri = configured_report_uri();
-    if(!uri){
+    if (!uri) {
         return;
     }
     var headers = {

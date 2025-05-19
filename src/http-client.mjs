@@ -31,7 +31,6 @@ class MediaType {
     }
 }
 
-
 /**
  * @typedef {Int8Array| Uint8Array| Uint8ClampedArray| Int16Array| Uint16Array| Int32Array| Uint32Array| Float32Array| Float64Array| BigInt64Array| BigUint64Array} TypedArray
  */
@@ -300,7 +299,6 @@ const unmarshal = async (response, type) => {
     }
 }
 
-
 class HttpRequestBuilder {
     #client;
     #method;
@@ -361,7 +359,7 @@ class HttpRequestBuilder {
                 this.#headers.delete(k);
             } else {
                 this.#headers.set(k, v);
-            }    
+            }
         }
         return this;
     }
@@ -401,10 +399,10 @@ class HttpRequestBuilder {
      * @returns {HttpRequestBuilder} this builder
      */
     param(k, ...vs) {
-        if(vs.length === 0 || vs[0] === null || vs[0] === undefined){
+        if (vs.length === 0 || vs[0] === null || vs[0] === undefined) {
             this.#params.delete(k);
         }
-        for(const v of vs){
+        for (const v of vs) {
             this.#params.append(k, v);
         }
         return this;
@@ -450,7 +448,6 @@ class HttpRequestBuilder {
      */
     options(kvs) {
         for (const [k, v] of Object.entries(kvs)) {
-            // @ts-ignore
             this.#options[k] = v;
         }
         return this;
@@ -558,7 +555,6 @@ class HttpRequestBuilder {
     }
 }
 
-
 class HttpMultipartRequestCustomizer {
     #formData;
     /**
@@ -619,6 +615,5 @@ class HttpMultipartRequestCustomizer {
         return this;
     }
 }
-
 
 export { MediaType, HttpClient, HttpClientError };

@@ -1,7 +1,7 @@
 import { Attributes, Fragments, Nodes, ParsedElement } from "@optionfactory/ftl"
 
-
-class SortButton extends ParsedElement({ observed: ["order"] }) {
+class SortButton extends ParsedElement {
+    static observed = ["order"];
     #order;
     render() {
         const sorter = this.getAttribute("sorter");
@@ -12,7 +12,7 @@ class SortButton extends ParsedElement({ observed: ["order"] }) {
                 bubbles: true,
                 cancelable: true,
                 detail: {
-                    value: {sorter, order: nextOrder}
+                    value: { sorter, order: nextOrder }
                 }
             }));
         })
@@ -34,11 +34,9 @@ class SortButton extends ParsedElement({ observed: ["order"] }) {
     }
 }
 
-
-
-class Pagination extends ParsedElement({
-    observed: ["total:number", "current:number"],
-    template: `
+class Pagination extends ParsedElement {
+    static observed = ["total:number", "current:number"];
+    static template = `
         <nav aria-label="Page navigation" class="user-select-none">
             <ul class="pagination">
                 <li class="page-item ms-auto me-2" data-tpl-if="paginationLabel"> Showing page {{ curr.label }} of {{ total }}</li>
@@ -60,12 +58,10 @@ class Pagination extends ParsedElement({
                 </li>
             </ul>
         </nav>
-    `
-}) {
+    `;
     #paginationLabel;
     #total = 0;
     #current = 0;
-
     render({ observed }) {
         this.#paginationLabel = this.hasAttribute('pagination-label');
         this.update(observed.current ?? 0, observed.total ?? 0);
@@ -84,8 +80,6 @@ class Pagination extends ParsedElement({
 
         })
     }
-
-
     update(current, total) {
         const maxRender = Number(this.getAttribute('pages') ?? "5");
         const prev = { index: Math.max(0, current - 1), enabled: current > 0 };
@@ -108,11 +102,9 @@ class Pagination extends ParsedElement({
         const paginationLabel = this.#paginationLabel;
         this.template().withOverlay({ total, prev, curr, next, pages, paginationLabel }).renderTo(this);
     }
-
     get total() {
         return this.#total;
     }
-
     set total(value) {
         this.#total = value;
         this.reflect(() => {
@@ -120,11 +112,9 @@ class Pagination extends ParsedElement({
             this.update(this.#current ?? 0, this.#total);
         })
     }
-
     get current() {
         return this.#current;
     }
-
     set current(value) {
         this.#current = value;
         this.reflect(() => {
@@ -133,7 +123,6 @@ class Pagination extends ParsedElement({
         })
     }
 }
-
 
 class TableSchemaParser {
     static parse(nodeOrFragment, template) {
@@ -172,10 +161,9 @@ class TableSchemaParser {
     }
 }
 
-
-class Table extends ParsedElement({
-    slots: true,
-    template: `
+class Table extends ParsedElement {
+    static slots = true;
+    static template = `
         <ful-form data-tpl-if="slots.filters">
             {{{{ slots.filters }}}}
         </ful-form>
@@ -222,8 +210,8 @@ class Table extends ParsedElement({
             </tfoot>
         </table>
         <ful-pagination current="0" total="1"></ful-pagination>
-    `,
-    templates: {
+    `;
+    static templates = {
         row: `
             <tr data-tpl-if="pageResponse.data.length == 0">
                 <td data-tpl-colspan="schema.length" class="text-center align-middle p-4">
@@ -236,8 +224,7 @@ class Table extends ParsedElement({
                 </td>
             </tr>
         `
-    }
-}) {
+    };
     #schema;
     #body;
     #loading;
@@ -321,13 +308,13 @@ class Table extends ParsedElement({
     }
 
     async remoting(pageRequest, sortRequest, filterRequest) {
-        const fre = Object.entries(filterRequest).filter(([k, v]) => v);
+        const filters = Object.entries(filterRequest).filter(([k, v]) => v);
         //@ts-ignore
         return await http.request(this.getAttribute("method") || "GET", this.getAttribute("src"))
             .param("page", pageRequest.page)
             .param("size", pageRequest.size)
             .param("sort", sortRequest.order ? `${sortRequest.sorter},${sortRequest.order}` : null)
-            .param("filters", fre.length > 0 ? JSON.stringify(Object.fromEntries(fre)) : null)
+            .param("filters", filters.length > 0 ? JSON.stringify(Object.fromEntries(filters)) : null)
             .fetchJson();
     }
 
@@ -350,6 +337,5 @@ class Table extends ParsedElement({
         this.#paginator.total = Math.ceil(pageResponse.size / pageRequest.size);
     }
 }
-
 
 export { SortButton, Table, TableSchemaParser, Pagination }

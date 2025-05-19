@@ -1,9 +1,9 @@
 import { Attributes, Fragments, ParsedElement } from "@optionfactory/ftl";
 
-class InstantFilter extends ParsedElement({    
-    observed: ["value:json"],
-    slots: true,
-    template: `
+class InstantFilter extends ParsedElement {
+    static observed = ["value:json"];
+    static slots = true;
+    static template = `
         <label data-tpl-for="id" class="form-label" data-tpl-if="label">{{{{ label }}}}</label>
         <div class="input-group">
             <button data-ref="operator" class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" value="LTE" form="">&PrecedesSlantEqual;</button>
@@ -21,14 +21,13 @@ class InstantFilter extends ParsedElement({
             <span class="input-group-text"><i class="bi bi-search"></i></span>
         </div>
         <ful-field-error></ful-field-error>
-    `
-}) {
+    `;
     static formAssociated = true;
     #operator;
     #value1;
     #value2;
     #fieldError;
-    constructor(){
+    constructor() {
         super();
         this.internals = this.attachInternals();
     }
@@ -61,12 +60,12 @@ class InstantFilter extends ParsedElement({
         return values.some(v => v === '') ? undefined : [operator, ...values.map(v => new Date(v).toISOString())];
     }
     set value(v) {
-        if(v === null || v === undefined){
+        if (v === null || v === undefined) {
             this.#value1.value = '';
             this.#value2.value = '';
             this.reflect(() => {
                 this.removeAttribute('value');
-            });    
+            });
             return;
         }
         const [operator, ...values] = v;
@@ -86,26 +85,24 @@ class InstantFilter extends ParsedElement({
         const time = `${pad(2, d.getHours())}:${pad(2, d.getMinutes())}:${pad(2, d.getSeconds())}.${pad(3, d.getMilliseconds())}`;
         return `${date}T${time}`
     }
-    focus(options){
+    focus(options) {
         this.#value1.focus(options);
-    }    
-    setCustomValidity(error){
-        if(!error){
+    }
+    setCustomValidity(error) {
+        if (!error) {
             this.internals.setValidity({});
-            this.#fieldError.innerText = "";    
+            this.#fieldError.innerText = "";
             return;
         }
-        this.internals.setValidity({customError: true}, " ");
+        this.internals.setValidity({ customError: true }, " ");
         this.#fieldError.innerText = error;
-    }        
+    }
 }
 
-
-
-class LocalDateFilter extends ParsedElement({
-    observed: ["value:json"],
-    slots: true,
-    template: `
+class LocalDateFilter extends ParsedElement {
+    static observed = ["value:json"];
+    static slots = true;
+    static template = `
         <label data-tpl-for="id" class="form-label" data-tpl-if="label">{{{{ label }}}}</label>
         <div class="input-group">
             <button data-ref="operator" class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" value="EQ" form="">=</button>
@@ -124,17 +121,16 @@ class LocalDateFilter extends ParsedElement({
 
         </div>
         <ful-field-error></ful-field-error>
-    `
-}) {
+    `;
     static formAssociated = true;
     #operator;
     #value1;
     #value2;
     #fieldError;
-    constructor(){
+    constructor() {
         super();
         this.internals = this.attachInternals();
-    }    
+    }
     render({ slots }) {
         const id = Attributes.uid('instant-filter');
         const label = Fragments.toHtml(slots.default.cloneNode(true)).trim().length === 0 ? null : slots.default;
@@ -163,14 +159,14 @@ class LocalDateFilter extends ParsedElement({
         return values.some(v => v === '') ? undefined : [operator, "ISO_8601", ...values];
     }
     set value(v) {
-        if(v === null || v === undefined){
+        if (v === null || v === undefined) {
             this.#value1.value = '';
             this.#value2.value = '';
             this.reflect(() => {
                 this.removeAttribute('value');
-            });    
+            });
             return;
-        }        
+        }
         const [operator, ...values] = v;
         this.#operator.setAttibute('value', operator);
         this.#value1.value = values[0];
@@ -179,25 +175,24 @@ class LocalDateFilter extends ParsedElement({
             this.setAttribute('value', JSON.stringify(v));
         });
     }
-    focus(options){
+    focus(options) {
         this.#value1.focus(options);
-    }    
-    setCustomValidity(error){
-        if(!error){
+    }
+    setCustomValidity(error) {
+        if (!error) {
             this.internals.setValidity({});
-            this.#fieldError.innerText = "";    
+            this.#fieldError.innerText = "";
             return;
         }
-        this.internals.setValidity({customError: true}, " ");
+        this.internals.setValidity({ customError: true }, " ");
         this.#fieldError.innerText = error;
-    }        
+    }
 }
 
-
-class TextFilter extends ParsedElement({
-    observed: ["value:json"],
-    slots: true,
-    template: `
+class TextFilter extends ParsedElement {
+    static observed = ["value:json"];
+    static slots = true;
+    static template = `
         <label data-tpl-for="id" class="form-label" data-tpl-if="label">{{{{ label }}}}</label>
         <div class="input-group">
             <button data-ref="operator" class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" value="CONTAINS" form="">&mldr;a&mldr;</button>
@@ -211,16 +206,15 @@ class TextFilter extends ParsedElement({
             <span class="input-group-text"><i class="bi bi-search"></i></span>
         </div>
         <ful-field-error></ful-field-error>
-    `
-}) {
+    `;
     static formAssociated = true;
     #operator;
     #value;
     #fieldError;
-    constructor(){
+    constructor() {
         super();
         this.internals = this.attachInternals();
-    }    
+    }
     render({ slots }) {
         const id = Attributes.uid('string-filter');
         const label = Fragments.toHtml(slots.default.cloneNode(true)).trim().length === 0 ? null : slots.default;
@@ -248,11 +242,11 @@ class TextFilter extends ParsedElement({
     }
 
     set value(v) {
-        if(v === null || v === undefined){
+        if (v === null || v === undefined) {
             this.#value.value = '';
             this.reflect(() => {
                 this.removeAttribute('value');
-            });    
+            });
             return;
         }
         const [operator, sensitivity, value] = v;
@@ -262,19 +256,18 @@ class TextFilter extends ParsedElement({
             this.setAttribute('value', JSON.stringify(v));
         });
     }
-    focus(options){
+    focus(options) {
         this.#value.focus(options);
-    }    
-    setCustomValidity(error){
-        if(!error){
+    }
+    setCustomValidity(error) {
+        if (!error) {
             this.internals.setValidity({});
-            this.#fieldError.innerText = "";    
+            this.#fieldError.innerText = "";
             return;
         }
-        this.internals.setValidity({customError: true}, " ");
+        this.internals.setValidity({ customError: true }, " ");
         this.#fieldError.innerText = error;
-    }        
+    }
 }
-
 
 export { InstantFilter, LocalDateFilter, TextFilter }

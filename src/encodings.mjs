@@ -65,10 +65,10 @@ class Hex {
     }
     static encode(bytes, upper) {
         return Array.from(bytes)
-                .map(b => b.toString(16))
-                .map(b => upper ? b.toUpperCase() : b)
-                .map(o => o.padStart(2, 0))
-                .join('');
+            .map(b => b.toString(16))
+            .map(b => upper ? b.toUpperCase() : b)
+            .map(o => o.padStart(2, 0))
+            .join('');
     }
 }
 
