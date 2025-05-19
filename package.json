@@ -30,14 +30,14 @@
         "build": "npx rollup --config rollup.conf.mjs"
     },
     "dependencies": {
-        "@optionfactory/ftl": "^2.0.0"
+        "@optionfactory/ftl": "^2.0.3"
     },
     "devDependencies": {
-        "@rollup/plugin-node-resolve": "^16.0.0",
-        "jsdom": "^26.0.0",
+        "@rollup/plugin-node-resolve": "^16.0.1",
+        "jsdom": "^26.1.0",
         "rollup-plugin-postcss": "^4.0.2",
         "@rollup/plugin-terser": "^0.4.4",
         "sass": "^1.88.0",
-        "terser": "^5.39.1"
+        "terser": "^5.39.2"
     }
 }
