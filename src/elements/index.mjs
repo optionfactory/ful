@@ -1,10 +1,11 @@
+export { Loaders } from "./loaders.mjs";
 export { Bindings } from "./bindings.mjs";
 import "./errors.css"
-export { Form } from "./form.mjs";
+export { FormLoader, Form } from "./form.mjs";
 import "./form.css"
 export { Input } from "./input.mjs";
 import "./input.css"
-export { Loaders, ChunkedSelectLoader, OptionsSlotSelectLoader, CompleteSelectLoader, Select, Dropdown } from "./select.mjs";
+export { SelectLoader, Select, Dropdown } from "./select.mjs";
 import "./select.css"
 export { RadioGroup } from "./radio.mjs";
 import "./radio.css"

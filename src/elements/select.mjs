@@ -1,19 +1,19 @@
-import { Attributes, ParsedElement, registry } from "@optionfactory/ftl"
+import { Attributes, ParsedElement } from "@optionfactory/ftl"
+import { Loaders } from "./loaders.mjs";
 import { timing } from "../timing.mjs";
-
 
 class CompleteSelectLoader {
     #http;
     #url;
     #method;
-    #mapper;
+    #responseMapper;
     #prefetch;
     #data;
-    constructor(http, url, method, mapper, prefetch) {
+    constructor(http, url, method, responseMapper, prefetch) {
         this.#http = http;
         this.#url = url;
         this.#method = method;
-        this.#mapper = mapper;
+        this.#responseMapper = responseMapper;
         this.#prefetch = prefetch;
         this.#data = null;
     }
@@ -37,14 +37,14 @@ class CompleteSelectLoader {
         }
         const data = await this.#http.request(this.#method, this.#url)
             .fetchJson()
-        this.#data = this.#mapper(data);
+        this.#data = this.#responseMapper(data);
     }
-    static create({ el, http, mapper }) {
+    static create({ el, http, responseMapper }) {
         return new CompleteSelectLoader(
             http,
             el.getAttribute("src"),
             el.getAttribute("method") ?? 'POST',
-            mapper,
+            responseMapper,
             el.hasAttribute("preload")
         );
     }
@@ -54,31 +54,31 @@ class ChunkedSelectLoader {
     #http;
     #url;
     #method;
-    #mapper;
-    constructor(http, url, method, mapper) {
+    #responseMapper;
+    constructor(http, url, method, responseMapper) {
         this.#http = http;
         this.#url = url;
         this.#method = method;
-        this.#mapper = mapper;
+        this.#responseMapper = responseMapper;
     }
     async exact(...keys) {
         const data = await this.#http.request(this.#method, this.#url)
             .param("k", ...keys)
             .fetchJson()
-        return this.#mapper(data);
+        return this.#responseMapper(data);
     }
     async load(needle) {
         const data = await this.#http.request(this.#method, this.#url)
             .param("s", needle)
             .fetchJson()
-        return this.#mapper(data);
+        return this.#responseMapper(data);
     }
-    static create({ el, http, mapper }) {
+    static create({ el, http, responseMapper }) {
         return new ChunkedSelectLoader(
             http,
             el.getAttribute("src"),
             el.getAttribute("method") ?? 'POST',
-            mapper
+            responseMapper
         );
     }
 }
@@ -96,26 +96,20 @@ class OptionsSlotSelectLoader {
         await timing.sleep(500);
         return this.#data.filter(([k, v]) => v.includes(needle?.toLowerCase()));
     }
-    static create({ el, options }) {
-        const els = Array.from(options.options?.querySelectorAll('option') ?? []);
-        const data = els.map(e => {
-            return [e.getAttribute("value") ?? e.innerText.trim(), e.innerText.trim()];
-        })
-        return new OptionsSlotSelectLoader(data);
-    }
 }
 
-class Loaders {
-    static fromAttributes(el, defaultLoader, options) {
-        const http = registry.component("http-client");
-        const mapper = el.hasAttribute("mapper") ? registry.component(el.getAttribute("mapper")) : v => v;
-        const loaderClass = registry.component(el.getAttribute("loader") ?? defaultLoader);
-        return loaderClass.create({
-            el,
-            http,
-            mapper,
-            options: options ?? {}
-        });
+
+class SelectLoader {
+    static create(conf) {
+        if (!conf.el.hasAttribute("src")) {
+            const els = Array.from(conf.options.options?.querySelectorAll('option') ?? []);
+            const data = els.map(e => {
+                return [e.getAttribute("value") ?? e.innerText.trim(), e.innerText.trim()];
+            })
+            return new OptionsSlotSelectLoader(data);
+        }
+        const chunked = "chunked" == conf.el.getAttribute("mode");
+        return chunked ? ChunkedSelectLoader.create(conf) : CompleteSelectLoader.create(conf);
     }
 }
 
@@ -247,7 +241,7 @@ class Select extends ParsedElement {
         const name = this.getAttribute("name");
         const id = Attributes.uid('ful-select');
         const fieldErrorId = id + "-error";
-        this.#loader = Loaders.fromAttributes(this, 'loaders:select:options', { options: slots.options });
+        this.#loader = Loaders.fromAttributes(this, 'loaders:select', { options: slots.options });
         await this.#loader.prefetch?.();
         const fragment = this.template().withOverlay({ slots, name, id, fieldErrorId }).render();
         this.#input = fragment.querySelector('input');
@@ -255,7 +249,7 @@ class Select extends ParsedElement {
         this.#ddmenu = fragment.querySelector('ful-dropdown');
         this.#multiple = this.hasAttribute("multiple");
         this.#fieldError = fragment.querySelector('ful-field-error');
-        
+
         const self = this;
         const [dload, abortdload] = timing.debounce(400, () => self.#ddmenu.show(() => self.#loader.load(self.#input.value)));
         this.addEventListener('click', (e) => {
@@ -368,4 +362,4 @@ class Select extends ParsedElement {
     }
 }
 
-export { Loaders, CompleteSelectLoader, ChunkedSelectLoader, OptionsSlotSelectLoader, Select, Dropdown };
+export { SelectLoader, Select, Dropdown };
