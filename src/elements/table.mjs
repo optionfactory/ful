@@ -1,4 +1,5 @@
 import { Attributes, Fragments, Nodes, ParsedElement } from "@optionfactory/ftl"
+import { Loaders } from "./loaders.mjs";
 
 class SortButton extends ParsedElement {
     static observed = ["order"];
@@ -161,13 +162,42 @@ class TableSchemaParser {
     }
 }
 
+class RemoteTableLoader{
+    #http;
+    #url;
+    #method;
+    constructor(http, url, method){
+        this.#http = http;
+        this.#url = url;
+        this.#method = method;
+    }
+    async load(pageRequest, sortRequest, filterRequest){
+        const filters = Object.entries(filterRequest).filter(([k, v]) => v);
+        return await this.#http.request(this.#method, this.#url)
+            .param("page", pageRequest.page)
+            .param("size", pageRequest.size)
+            .param("sort", sortRequest.order ? `${sortRequest.sorter},${sortRequest.order}` : null)
+            .param("filters", filters.length > 0 ? JSON.stringify(Object.fromEntries(filters)) : null)
+            .fetchJson();
+    }    
+}
+
+
+class TableLoader{
+    static create({el, http}){
+        const url = el.getAttribute("src");
+        const method = el.getAttribute("method") ?? 'GET';
+        return new RemoteTableLoader(http, url, method);
+    }
+}
+
 class Table extends ParsedElement {
     static slots = true;
     static template = `
         <ful-form data-tpl-if="slots.filters">
             {{{{ slots.filters }}}}
         </ful-form>
-        <table class="table table-dark table-dark-custom">
+        <table class="table">
             <caption data-tpl-if="slots.caption">{{{{ slots.caption }}}}</caption>
             <thead>
                 <tr>
@@ -259,12 +289,14 @@ class Table extends ParsedElement {
             sortRequest: { order: orderFromSchema?.order, sorter: orderFromSchema?.sorter },
             filterRequest: maybeForm?.values ?? {}
         }
+        maybeForm?.addEventListener('submit:success', async (evt) => {
+            await this.load({
+                page: 0,
+                size: this.#latestRequest.pageRequest.size
+            }, this.#latestRequest.sortRequest, evt.detail.request);
+        })
         if (maybeForm) {
             maybeForm.submitter = async (filterRequest, form) => {
-                await this.load({
-                    page: 0,
-                    size: this.#latestRequest.pageRequest.size
-                }, this.#latestRequest.sortRequest, filterRequest);
             }
         }
         this.addEventListener('page-requested', async (/** @type any */e) => {
@@ -292,9 +324,10 @@ class Table extends ParsedElement {
         this.#feedback.setAttribute("hidden", "");
         this.#noAutoload.setAttribute("hidden", "");
         try {
-            const pageResponse = await this.remoting(pageRequest, sortRequest, filterRequest);
+            const loader = Loaders.fromAttributes(this, 'loaders:table');
+            const pageResponse =await loader.load(pageRequest, sortRequest, filterRequest);
             this.#latestRequest = { pageRequest, sortRequest, filterRequest };
-            this.update(pageRequest, sortRequest, filterRequest, pageResponse);
+            this.#update(pageRequest, sortRequest, filterRequest, pageResponse);
         } catch (/** @type any */error) {
             this.#loading.setAttribute("hidden", "");
             this.#feedback.removeAttribute("hidden", "");
@@ -307,17 +340,6 @@ class Table extends ParsedElement {
         }
     }
 
-    async remoting(pageRequest, sortRequest, filterRequest) {
-        const filters = Object.entries(filterRequest).filter(([k, v]) => v);
-        //@ts-ignore
-        return await http.request(this.getAttribute("method") || "GET", this.getAttribute("src"))
-            .param("page", pageRequest.page)
-            .param("size", pageRequest.size)
-            .param("sort", sortRequest.order ? `${sortRequest.sorter},${sortRequest.order}` : null)
-            .param("filters", filters.length > 0 ? JSON.stringify(Object.fromEntries(filters)) : null)
-            .fetchJson();
-    }
-
     async resetWithFilter(filterRequest) {
         return await this.load({
             page: 0,
@@ -325,7 +347,7 @@ class Table extends ParsedElement {
         }, this.#latestRequest.sortRequest, filterRequest);
     }
 
-    update(pageRequest, sortRequest, filterRequest, pageResponse) {
+    #update(pageRequest, sortRequest, filterRequest, pageResponse) {
         this.#loading.setAttribute("hidden", "");
         this.#body.replaceChildren(this.template('row').withOverlay({
             schema: this.#schema,
@@ -338,4 +360,4 @@ class Table extends ParsedElement {
     }
 }
 
-export { SortButton, Table, TableSchemaParser, Pagination }
+export { TableLoader, SortButton, Table, TableSchemaParser, Pagination }

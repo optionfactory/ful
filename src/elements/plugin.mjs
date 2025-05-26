@@ -6,7 +6,7 @@ import { Input } from "./input.mjs";
 import { RadioGroup } from "./radio.mjs";
 import { SelectLoader, Dropdown, Select } from "./select.mjs";
 import { Spinner } from "./spinner.mjs";
-import { Table } from "./table.mjs";
+import { TableLoader, Table, Pagination, SortButton } from "./table.mjs";
 
 
 class Plugin {
@@ -23,6 +23,8 @@ class Plugin {
             .defineElement('ful-input', Input)
             .defineElement('ful-radio-group', RadioGroup)
             .defineElement('ful-table', Table)
+            .defineElement('ful-pagination', Pagination)
+            .defineElement('ful-sorter', SortButton)
             .defineElement('ful-filter-instant', InstantFilter)
             .defineElement('ful-filter-local-date', LocalDateFilter)
             .defineElement('ful-filter-text', TextFilter)
@@ -30,6 +32,7 @@ class Plugin {
             .defineElement('ful-dropdown', Dropdown)
             .defineComponent("loaders:select", SelectLoader)
             .defineComponent("loaders:form", FormLoader)
+            .defineComponent("loaders:table", TableLoader)
     }
 }
 

@@ -1,42 +1,55 @@
-tp-pagination:not(:defined) {
-    visibility: hidden;
+ful-pagination {
+    display: block;
+
+    &:not(:defined) {
+        visibility: hidden;
+    }
 }
 
-tp-table:not(:defined) {
-    visibility: hidden;
+ful-table {
+    display: block;
+
+    &:not(:defined) {
+        visibility: hidden;
+    }
+
+    & tbody:last-of-type {
+        height: 360px;
+    }
+
 }
 
-tp-table tbody:last-of-type {
-    height: 360px;
-}
 
+ful-sorter {
+    display: inline;
 
-tp-sorter:not(:defined) {
-    visibility: hidden;
-}
+    &:not(:defined) {
+        visibility: hidden;
+    }
 
-tp-sorter::before {
-    display: inline-block;
-    font-family: bootstrap-icons !important;
-    font-style: normal;
-    font-weight: 400 !important;
-    font-variant: normal;
-    text-transform: none;
-    line-height: 1;
-    vertical-align: -.125em;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    content: "\f574";
-}
+    &::before {
+        display: inline-block;
+        font-family: bootstrap-icons !important;
+        font-style: normal;
+        font-weight: 400 !important;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+        vertical-align: -.125em;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        content: "\f574";
+    }
 
-tp-sorter:not([order]) {
-    color: #cccccc;
-}
+    &:not([order]) {
+        color: #cccccc;
+    }
 
-tp-sorter[order=asc]::before {
-    content: "\f574"
-}
+    &[order=asc]::before {
+        content: "\f574"
+    }
 
-tp-sorter[order=desc]::before {
-    content: "\f575";
+    &[order=desc]::before {
+        content: "\f575";
+    }
 }
