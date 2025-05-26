@@ -13,6 +13,29 @@
 
     <link href="../dist/ful.css" rel="stylesheet">
     <script src="../dist/ful.iife.min.js"></script>
+    <style>
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem 1rem;
+
+            h2, 
+            .full-row {
+                grid-column: 1 / -1;
+            }
+
+            fieldset {
+                display: contents;
+            }
+
+        }
+
+        h2 {
+            font-size: 22px;
+            background-color: #ccd6ffaa;
+            padding: 1rem;
+        }
+    </style>
     <script>
         const sleep = ful.timing.sleep;
         const Failure = ful.Failure;
@@ -26,247 +49,190 @@
 
 <body>
     <div class="container-fluid">
-        <div class="row">
-            <ful-form class="col-6 border border-primary" scroll-on-error>
-                <h1>Classic layout</h1>
-                <ful-input name="text.plain" class="mb-3" value="123">
-                    text plain <sup>*</sup>
+        <ful-form scroll-on-error response-mapper="mapper:mock-failure">
+            <h1>Form associated elements</h1>
+            <div class="form-grid">
+                <fieldset>
+                    <h2>Inputs</h2>
+                    <ful-input name="text.plain" class="mb-3" value="123">
+                        text plain <sup>*</sup>
+                    </ful-input>
+                    <ful-input name="text.icons.before" class="mb-3">
+                        Text with icon before
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                    </ful-input>
+                    <ful-input name="text.icons.after" class="mb-3">
+                        Text with icon after
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                    </ful-input>
+                    <ful-input name="text.icons.both" class="mb-3">
+                        Text with icons
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                    </ful-input>
+                    <ful-input name="datetime" input-type="datetime-local" class="mb-3">
+                        datetime-local
+                    </ful-input>
+                    <ful-input name="date" input-type="date" class="mb-3">
+                        date
+                    </ful-input>
+                    <ful-input name="time" input-type="time" class="mb-3">
+                        time
+                    </ful-input>
+                </fieldset>
+                <fieldset disabled>
+                    <h2>A disabled fieldset</h2>
+                    <ful-input name="text.disabled.plain" class="mb-3" value="123">
+                        text plain <sup>*</sup>
+                    </ful-input>
+                    <ful-input name="text.disabled.icons.before" class="mb-3">
+                        Text with icon before
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                    </ful-input>
+                    <ful-input name="text.disabled.icons.after" class="mb-3">
+                        Text with icon after
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                    </ful-input>
+                    <ful-input name="text.disabled.icons.both" class="mb-3">
+                        Text with icons
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                    </ful-input>
+                    <ful-input name="disabled.datetime" input-type="datetime-local" class="mb-3">
+                        datetime-local
+                    </ful-input>
+                    <ful-input name="disabled.date" input-type="date" class="mb-3">
+                        date
+                    </ful-input>
+                    <ful-input name="disabled.time" input-type="time" class="mb-3">
+                        time
+                    </ful-input>
+                </fieldset>
 
-                </ful-input>
-                <ful-input name="text.icons.before" class="mb-3">
-                    Text with icon before
-                    <i slot="ibefore" class="bi bi-envelope-at"></i>
-                </ful-input>
-                <ful-input name="text.icons.after" class="mb-3">
-                    Text with icon after
-                    <i slot="iafter" class="bi bi-envelope-at"></i>
-                </ful-input>
-                <ful-input name="text.icons.both" class="mb-3">
-                    Text with icons
-                    <i slot="ibefore" class="bi bi-envelope-at"></i>
-                    <i slot="iafter" class="bi bi-envelope-at"></i>
-                </ful-input>
-                <ful-input name="datetime" input-type="datetime-local" class="mb-3">
-                    datetime-local
-                </ful-input>
-                <ful-input name="date" input-type="date" class="mb-3">
-                    date
-                </ful-input>
-                <ful-input name="time" input-type="time" class="mb-3">
-                    time
-                </ful-input>
-                <ful-select name="select.single.local.noicons" class="mb-3">
-                    select local single no icons
-                    <select slot="options">
-                        <option value="16">aaa</option>
-                        <option value="17">zzz</option>
-                    </select>
-                </ful-select>
+                <fieldset>
+                    <h2>Select</h2>
+                    <ful-select name="select.single.noicons" class="mb-3">
+                        select local single no icons
+                        <select slot="options">
+                            <option value="16">aaa</option>
+                            <option value="17">zzz</option>
+                        </select>
+                    </ful-select>
 
-                <ful-select name="select.single.local.iconbefore" class="mb-3">
-                    select local single icon before
-                    <i slot="ibefore" class="bi bi-envelope-at"></i>
-                    <select slot="options">
-                        <option value="16">aaa</option>
-                        <option value="17">zzz</option>
-                    </select>
-                </ful-select>
+                    <ful-select name="select.single.iconbefore" class="mb-3">
+                        select local single icon before
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <select slot="options">
+                            <option value="16">aaa</option>
+                            <option value="17">zzz</option>
+                        </select>
+                    </ful-select>
 
-                <ful-select name="select.single.local.iconafter" class="mb-3">
-                    select local single icon after
-                    <i slot="iafter" class="bi bi-envelope-at"></i>
-                    <select slot="options">
-                        <option value="16">aaa</option>
-                        <option value="17">zzz</option>
-                    </select>
-                </ful-select>
+                    <ful-select name="select.single.iconafter" class="mb-3">
+                        select local single icon after
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                        <select slot="options">
+                            <option value="16">aaa</option>
+                            <option value="17">zzz</option>
+                        </select>
+                    </ful-select>
 
-                <ful-select name="select.single.local.icons" class="mb-3">
-                    select local single 2 icons
-                    <i slot="ibefore" class="bi bi-envelope-at"></i>
-                    <i slot="iafter" class="bi bi-envelope-at"></i>
-                    <select slot="options">
-                        <option value="16">aaa</option>
-                        <option value="17">zzz</option>
-                    </select>
-                </ful-select>
-                <ful-select type="remote" name="select.single.remote" input-class="form-select" class="mb-3" value="1">
-                    select remote single
-                    <i slot="ibefore" class="bi bi-envelope-at"></i>
-                    <i slot="iafter" class="bi bi-envelope-at"></i>
-                </ful-select>
-                <ful-select type="remote" name="select.multiple.remote" input-class="form-select" input-multiple class="mb-3">
-                    select remote multiple
-                    <i slot="ibefore" class="bi bi-envelope-at"></i>
-                    <i slot="iafter" class="bi bi-envelope-at"></i>
-                </ful-select>
-                <ful-radio-group name="radio.vertical" class="mb-3">
-                    A vertical radio group
-                    <ful-radio value="one">One</ful-radio>
-                    <ful-radio value="two">Two</ful-radio>
-                </ful-radio-group>
+                    <ful-select name="select.single.icons" class="mb-3">
+                        select local single 2 icons
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                        <select slot="options">
+                            <option value="16">aaa</option>
+                            <option value="17">zzz</option>
+                        </select>
+                    </ful-select>
+                    <ful-select type="remote" name="select.multiple" input-class="form-select" multiple class="mb-3">
+                        select multiple
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                        <select slot="options">
+                            <option value="16">aaa</option>
+                            <option value="17">zzz</option>
+                        </select>
+                    </ful-select>
+                </fieldset>
+                <fieldset>
+                    <h2>Radio groups</h2>
+                    <ful-radio-group name="radio.vertical" class="mb-3">
+                        A vertical radio group
+                        <ful-radio value="one">One</ful-radio>
+                        <ful-radio value="two">Two</ful-radio>
+                    </ful-radio-group>
 
-                <ful-radio-group name="radio.horizontal" class="mb-3 horizontal">
-                    An horizontal radio group
-                    <ful-radio value="one">One</ful-radio>
-                    <ful-radio value="two">Two</ful-radio>
-                </ful-radio-group>
+                    <ful-radio-group name="radio.horizontal" class="mb-3 horizontal">
+                        An horizontal radio group
+                        <ful-radio value="one">One</ful-radio>
+                        <ful-radio value="two">Two</ful-radio>
+                    </ful-radio-group>
+                </fieldset>
 
-                <ful-checkbox name="checkbox.normal" class="mb-3">
-                    A checkbox
-                </ful-checkbox>
+                <fieldset>
+                    <h2>Checkboxes</h2>
+                    <ful-checkbox name="checkbox.normal" class="mb-3">
+                        A checkbox
+                    </ful-checkbox>
 
-                <ful-checkbox type="switch" name="checkbox.switch" class="mb-3">
-                    A switch
-                </ful-checkbox>
+                    <ful-checkbox type="switch" name="checkbox.switch" class="mb-3">
+                        A switch
+                    </ful-checkbox>
+                </fieldset>
 
+                <h2>Filters</h2>
                 <ful-filter-text name="filter.text" class="mb-3">
 
                 </ful-filter-text>
-                <ful-filter-local-date name="filter.text" class="mb-3">
+                <ful-filter-local-date name="filter.localdate" class="mb-3">
 
                 </ful-filter-local-date>
-                <ful-filter-instant name="filter.text" class="mb-3">
+                <ful-filter-instant name="filter.instant" class="mb-3">
 
                 </ful-filter-instant>
 
-                <ful-errors hidden></ful-errors>
+                <ful-errors class="full-row" hidden></ful-errors>
 
-                <button type="submit" class="btn btn-primary">
-                    <ful-spinner hidden></ful-spinner>
-                    submit
-                </button>
-            </ful-form>
-            <ful-form class="col-6 border border-primary">
-                <h1>Classic layout big</h1>
-                <ful-input name="blasd1" class="mb-3">
-                    Label1 <sup>*</sup>
-                    <input slot="input" class="form-control form-control-lg">
-                </ful-input>
-                <ful-select type="remote" name="tomselect.single" class="mb-3" input-class="form-control-lg">
-                    select single
-                    <i slot="ibefore" class="bi bi-envelope-at"></i>
-                    <i slot="iafter" class="bi bi-envelope-at"></i>
-                </ful-select>
-                <ful-select type="remote" name="tomselect.multiple" input-multiple class="mb-3" input-class="form-control-lg">
-                    select multiple
-                    <i slot="ibefore" class="bi bi-envelope-at"></i>
-                    <i slot="iafter" class="bi bi-envelope-at"></i>
-                </ful-select>
-            </ful-form>
-        </div>
+                <div class="full-row">
+                    <button type="submit" class="btn btn-primary">
+                        <ful-spinner hidden></ful-spinner>
+                        submit
+                    </button>
+
+                </div>
+            </div>
+        </ful-form>
     </div>
     <script>
 
 
 
+        ftl.registry.defineComponent("mapper:mock-failure", async (values, form) => {
+            await sleep(2_000);
+            const fieldErrors = Array.from(form.form.elements)
+                .map(el => el.getAttribute("name"))
+                .filter(name => name)
+                .map(name => ({ type: 'FIELD_ERROR', context: name, reason: `${name} is invalid` }));
+            throw new Failure(0, [...fieldErrors, {
+                type: 'GLOBAL_ERROR',
+                reason: 'Global Error message'
+            }])
+        });
 
 
         document.addEventListener("DOMContentLoaded", () => {
-
-
             document.querySelectorAll('ful-select').forEach(el => {
                 el.addEventListener('change', evt => {
                     console.log("ful-select changed", evt);
                 });
             })
-
             document.querySelector('[name="radio.horizontal"]').addEventListener('change', evt => {
                 console.log("event:val", evt, evt.currentTarget, evt.target, "cancelable", evt.cancelable);
             });
-
-
-            document.querySelectorAll('ful-form').forEach(form => {
-                form.submitter = async (data, form) => {
-                    await sleep(2_000);
-                    throw new Failure(0, [{ type: 'FIELD_ERROR', context: 'text.plain', reason: 'text.plain error message' }, {
-                        type: 'FIELD_ERROR',
-                        context: 'text.icons.before',
-                        reason: 'text icons before error message'
-                    }, {
-                        type: 'FIELD_ERROR',
-                        context: 'text.icons.after',
-                        reason: 'text icons after error message'
-                    }, {
-                        type: 'FIELD_ERROR',
-                        context: 'text.icons.both',
-                        reason: 'text.icons.both error message'
-                    }, {
-                        type: 'FIELD_ERROR',
-                        context: 'datetime',
-                        reason: 'datetime error message'
-                    }, {
-                        type: 'FIELD_ERROR',
-                        context: 'date',
-                        reason: 'date error message'
-                    }, {
-                        type: 'FIELD_ERROR',
-                        context: 'time',
-                        reason: 'time error message'
-                    }, {
-                        type: 'FIELD_ERROR',
-                        context: 'select.single.local.noicons',
-                        reason: 'select.single.local.noicons error message'
-                    }, {
-                        type: 'FIELD_ERROR',
-                        context: 'select.single.local.iconbefore',
-                        reason: 'select.single.local.iconbefore error message'
-                    }, {
-                        type: 'FIELD_ERROR',
-                        context: 'select.single.local.iconafter',
-                        reason: 'select.single.local.iconafter error message'
-                    }, {
-                        type: 'FIELD_ERROR',
-                        context: 'select.single.local.icons',
-                        reason: 'select.single.local.icons error message'
-                    }, {
-                        type: 'FIELD_ERROR',
-                        context: 'select.single.remote',
-                        reason: 'select.single.remote error message'
-                    }, {
-                        type: 'FIELD_ERROR',
-                        context: 'select.multiple.remote',
-                        reason: 'select.multiple.remote error message'
-                    }, {
-                        type: 'FIELD_ERROR',
-                        context: 'radio.vertical',
-                        reason: 'Vertical radio validation error message'
-                    }, {
-                        type: 'FIELD_ERROR',
-                        context: 'radio.horizontal',
-                        reason: 'Horizontal radio validation error message'
-                    }, {
-                        type: 'FIELD_ERROR',
-                        context: 'checkbox.normal',
-                        reason: 'Checkbox validation error message'
-                    }, {
-                        type: 'FIELD_ERROR',
-                        context: 'checkbox.switch',
-                        reason: 'Switch validation error message'
-                    }, {
-                        type: 'GLOBAL_ERROR',
-                        reason: 'globally broken'
-                    }]);
-                };
-            });
-
-            document.querySelectorAll('ful-select').forEach(sel => {
-                sel.loader = async (q, type) => {
-                    if (type === 'id') {
-                        return [
-                            { value: q, text: q + "-asd" }
-                        ];
-                    }
-                    await sleep(3_000);
-                    return [
-                        { value: "1", text: "asd" },
-                        { value: "2", text: "bsd" }
-                    ]
-                };
-            })
-
-
         });
+
     </script>
 </body>
 

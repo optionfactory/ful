@@ -17,37 +17,41 @@ class RemoteJsonFormLoader {
         this.#responseMapper = responseMapper;
     }
     prepare(values, form) {
-        return this.#requestMapper(values);
+        return this.#requestMapper(values, form);
     }
     async submit(values, form) {
-
+        return await this.#http.request(this.#method, this.#url)
+            .json(values)
+            .fetch()
     }
     transform(response, form) {
-        return this.#responseMapper(response);
+        return this.#responseMapper(response, form);
     }
 }
 
 class LocalFormLoader {
     #requestMapper;
-    constructor(requestMapper) {
+    #responseMapper;
+    constructor(requestMapper, responseMapper) {
         this.#requestMapper = requestMapper;
+        this.#responseMapper = responseMapper;
     }
-    prepare(values, form) {
-        return this.#requestMapper(values);
+    async prepare(values, form) {
+        return await this.#requestMapper(values, form);
     }
     async submit(values, form) {
         return values;
     }
-    transform(response, form) {
-        return response;
+    async transform(response, form) {
+        return await this.#responseMapper(response, form);
     }
 }
 
 class FormLoader {
-    create({ el, http, requestMapper, responseMapper }) {
+    static create({ el, http, requestMapper, responseMapper }) {
         const url = el.getAttribute("action");
         if (!url) {
-            return new LocalFormLoader(requestMapper);
+            return new LocalFormLoader(requestMapper, responseMapper);
         }
         const method = el.getAttribute("method") ?? 'POST';
         return new RemoteJsonFormLoader(http, url, method, requestMapper, responseMapper);
