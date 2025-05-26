@@ -172,6 +172,9 @@ class Dropdown extends ParsedElement {
     hide() {
         this.setAttribute('hidden', '')
     }
+    get shown() {
+        return !this.hasAttribute('hidden');
+    }
     async show(loader) {
         this.removeAttribute('hidden');
         this.#menu.setAttribute('hidden', '');
@@ -203,7 +206,7 @@ class Select extends ParsedElement {
     static slots = true
     static template = `
         <label data-tpl-for="id" class="form-label">{{{{ slots.default }}}}</label>
-        <div class="input-group flex-nowrap">
+        <div class="input-group flex-nowrap" tabindex="-1">
             <span data-tpl-if="slots.ibefore" class="input-group-text">{{{{ slots.ibefore }}}}</span>
             {{{{ slots.before }}}}
             <div class="ful-select-input">
@@ -252,11 +255,20 @@ class Select extends ParsedElement {
 
         const self = this;
         const [dload, abortdload] = timing.debounce(400, () => self.#ddmenu.show(() => self.#loader.load(self.#input.value)));
-        this.addEventListener('click', (e) => {
-            this.#input.blur(); //we blur so we always trigger the focus event
+        this.addEventListener('click', (/** @type any */e) => {
+            e.stopPropagation();
+            if (e.target.matches('input')) {
+                return;
+            }
+            if (this.#ddmenu.shown) {
+                this.#ddmenu.hide();
+                return;
+            }
             this.#input.focus();
+            dload();
         })
         this.#badges.addEventListener('click', (e) => {
+            e.stopPropagation();
             const idx = [...this.#badges.children].indexOf(e.target);
             if (idx === -1) {
                 return;
@@ -264,9 +276,6 @@ class Select extends ParsedElement {
             this.#values.delete(Array.from(this.#values.keys()).pop())
             this.#syncBadges();
         })
-        this.#input.addEventListener('focus', e => {
-            this.#ddmenu.show(() => this.#loader.load(this.#input.value));
-        });
 
         this.#input.addEventListener('blur', e => {
             if (e.relatedTarget && this.contains(e.relatedTarget)) {
