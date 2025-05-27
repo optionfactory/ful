@@ -401,6 +401,7 @@ class HttpRequestBuilder {
     param(k, ...vs) {
         if (vs.length === 0 || vs[0] === null || vs[0] === undefined) {
             this.#params.delete(k);
+            return this;
         }
         for (const v of vs) {
             this.#params.append(k, v);
