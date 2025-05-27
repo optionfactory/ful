@@ -30,6 +30,7 @@ ful-radio-group {
                 border-radius: 4px;
                 padding: 8px 10px;
                 height: 100%;
+                cursor: pointer;
                 & > div {
                     flex: 1
                 }
