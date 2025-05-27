@@ -2,6 +2,7 @@ import { Attributes, ParsedElement } from "@optionfactory/ftl"
 import { Failure } from "../failure.mjs";
 import { Bindings } from "./bindings.mjs"
 import { Loaders } from "./loaders.mjs"
+import { AsyncEvents } from "../events/async.mjs";
 
 class RemoteJsonFormLoader {
     #http;
@@ -39,8 +40,8 @@ class LocalFormLoader {
     async prepare(values, form) {
         return await this.#requestMapper(values, form);
     }
-    async submit(values, form) {
-        return values;
+    async submit(values, form, response) {
+        return response;
     }
     async transform(response, form) {
         return await this.#responseMapper(response, form);
@@ -82,13 +83,17 @@ class Form extends ParsedElement {
         try {
             const loader = Loaders.fromAttributes(this, 'loaders:form');
             const values = this.values;
-            const request = await loader.prepare(values, this)
-            const se = new CustomEvent('submit', { bubbles: true, cancelable: true, detail: { values, request } });
-            if (!this.dispatchEvent(se)) {
-                return;
-            }
+            let request = await loader.prepare(values, this)
             try {
-                const response = await loader.submit(se.detail.request, this);
+                const se = new CustomEvent('submit', { bubbles: true, cancelable: true, detail: { values, request } });
+                if (!this.dispatchEvent(se)) {
+                    return;
+                }
+                const sre = new CustomEvent('submit:requested', { bubbles: true, cancelable: false, detail: { values: se.detail.values, request: se.detail.request} })
+                let response = await AsyncEvents.fireAsync(this, sre);
+                request = sre.detail.request;
+
+                response = await loader.submit(request, this, response);
                 const mapped = await loader.transform(response, this);
                 this.dispatchEvent(new CustomEvent('submit:success', { bubbles: true, cancelable: false, detail: { values, request, response: mapped } }))
             } catch (e) {
@@ -96,12 +101,13 @@ class Form extends ParsedElement {
                 if (e instanceof Failure) {
                     this.errors = e.problems;
                 }
-                throw e;
+                console.warn("failed to submit form", this, "reason:", e);
             }
         } finally {
             this.spinner(false);
         }
     }
+
     spinner(spin) {
         this.querySelectorAll('ful-spinner').forEach(el => {
             const hel = /** @type HTMLElement */ (el);

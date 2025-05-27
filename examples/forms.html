@@ -44,12 +44,14 @@
         ftl.registry
             .plugin(new ful.Plugin())
             .configure();
+
+        ful.AsyncEvents.mixInto(HTMLElement, HTMLDocument);
     </script>
 </head>
 
 <body>
     <div class="container">
-        <ful-form scroll-on-error response-mapper="mapper:mock-failure">
+        <ful-form scroll-on-error>
             <h1>Form associated elements</h1>
             <div class="form-grid">
                 <fieldset>
@@ -227,7 +229,7 @@
     <script>
 
 
-
+/*
         ftl.registry.defineComponent("mapper:mock-failure", async (values, form) => {
             await sleep(2_000);
             const fieldErrors = Array.from(form.form.elements)
@@ -239,7 +241,18 @@
                 reason: 'Global Error message'
             }])
         });
-
+*/
+        document.asyncOn('submit:requested', async (evt) => {
+            await sleep(2_000);
+            const fieldErrors = Array.from(evt.target.form.elements)
+                .map(el => el.getAttribute("name"))
+                .filter(name => name)
+                .map(name => ({ type: 'FIELD_ERROR', context: name, reason: `${name} is invalid` }));
+            throw new Failure(0, [...fieldErrors, {
+                type: 'GLOBAL_ERROR',
+                reason: 'Global Error message'
+            }])
+        });
 
         document.addEventListener("DOMContentLoaded", () => {
             document.querySelectorAll('ful-select').forEach(el => {
