@@ -27,7 +27,7 @@ class Input extends ParsedElement {
         
         const fragment = this.template().withOverlay({ id, fieldErrorId, slots }).render();    
         this.#input = fragment.querySelector("input");
-        Attributes.forward('input-', this, this.#input)
+        Attributes.forward('input-', this, this.#input);
         this.#input.addEventListener('change', (evt) => {
             evt.stopPropagation();
             this.dispatchEvent(new CustomEvent('change', {

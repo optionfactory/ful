@@ -67,6 +67,7 @@ class Form extends ParsedElement {
         form.replaceChildren(...this.childNodes);
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
+            e.stopPropagation();
             await this.submit();
         })
         if (this.hasAttribute("clear-invalid-on-change")) {
