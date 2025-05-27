@@ -14,17 +14,15 @@
     <script src="https://cdn.jsdelivr.net/npm/@optionfactory/ftl@2.0.6/dist/ftl.iife.min.js" crossorigin="anonymous"></script>
     <link href="../dist/ful.css" rel="stylesheet">
     <script src="../dist/ful.iife.min.js"></script>
-
-
     <script>
         class MockDataLoader {
-            #mockdata = Array.from({ length: 100 }, (x, i) => ({ id: i+1, types: ['type1', 'type2'], username: `test${i}@exaqmple.com`, date: '2025-01-01'}));
+            #mockdata = Array.from({ length: 100 }, (x, i) => ({ id: i + 1, types: ['type1', 'type2'], username: `test${i}@exaqmple.com`, date: '2025-01-01' }));
             async load(pageRequest, sortRequest, filterRequest) {
                 await ful.timing.sleep(500);
                 console.log(pageRequest);
                 return {
                     size: this.#mockdata.length,
-                    data: this.#mockdata.filter((e, i) => i >= pageRequest.size * pageRequest.page && i < pageRequest.size * (pageRequest.page +1))
+                    data: this.#mockdata.filter((e, i) => i >= pageRequest.size * pageRequest.page && i < pageRequest.size * (pageRequest.page + 1))
                 };
             }
             static create() {
@@ -41,7 +39,7 @@
 
 <body>
     <div class="container-fluid">
-        <ful-table loader="loaders:mock-data" autoload page-size="10">
+        <ful-table loader="loaders:mock-data" autoload page-size="25" class="d-flex flex-column h-100">
             <div slot="filters" class="d-flex gap-2">
                 <ful-filter-text class="col" name="byName">
                     Nome

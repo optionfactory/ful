@@ -1,6 +1,6 @@
 ful-pagination {
     display: block;
-
+    margin-top: auto;
     &:not(:defined) {
         visibility: hidden;
     }
