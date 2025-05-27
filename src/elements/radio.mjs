@@ -15,7 +15,7 @@ class RadioGroup extends ParsedElement {
                 <div class="label-wrapper" data-tpl-each="inputsAndLabels" data-tpl-var="ial">
                     <label>
                         {{{{ ial[0] }}}}
-                        {{{{ ial[1] }}}}
+                        <div>{{{{ ial[1] }}}}</div>
                     </label>
                 </div>
             </section>

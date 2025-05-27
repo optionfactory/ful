@@ -23,11 +23,16 @@ ful-radio-group {
             grid-template-columns: 1fr;
 
             & label {
-                display: block;
+                display: flex;
+                align-items: center;
                 border: 1px solid var(--ful-radio-group-label-border-color);
                 background-color: var(--ful-radio-group-label-background-color);
                 border-radius: 4px;
                 padding: 8px 10px;
+                height: 100%;
+                & > div {
+                    flex: 1
+                }
             }
 
             & label:has(input[type=radio]:checked) {
