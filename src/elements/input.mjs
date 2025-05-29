@@ -9,8 +9,7 @@ class Input extends ParsedElement {
             <span data-tpl-if="slots.ibefore" class="input-group-text">{{{{ slots.ibefore }}}}</span>
             {{{{ slots.before }}}}
             <input data-tpl-if="type != 'textarea'" class="form-control" data-tpl-id="id" data-tpl-type="text" placeholder=" " data-tpl-aria-describedby="fieldErrorId" form="">
-            <textarea data-tpl-if="type == 'textarea'" class="form-control" data-tpl-id="id" placeholder=" " data-tpl-aria-describedby="fieldErrorId" form="">
-            </textarea>
+            <textarea data-tpl-if="type == 'textarea'" class="form-control" data-tpl-id="id" placeholder=" " data-tpl-aria-describedby="fieldErrorId" form=""></textarea>
             {{{{ slots.after }}}}
             <span data-tpl-if="slots.iafter" class="input-group-text">{{{{ slots.iafter }}}}</span>
         </div>
