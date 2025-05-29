@@ -5,7 +5,9 @@ class Checkbox extends ParsedElement {
     static slots = true;
     static template = `
         <div data-tpl-class="klass">
-            <input data-tpl-id="id" class="form-check-input" type="checkbox" role="switch" form="" placeholder=" " data-tpl-aria-describedby="fieldErrorId">
+            <div class="input-container">
+                <input data-tpl-id="id" class="form-check-input" type="checkbox" role="switch" form="" placeholder=" " data-tpl-aria-describedby="fieldErrorId">
+            </div>
             <label data-tpl-for="id" class="form-check-label">{{{{ slots.default }}}}</label>
         </div>
         <ful-field-error data-tpl-if="fieldErrorId"></ful-field-error>
