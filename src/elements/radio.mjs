@@ -28,6 +28,7 @@ class RadioGroup extends ParsedElement {
     static formAssociated = true;
     #fieldError;
     #firstRadio;
+    #booleanType;
     constructor() {
         super();
         this.internals = this.attachInternals();
@@ -62,11 +63,12 @@ class RadioGroup extends ParsedElement {
         this.template().withOverlay({ name, fieldErrorId, slots, inputsAndLabels }).renderTo(this);
         this.#fieldError = this.querySelector('ful-field-error');
         this.#firstRadio = this.querySelector('input[type=radio]');
+        this.#booleanType = this.getAttribute('type') === 'boolean';
     }
     get value() {
         /** @type {HTMLInputElement|null} */
         const checked = this.querySelector('input[type=radio]:checked');
-        return checked ? checked.value : null;
+        return checked ? (this.#booleanType ? (checked.value === 'true') : checked.value) : null;
     }
     set value(value) {
         if (value === null) {
@@ -76,7 +78,7 @@ class RadioGroup extends ParsedElement {
             return;
         }
         /** @type {HTMLInputElement|null} */
-        const el = this.querySelector(`input[type=radio][value=${CSS.escape(value)}]`);
+        const el = this.querySelector(`input[type=radio][value=${CSS.escape(String(value))}]`);
         if (el) {
             el.checked = true;
         }
