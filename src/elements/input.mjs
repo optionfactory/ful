@@ -8,7 +8,9 @@ class Input extends ParsedElement {
         <div class="input-group">
             <span data-tpl-if="slots.ibefore" class="input-group-text">{{{{ slots.ibefore }}}}</span>
             {{{{ slots.before }}}}
-            <input class="form-control" data-tpl-id="id" type="text" placeholder=" " data-tpl-aria-describedby="fieldErrorId" form="">
+            <input data-tpl-if="type != 'textarea'" class="form-control" data-tpl-id="id" data-tpl-type="text" placeholder=" " data-tpl-aria-describedby="fieldErrorId" form="">
+            <textarea data-tpl-if="type == 'textarea'" class="form-control" data-tpl-id="id" placeholder=" " data-tpl-aria-describedby="fieldErrorId" form="">
+            </textarea>
             {{{{ slots.after }}}}
             <span data-tpl-if="slots.iafter" class="input-group-text">{{{{ slots.iafter }}}}</span>
         </div>
@@ -24,9 +26,9 @@ class Input extends ParsedElement {
     render({ slots }) {
         const id = Attributes.uid('ful-input');
         const fieldErrorId = `${id}-error`;
-        
-        const fragment = this.template().withOverlay({ id, fieldErrorId, slots }).render();    
-        this.#input = fragment.querySelector("input");
+        const type = this.getAttribute("type") ?? 'text';
+        const fragment = this.template().withOverlay({ id, type, fieldErrorId, slots }).render();    
+        this.#input = fragment.querySelector("input,textarea");
         Attributes.forward('input-', this, this.#input);
         this.#input.addEventListener('change', (evt) => {
             evt.stopPropagation();
