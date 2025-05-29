@@ -4,7 +4,7 @@ ful-input {
     &:not(:defined) {
         visibility: hidden;
     }
-
+    &:invalid textarea,
     &:invalid input {
         border-color: var(--ful-invalid-border-color);
         padding-right: calc(1.5em + .75rem);
@@ -14,6 +14,7 @@ ful-input {
         background-size: calc(.75em + .375rem) calc(.75em + .375rem);
     }
 
+    &:invalid textarea:focus,
     &:invalid input:focus {
         border-color: var(--ful-invalid-border-color);
         box-shadow: var(--ful-invalid-box-shadow);
