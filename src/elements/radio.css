@@ -1,9 +1,9 @@
 ful-radio-group {
     --ful-radio-group-label-border-color: var(--bs-border-color, #dee2e6);
-    --ful-radio-group-label-border-color-checked: #46ce95;
+    --ful-radio-group-label-border-color-checked: #007376;
     --ful-radio-group-label-border-color-disabled: var(--bs-border-color, #dee2e6);
     --ful-radio-group-label-background-color: inherit;
-    --ful-radio-group-label-background-color-checked: #f5fffc;
+    --ful-radio-group-label-background-color-checked: #eefbfb;
     --ful-radio-group-label-background-color-disabled: var(--bs-secondary-bg, #e9ecef);
     display: block;
 
