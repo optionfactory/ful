@@ -4,6 +4,29 @@ import { it, describe } from 'node:test';
 import { Fragments } from "@optionfactory/ftl"
 import { Bindings } from "../src/elements/bindings.mjs";
 
+describe('Bindings.flatten', () => {
+    it('can flatten an empty object', () => {
+        const got = Bindings.flatten({}, '', new Set());
+        assert.deepEqual(got, {});
+    });    
+    it('can flatten a flat object', () => {
+        const got = Bindings.flatten({a: 1, b: 2}, '', new Set());
+        assert.deepEqual(got, {a: 1, b: 2});
+    });    
+    it('can flatten a nested object', () => {
+        const got = Bindings.flatten({a: 1, b: {c: 2}}, '', new Set());
+        assert.deepEqual(got, {a: 1, "b.c": 2});
+    });    
+    it('can flatten an array', () => {
+        const got = Bindings.flatten({a: [1, 2]}, '', new Set());
+        assert.deepEqual(got, {"a.0": 1, "a.1": 2});
+    });    
+    it('objects are not flattened over stops', () => {
+        const got = Bindings.flatten({a: {b: {c: 1}}}, '', new Set("a.b"));
+        assert.deepEqual(got, {"a.b": {c: 1}});
+    });    
+
+});
 
 
 describe('Bindings', () => {

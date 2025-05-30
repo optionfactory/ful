@@ -4,15 +4,16 @@ class Bindings {
     /**
      * @param {{ [x: string]: any; }} obj
      * @param {string} prefix
+     * @param {Set<String>} stops
      * @return {{ [x: string]: any; }}
      */
-    static flatten(obj, prefix) {
+    static flatten(obj, prefix, stops) {
         return Object.keys(obj).reduce((acc, k) => {
-            const pre = prefix.length ? prefix + '.' : '';
-            if (typeof obj[k] === 'object' && obj[k] !== null) {
-                Object.assign(acc, Bindings.flatten(obj[k], pre + k));
+            const pre = prefix.length ? prefix + '.' + k : k;
+            if (!stops.has(prefix) && typeof obj[k] === 'object' && obj[k] !== null) {
+                Object.assign(acc, Bindings.flatten(obj[k], pre, stops));
             } else {
-                acc[pre + k] = obj[k];
+                acc[pre] = obj[k];
             }
             return acc;
         }, {});
@@ -107,7 +108,10 @@ class Bindings {
     }
 
     static mutateIn(form, values){
-        for (const [flattenedKey, value] of Object.entries(Bindings.flatten(values, ''))) {
+        const names = Array.from(form.form.elements)
+            .map(el => el.getAttribute("name"))
+            .filter(n => n);
+        for (const [flattenedKey, value] of Object.entries(Bindings.flatten(values, '', new Set(names)))) {
             for(const el of form.querySelectorAll(`[name='${CSS.escape(flattenedKey)}']`)){
                 Bindings.mutate(el, value)
             }
