@@ -1,7 +1,7 @@
 import { Attributes, ParsedElement } from "@optionfactory/ftl"
 
 class Input extends ParsedElement {
-    static observed = ['value'];
+    static observed = ['value', 'readonly:presence'];
     static slots = true;
     static template = `
         <label data-tpl-for="id" class="form-label">{{{{ slots.default }}}}</label>
@@ -48,6 +48,12 @@ class Input extends ParsedElement {
     set value(value) {
         this.#input.value = value;
     }
+    get readonly(){
+        return this.#input.readOnly;
+    }
+    set readonly(v) {
+        this.#input.readOnly = v;
+    }    
     focus(options) {
         this.#input.focus(options);
     }
