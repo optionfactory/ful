@@ -43,10 +43,10 @@ class Input extends ParsedElement {
         this.replaceChildren(fragment);
     }
     get value() {
-        return this.#input.value;
+        return this.#input.value === '' ? null : this.#input.value;
     }
     set value(value) {
-        this.#input.value = value;
+        this.#input.value = value === '' ? null : value;
     }
     get readonly(){
         return this.#input.readOnly;
