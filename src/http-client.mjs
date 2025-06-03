@@ -51,6 +51,9 @@ class HttpClientError extends Failure {
         this.name = 'HttpClientError';
         this.status = status;
     }
+    dropping(prefix){
+        return new HttpClientError(this.message, this.status, Failure.dropProblemsContext(this.problems, prefix), this);
+    }
     /**
      * 
      * @param {string} type 
