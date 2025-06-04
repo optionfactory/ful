@@ -239,7 +239,7 @@ class Select extends ParsedElement {
     constructor() {
         super();
         this.internals = this.attachInternals();
-        this.internals.role = 'combobox';
+        this.internals.role = 'presentation';
     }
     async render({ slots, observed }) {
         const name = this.getAttribute("name");

@@ -21,7 +21,7 @@ class Input extends ParsedElement {
     constructor() {
         super();
         this.internals = this.attachInternals();
-        this.internals.role = 'textbox';
+        this.internals.role = 'presentation';
     }
     render({ slots }) {
         const id = Attributes.uid('ful-input');
