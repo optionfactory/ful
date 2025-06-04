@@ -4,7 +4,7 @@ class InstantFilter extends ParsedElement {
     static observed = ["value:json"];
     static slots = true;
     static template = `
-        <label data-tpl-for="id" class="form-label" data-tpl-if="label">{{{{ label }}}}</label>
+        <label class="form-label" data-tpl-if="label">{{{{ label }}}}</label>
         <div class="input-group">
             <button data-ref="operator" class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" value="LTE" form="">&PrecedesSlantEqual;</button>
             <ul class="dropdown-menu">
@@ -16,7 +16,7 @@ class InstantFilter extends ParsedElement {
                 <li><a class="dropdown-item" role="button" value="GTE">&SucceedsSlantEqual;</a></li>
                 <li><a class="dropdown-item" role="button" value="BETWEEN">&LeftRightArrow;</a></li>
             </ul>
-            <input data-tpl-id="id" data-ref="value1" type="datetime-local" class="form-control" form="">
+            <input data-ref="value1" type="datetime-local" class="form-control" form="">
             <input data-ref="value2" type="datetime-local" class="form-control" form="" hidden>
             <span class="input-group-text"><i class="bi bi-search"></i></span>
         </div>
@@ -32,15 +32,18 @@ class InstantFilter extends ParsedElement {
         this.internals = this.attachInternals();
     }
     render({ slots }) {
-        const id = Attributes.uid('instant-filter');
         const label = Fragments.toHtml(slots.default.cloneNode(true)).trim().length === 0 ? null : slots.default;
         const name = this.getAttribute("name")
-        const fragment = this.template().withOverlay({ id, label, name }).render(this);
+        const fragment = this.template().withOverlay({ label, name }).render(this);
         this.#operator = fragment.querySelector('[data-ref=operator]');
         this.#value1 = fragment.querySelector('[data-ref=value1]');
         this.#value2 = fragment.querySelector('[data-ref=value2]');
+        this.#fieldError = fragment.querySelector('ful-field-error');
+        const labelEl = fragment.querySelector('label')
+        labelEl?.addEventListener('click', () => this.focus());
+        this.#value1.ariaDescribedByElements = [this.#fieldError];
+        this.#value1.ariaLabelledByElements = labelEl ? [label] : [];
         this.replaceChildren(fragment);
-        this.#fieldError = this.querySelector('ful-field-error');
         this.addEventListener('click', (evt) => {
             const target = /** @type HTMLElement */ (evt.target);
             if (!target.matches('ul > li > a')) {
@@ -103,7 +106,7 @@ class LocalDateFilter extends ParsedElement {
     static observed = ["value:json"];
     static slots = true;
     static template = `
-        <label data-tpl-for="id" class="form-label" data-tpl-if="label">{{{{ label }}}}</label>
+        <label class="form-label" data-tpl-if="label">{{{{ label }}}}</label>
         <div class="input-group">
             <button data-ref="operator" class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" value="EQ" form="">=</button>
             <ul class="dropdown-menu">
@@ -115,10 +118,9 @@ class LocalDateFilter extends ParsedElement {
                 <li><a class="dropdown-item" role="button" value="GTE">&SucceedsSlantEqual;</a></li>
                 <li><a class="dropdown-item" role="button" value="BETWEEN">&LeftRightArrow;</a></li>
             </ul>
-            <input data-tpl-id="id" data-ref="value1" type="date" class="form-control" form="">
+            <input data-ref="value1" type="date" class="form-control" form="">
             <input data-ref="value2" type="date" class="form-control" form="" hidden>
             <span class="input-group-text"><i class="bi bi-search"></i></span>
-
         </div>
         <ful-field-error></ful-field-error>
     `;
@@ -132,15 +134,18 @@ class LocalDateFilter extends ParsedElement {
         this.internals = this.attachInternals();
     }
     render({ slots }) {
-        const id = Attributes.uid('instant-filter');
         const label = Fragments.toHtml(slots.default.cloneNode(true)).trim().length === 0 ? null : slots.default;
         const name = this.getAttribute("name")
-        const fragment = this.template().withOverlay({ id, label, name }).render(this);
+        const fragment = this.template().withOverlay({ label, name }).render(this);
         this.#operator = fragment.querySelector('[data-ref=operator]');
         this.#value1 = fragment.querySelector('[data-ref=value1]');
         this.#value2 = fragment.querySelector('[data-ref=value2]');
+        this.#fieldError = fragment.querySelector('ful-field-error');
+        const labelEl = fragment.querySelector('label')
+        labelEl?.addEventListener('click', () => this.focus());
+        this.#value1.ariaDescribedByElements = [this.#fieldError];
+        this.#value1.ariaLabelledByElements = labelEl ? [label] : [];
         this.replaceChildren(fragment);
-        this.#fieldError = this.querySelector('ful-field-error');
         this.addEventListener('click', (evt) => {
             const target = /** @type HTMLElement */(evt.target);
             if (!target.matches('ul > li > a')) {
@@ -193,7 +198,7 @@ class TextFilter extends ParsedElement {
     static observed = ["value:json"];
     static slots = true;
     static template = `
-        <label data-tpl-for="id" class="form-label" data-tpl-if="label">{{{{ label }}}}</label>
+        <label class="form-label" data-tpl-if="label">{{{{ label }}}}</label>
         <div class="input-group">
             <button data-ref="operator" class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" value="CONTAINS" form="">&mldr;a&mldr;</button>
             <ul class="dropdown-menu">
@@ -202,7 +207,7 @@ class TextFilter extends ParsedElement {
                 <li><a class="dropdown-item" role="button" value="ENDS_WITH">&mldr;a</a></li>
                 <li><a class="dropdown-item" role="button" value="EQ">=</a></li>
             </ul>
-            <input data-tpl-id="id" data-ref="value" type="text" class="form-control" form="">
+            <input data-ref="value" type="text" class="form-control" form="">
             <span class="input-group-text"><i class="bi bi-search"></i></span>
         </div>
         <ful-field-error></ful-field-error>
@@ -216,14 +221,17 @@ class TextFilter extends ParsedElement {
         this.internals = this.attachInternals();
     }
     render({ slots }) {
-        const id = Attributes.uid('string-filter');
         const label = Fragments.toHtml(slots.default.cloneNode(true)).trim().length === 0 ? null : slots.default;
         const name = this.getAttribute("name")
-        const fragment = this.template().withOverlay({ id, label, name }).render(this);
+        const fragment = this.template().withOverlay({ label, name }).render(this);
         this.#operator = fragment.querySelector('[data-ref=operator]');
         this.#value = fragment.querySelector('[data-ref=value]');
+        this.#fieldError = fragment.querySelector('ful-field-error');
+        const labelEl = fragment.querySelector('label')
+        labelEl?.addEventListener('click', () => this.focus());
+        this.#value.ariaDescribedByElements = [this.#fieldError];
+        this.#value.ariaLabelledByElements = labelEl ? [label] : [];        
         this.replaceChildren(fragment);
-        this.#fieldError = this.querySelector('ful-field-error');
         this.addEventListener('click', (evt) => {
             const target = /** @type HTMLElement */(evt.target);
             if (!target.matches('ul > li > a')) {

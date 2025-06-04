@@ -6,11 +6,11 @@ class Checkbox extends ParsedElement {
     static template = `
         <div data-tpl-class="klass">
             <div class="input-container">
-                <input data-tpl-id="id" class="form-check-input" type="checkbox" role="switch" form="" placeholder=" " data-tpl-aria-describedby="fieldErrorId">
+                <input class="form-check-input" type="checkbox" role="switch" form="" placeholder=" ">
             </div>
-            <label data-tpl-for="id" class="form-check-label">{{{{ slots.default }}}}</label>
+            <label class="form-check-label">{{{{ slots.default }}}}</label>
         </div>
-        <ful-field-error data-tpl-if="fieldErrorId"></ful-field-error>
+        <ful-field-error></ful-field-error>
     `;
     #input;
     #fieldError;
@@ -21,13 +21,10 @@ class Checkbox extends ParsedElement {
         this.internals.role = 'presentation';
     }
     render({ slots }) {
-        const id = Attributes.uid("ful-checkbox");
-        const fieldErrorId = id + "-error";
         const klass = this.getAttribute('type') == 'switch' ? "form-check form-switch" : "form-check";
-        const fragment = this.template().withOverlay({ slots, klass, id, fieldErrorId }).render();
+        const fragment = this.template().withOverlay({ slots, klass }).render();
         this.#input = fragment.querySelector("input");
         Attributes.forward('input-', this, this.#input)
-        this.#fieldError = fragment.querySelector('ful-field-error');
         this.#input.addEventListener('change', (evt) => {
             evt.stopPropagation();
             this.dispatchEvent(new CustomEvent('change', {
@@ -37,7 +34,12 @@ class Checkbox extends ParsedElement {
                     value: this.value
                 }
             }));
-        });        
+        });
+        const label = fragment.querySelector('label');
+        label.addEventListener('click', () => { this.focus(); this.value = !this.value; });
+        this.#fieldError = fragment.querySelector('ful-field-error');
+        this.#input.ariaDescribedByElements = [this.#fieldError];
+        this.#input.ariaLabelledByElements = [label];
         this.replaceChildren(fragment);
     }
     get value() {

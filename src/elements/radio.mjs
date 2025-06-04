@@ -4,7 +4,7 @@ class RadioGroup extends ParsedElement {
     static observed = ['value'];
     static slots = true;
     static template = `
-        <fieldset data-tpl-aria-describedby="fieldErrorId">
+        <fieldset>
             <legend class="form-label">
                 {{{{ slots.default }}}}
             </legend>
@@ -19,7 +19,7 @@ class RadioGroup extends ParsedElement {
                     </label>
                 </div>
             </section>
-            <ful-field-error data-tpl-id="fieldErrorId"></ful-field-error>
+            <ful-field-error></ful-field-error>
             <footer data-tpl-if="slots.footer">
                 {{{{ slots.footer }}}}
             </footer>
@@ -60,9 +60,9 @@ class RadioGroup extends ParsedElement {
         });
 
         radioEls.forEach(el => el.remove());
-        const fieldErrorId = Attributes.uid("ful-error")
-        this.template().withOverlay({ name, fieldErrorId, slots, inputsAndLabels }).renderTo(this);
+        this.template().withOverlay({ name, slots, inputsAndLabels }).renderTo(this);
         this.#fieldError = this.querySelector('ful-field-error');
+        this.ariaDescribedByElements = [this.#fieldError];
         this.#firstRadio = this.querySelector('input[type=radio]');
         this.#booleanType = this.getAttribute('type') === 'boolean';
     }

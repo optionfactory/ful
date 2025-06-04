@@ -203,19 +203,19 @@ class Select extends ParsedElement {
     static observed = ['value:csvm']
     static slots = true
     static template = `
-        <label data-tpl-for="id" class="form-label">{{{{ slots.default }}}}</label>
+        <label class="form-label">{{{{ slots.default }}}}</label>
         <div class="input-group flex-nowrap" tabindex="-1">
             <span data-tpl-if="slots.ibefore" class="input-group-text">{{{{ slots.ibefore }}}}</span>
             {{{{ slots.before }}}}
             <div class="ful-select-input">
                 <badges></badges>
-                <input data-tpl-id="id" data-tpl-ariadesribed-by="fieldErrorId" type="text" form="">
+                <input type="text" form="">
             </div>
             {{{{ slots.after }}}}
             <span data-tpl-if="slots.iafter" class="input-group-text">{{{{ slots.iafter }}}}</span>
         </div>
         <ful-dropdown hidden></ful-dropdown>
-        <ful-field-error data-tpl-id="fieldErrorId"></ful-field-error>
+        <ful-field-error></ful-field-error>
     `;
     static mappers = {
         "csvm": (v, name, el) => {
@@ -241,16 +241,19 @@ class Select extends ParsedElement {
     }
     async render({ slots, observed }) {
         const name = this.getAttribute("name");
-        const id = Attributes.uid('ful-select');
-        const fieldErrorId = id + "-error";
         this.#loader = Loaders.fromAttributes(this, 'loaders:select', { options: slots.options });
         await this.#loader.prefetch?.();
-        const fragment = this.template().withOverlay({ slots, name, id, fieldErrorId }).render();
+        const fragment = this.template().withOverlay({ slots, name }).render();
         this.#input = fragment.querySelector('input');
         this.#badges = fragment.querySelector('badges');
         this.#ddmenu = fragment.querySelector('ful-dropdown');
         this.#multiple = this.hasAttribute("multiple");
+        const label = fragment.querySelector('label');
+        label.addEventListener('click', () => this.focus());
         this.#fieldError = fragment.querySelector('ful-field-error');
+        this.#input.ariaDescribedByElements = [this.#fieldError];
+        this.#input.ariaLabelledByElements = [label];
+
 
         const self = this;
         const [dload, abortdload] = timing.debounce(400, () => self.#ddmenu.show(() => self.#loader.load(self.#input.value)));
