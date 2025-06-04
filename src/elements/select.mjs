@@ -89,11 +89,9 @@ class OptionsSlotSelectLoader {
         this.#data = data;
     }
     async exact(...keys) {
-        await timing.sleep(500);
         return this.#data.filter(([k, v]) => keys.includes(k));
     }
     async load(needle) {
-        await timing.sleep(500);
         return this.#data.filter(([k, v]) => v.includes(needle?.toLowerCase()));
     }
 }
