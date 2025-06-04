@@ -108,7 +108,7 @@ class Bindings {
     }
 
     static mutateIn(form, values){
-        const names = Array.from(form.form.elements)
+        const names = Array.from(form.elements)
             .map(el => el.getAttribute("name"))
             .filter(n => n);
         for (const [flattenedKey, value] of Object.entries(Bindings.flatten(values, '', new Set(names)))) {
