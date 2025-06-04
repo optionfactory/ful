@@ -10,7 +10,7 @@ class Bindings {
     static flatten(obj, prefix, stops) {
         return Object.keys(obj).reduce((acc, k) => {
             const pre = prefix.length ? prefix + '.' + k : k;
-            if (!stops.has(prefix) && typeof obj[k] === 'object' && obj[k] !== null) {
+            if (!stops.has(pre) && typeof obj[k] === 'object' && obj[k] !== null) {
                 Object.assign(acc, Bindings.flatten(obj[k], pre, stops));
             } else {
                 acc[pre] = obj[k];
