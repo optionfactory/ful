@@ -32,6 +32,7 @@ class RadioGroup extends ParsedElement {
     constructor() {
         super();
         this.internals = this.attachInternals();
+        this.internals.role = 'radiogroup';
     }
     render({ slots }) {
         const name = this.getAttribute('name') ?? Attributes.uid('ful-radiogroup');

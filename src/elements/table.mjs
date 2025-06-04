@@ -295,10 +295,6 @@ class Table extends ParsedElement {
                 size: this.#latestRequest.pageRequest.size
             }, this.#latestRequest.sortRequest, evt.detail.request);
         })
-        if (maybeForm) {
-            maybeForm.submitter = async (filterRequest, form) => {
-            }
-        }
         this.addEventListener('page-requested', async (/** @type any */e) => {
             await this.load({
                 page: e.detail.value,

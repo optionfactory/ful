@@ -18,11 +18,13 @@ class Checkbox extends ParsedElement {
     constructor() {
         super();
         this.internals = this.attachInternals();
+        this.internals.role = 'checkbox';
     }
     render({ slots }) {
         const id = Attributes.uid("ful-checkbox");
         const fieldErrorId = id + "-error";
         const klass = this.getAttribute('type') == 'switch' ? "form-check form-switch" : "form-check";
+        this.internals.role = this.getAttribute('type') == 'switch' ? 'switch' : 'checkbox';
         const fragment = this.template().withOverlay({ slots, klass, id, fieldErrorId }).render();
         this.#input = fragment.querySelector("input");
         Attributes.forward('input-', this, this.#input)
