@@ -42,7 +42,7 @@ class InstantFilter extends ParsedElement {
         const labelEl = fragment.querySelector('label')
         labelEl?.addEventListener('click', () => this.focus());
         this.#value1.ariaDescribedByElements = [this.#fieldError];
-        this.#value1.ariaLabelledByElements = labelEl ? [label] : [];
+        this.#value1.ariaLabelledByElements = labelEl ? [labelEl] : [];
         this.replaceChildren(fragment);
         this.addEventListener('click', (evt) => {
             const target = /** @type HTMLElement */ (evt.target);
@@ -144,7 +144,7 @@ class LocalDateFilter extends ParsedElement {
         const labelEl = fragment.querySelector('label')
         labelEl?.addEventListener('click', () => this.focus());
         this.#value1.ariaDescribedByElements = [this.#fieldError];
-        this.#value1.ariaLabelledByElements = labelEl ? [label] : [];
+        this.#value1.ariaLabelledByElements = labelEl ? [labelEl] : [];
         this.replaceChildren(fragment);
         this.addEventListener('click', (evt) => {
             const target = /** @type HTMLElement */(evt.target);
@@ -230,7 +230,7 @@ class TextFilter extends ParsedElement {
         const labelEl = fragment.querySelector('label')
         labelEl?.addEventListener('click', () => this.focus());
         this.#value.ariaDescribedByElements = [this.#fieldError];
-        this.#value.ariaLabelledByElements = labelEl ? [label] : [];        
+        this.#value.ariaLabelledByElements = labelEl ? [labelEl] : [];        
         this.replaceChildren(fragment);
         this.addEventListener('click', (evt) => {
             const target = /** @type HTMLElement */(evt.target);
