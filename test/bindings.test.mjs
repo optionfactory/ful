@@ -22,7 +22,7 @@ describe('Bindings.flatten', () => {
         assert.deepEqual(got, {"a.0": 1, "a.1": 2});
     });    
     it('objects are not flattened over stops', () => {
-        const got = Bindings.flatten({a: {b: {c: 1}}}, '', new Set("a.b"));
+        const got = Bindings.flatten({a: {b: {c: 1}}}, '', new Set(["a.b"]));
         assert.deepEqual(got, {"a.b": {c: 1}});
     });    
 
