@@ -197,48 +197,50 @@ class Table extends ParsedElement {
         <ful-form data-tpl-if="slots.filters">
             {{{{ slots.filters }}}}
         </ful-form>
-        <table class="table">
-            <caption data-tpl-if="slots.caption">{{{{ slots.caption }}}}</caption>
-            <thead>
-                <tr>
-                    <th data-tpl-each="schema" scope="col" data-tpl-class="title.classes">
-                        {{{{ title.fragment }}}}
-                        <ful-sorter data-tpl-if="sorter || order" data-tpl-sorter="sorter" data-tpl-order="order"></ful-sorter>
-                    </th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-            <tbody data-ref="no-autoload">
-                <tr>
-                    <td data-tpl-colspan="schema.length" class="text-center align-middle p-4">
-                        <i class="bi bi-search" style="font-size: 40px; color: #BDC3CA"></i>
-                        <p class="mt-3 mb-0" style="color: #BDC3CA">
-                            Avvia la ricerca per visualizzare i risultati...
-                        </p>
-                    </td>
-                </tr>
-            </tbody>
-            <tbody data-ref="loading" hidden>
-                <tr>
-                    <td data-tpl-colspan="schema.length" class="text-center align-middle p-4">
-                        <ful-spinner class="big"></ful-spinner>
-                    </td>
-                </tr>
-            </tbody>
-            <tbody data-ref="feedback" hidden>
-                <tr>
-                    <td data-tpl-colspan="schema.length" class="text-center align-middle p-4">
-                        <div class="alert alert-danger">
-                            <p>Errore nel caricamento della tabella:</p>
-                            <p class="mb-0" data-ref="feedback-error"></p>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-            <tfoot data-tpl-if="slots.footer">
-                {{{{ slots.footer }}}}
-            </tfoot>
-        </table>
+        <div class="table-wrapper">
+            <table class="table">
+                <caption data-tpl-if="slots.caption">{{{{ slots.caption }}}}</caption>
+                <thead>
+                    <tr>
+                        <th data-tpl-each="schema" scope="col" data-tpl-class="title.classes">
+                            {{{{ title.fragment }}}}
+                            <ful-sorter data-tpl-if="sorter || order" data-tpl-sorter="sorter" data-tpl-order="order"></ful-sorter>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                <tbody data-ref="no-autoload">
+                    <tr>
+                        <td data-tpl-colspan="schema.length" class="text-center align-middle p-4">
+                            <i class="bi bi-search" style="font-size: 40px; color: #BDC3CA"></i>
+                            <p class="mt-3 mb-0" style="color: #BDC3CA">
+                                Avvia la ricerca per visualizzare i risultati...
+                            </p>
+                        </td>
+                    </tr>
+                </tbody>
+                <tbody data-ref="loading" hidden>
+                    <tr>
+                        <td data-tpl-colspan="schema.length" class="text-center align-middle p-4">
+                            <ful-spinner class="big"></ful-spinner>
+                        </td>
+                    </tr>
+                </tbody>
+                <tbody data-ref="feedback" hidden>
+                    <tr>
+                        <td data-tpl-colspan="schema.length" class="text-center align-middle p-4">
+                            <div class="alert alert-danger">
+                                <p>Errore nel caricamento della tabella:</p>
+                                <p class="mb-0" data-ref="feedback-error"></p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot data-tpl-if="slots.footer">
+                    {{{{ slots.footer }}}}
+                </tfoot>
+            </table>
+        </div>
         <ful-pagination current="0" total="1"></ful-pagination>
     `;
     static templates = {
@@ -267,7 +269,8 @@ class Table extends ParsedElement {
         const template = this.template();
         const schema = TableSchemaParser.parse(slots.default, template);
         const fragment = template.withOverlay({ slots, schema }).render();
-        const table = /** @type HTMLTableElement */ (Nodes.queryChildren(fragment, 'table'));
+        const tableWrapper = /** @type HTMLTableElement */ (Nodes.queryChildren(fragment, '.table-wrapper'));
+        const table = /** @type HTMLTableElement */ (tableWrapper.querySelector("table"));
         Attributes.forward('table-', this, table);
         this.#schema = schema;
         this.#body = table.querySelector(':scope > tbody');
