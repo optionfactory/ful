@@ -200,7 +200,7 @@ class Dropdown extends ParsedElement {
 }
 
 class Select extends ParsedElement {
-    static observed = ['value:csvm']
+    static observed = ['value:csvm', 'readonly:presence']
     static slots = true
     static template = `
         <label class="form-label">{{{{ slots.default }}}}</label>
@@ -239,13 +239,18 @@ class Select extends ParsedElement {
         this.internals = this.attachInternals();
         this.internals.role = 'presentation';
     }
-    async render({ slots, observed }) {
+    async render({ slots, observed, disabled }) {
         const name = this.getAttribute("name");
         this.#loader = Loaders.fromAttributes(this, 'loaders:select', { options: slots.options });
         await this.#loader.prefetch?.();
         const fragment = this.template().withOverlay({ slots, name }).render();
         this.#input = fragment.querySelector('input');
         this.#badges = fragment.querySelector('badges');
+
+        this.value = observed.value;
+        this.disabled = disabled;
+        this.readonly = observed.readonly;
+
         this.#ddmenu = fragment.querySelector('ful-dropdown');
         this.#multiple = this.hasAttribute("multiple");
         const label = fragment.querySelector('label');
@@ -253,7 +258,6 @@ class Select extends ParsedElement {
         this.#fieldError = fragment.querySelector('ful-field-error');
         this.#input.ariaDescribedByElements = [this.#fieldError];
         this.#input.ariaLabelledByElements = [label];
-
 
         const self = this;
         const [dload, abortdload] = timing.debounce(400, () => self.#ddmenu.show(() => self.#loader.load(self.#input.value)));
@@ -347,6 +351,11 @@ class Select extends ParsedElement {
         this.#badges.append(...badges);
     }
     set value(value) {
+        if(value === null){
+            this.#values = new Map();
+            this.#syncBadges();
+            return;            
+        }
         (async () => {
             const entries = await (this.#multiple ? this.#loader.exact(...value) : this.#loader.exact(value));
             this.#values = new Map(entries);

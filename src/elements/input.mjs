@@ -23,11 +23,16 @@ class Input extends ParsedElement {
         this.internals = this.attachInternals();
         this.internals.role = 'presentation';
     }
-    render({ slots }) {
+    render({ slots, observed, disabled }) {
         const type = this.getAttribute("type") ?? 'text';
         const fragment = this.template().withOverlay({ type, slots }).render();    
         this.#input = fragment.querySelector("input,textarea");
+
         Attributes.forward('input-', this, this.#input);
+        this.disabled = disabled;
+        this.readonly = observed.readonly;
+        this.value = observed.value;
+
         this.#input.addEventListener('change', (evt) => {
             evt.stopPropagation();
             this.dispatchEvent(new CustomEvent('change', {
@@ -57,6 +62,12 @@ class Input extends ParsedElement {
     set readonly(v) {
         this.#input.readOnly = v;
     }    
+    get disabled(){
+        return this.#input.hasAttribute('disabled');
+    }
+    set disabled(d){
+        Attributes.toggle(this.#input, 'disabled', d);
+    }
     focus(options) {
         this.#input.focus(options);
     }
@@ -68,6 +79,9 @@ class Input extends ParsedElement {
         }
         this.internals.setValidity({ customError: true }, " ");
         this.#fieldError.innerText = error;
+    }
+    formResetCallback(){
+        this.value = this.getAttribute("value")
     }
 }
 

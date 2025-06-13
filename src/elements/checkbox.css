@@ -5,18 +5,16 @@ ful-checkbox {
         visibility: hidden;
     }
 
-
-    &:invalid > div > input[type=checkbox] {
+    &:invalid input[type=checkbox] {
         border-color: var(--ful-invalid-border-color);
 
-        &:checked{
+        &:checked {
             background-color: var(--ful-invalid-color);
         }
-    
+
         &:focus {
             box-shadow: var(--ful-invalid-box-shadow);
-        }    
-    } 
+        }
+    }
 
-   
 }

@@ -31,7 +31,8 @@ ful-radio-group {
                 padding: 8px 10px;
                 height: 100%;
                 cursor: pointer;
-                & > div {
+
+                &>div {
                     flex: 1
                 }
             }
@@ -40,10 +41,12 @@ ful-radio-group {
                 background-color: var(--ful-radio-group-label-background-color-checked);
                 border-color: var(--ful-radio-group-label-border-color-checked);
             }
+
             & label:has(input[type=radio]:disabled) {
                 background-color: var(--ful-radio-group-label-background-color-disabled);
                 border-color: var(--ful-radio-group-label-border-color-disabled);
             }
+
             & input[type=radio] {
                 margin-left: 8px;
                 margin-right: 12px;
@@ -59,7 +62,7 @@ ful-radio-group {
         grid-template-columns: 1fr 1fr;
     }
 
-    &:invalid > fieldset > section label {
+    &:invalid>fieldset>section label {
         border-color: var(--ful-invalid-border-color);
     }
 }

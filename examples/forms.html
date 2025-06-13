@@ -9,14 +9,14 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha256-y3ibfOyBqlgBd+GzwFYQEVOZdNJD06HeDXihongBXKs=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" crossorigin="anonymous">
 
-    <script src="https://cdn.jsdelivr.net/npm/@optionfactory/ftl@2.0.6/dist/ftl.iife.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@optionfactory/ftl@2.0.10/dist/ftl.iife.min.js" crossorigin="anonymous"></script>
 
     <link href="../dist/ful.css" rel="stylesheet">
     <script src="../dist/ful.iife.min.js"></script>
     <style>
         .form-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 0.5rem 1rem;
 
             h2, 
@@ -56,6 +56,7 @@
             <div class="form-grid">
                 <fieldset>
                     <h2>Inputs</h2>
+
                     <ful-input name="text.plain" class="mb-3" value="123">
                         text plain <sup>*</sup>
                     </ful-input>
@@ -63,95 +64,269 @@
                         Text with icon before
                         <i slot="ibefore" class="bi bi-envelope-at"></i>
                     </ful-input>
-                    <ful-input name="text.icons.after" class="mb-3">
-                        Text with icon after
+                    <ful-input name="text.icons.both" class="mb-3">
+                        Text with icons
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
                         <i slot="iafter" class="bi bi-envelope-at"></i>
+                    </ful-input>
+
+                    <ful-input name="datetime.plain" type="datetime-local" class="mb-3">
+                        datetime-local
+                    </ful-input>
+                    <ful-input name="datetime.icons.before" type="datetime-local" class="mb-3">
+                        datetime-local
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                    </ful-input>
+                    <ful-input name="datetime.icons.both" type="datetime-local" class="mb-3">
+                        datetime-local
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                    </ful-input>
+
+                    <ful-input name="date.plain" type="date" class="mb-3">
+                        date
+                    </ful-input>
+                    <ful-input name="date.icons.before" type="date" class="mb-3">
+                        date
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                    </ful-input>
+                    <ful-input name="date.icons.after" type="date" class="mb-3">
+                        date
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                    </ful-input>
+
+                    <ful-input name="time.plain" type="time" class="mb-3">
+                        time
+                    </ful-input>
+                    <ful-input name="time.icons.before" type="time" class="mb-3">
+                        time
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                    </ful-input>
+                    <ful-input name="time.icons.after" type="time" class="mb-3">
+                        time
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                    </ful-input>
+
+                    <ful-input name="texarea.plain" type="textarea" class="mb-3">
+                        texarea
+                    </ful-input>
+                    <ful-input name="texarea.plain" type="textarea" class="mb-3">
+                        texarea with icon
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                    </ful-input>
+                    <ful-input name="texarea.icons.both" type="textarea" class="mb-3">
+                        texarea with icons
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                    </ful-input>
+                </fieldset>
+                <fieldset>
+                    <h2>Inputs: disabled</h2>
+                    <ful-input name="text.plain" class="mb-3" value="123" disabled>
+                        text plain <sup>*</sup>
+                    </ful-input>
+                    <ful-input name="text.icons.before" class="mb-3" disabled>
+                        Text with icon before
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                    </ful-input>
+                    <ful-input name="text.icons.both" class="mb-3" disabled>
+                        Text with icons
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                    </ful-input>
+
+                    <ful-input name="datetime.plain" type="datetime-local" class="mb-3" disabled>
+                        datetime-local
+                    </ful-input>
+                    <ful-input name="datetime.icons.before" type="datetime-local" class="mb-3" disabled>
+                        datetime-local
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                    </ful-input>
+                    <ful-input name="datetime.icons" type="datetime-local" class="mb-3" disabled>
+                        datetime-local
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                    </ful-input>
+
+                    <ful-input name="date.plain" type="date" class="mb-3" disabled>
+                        date
+                    </ful-input>
+                    <ful-input name="date.icons.before" type="date" class="mb-3" disabled>
+                        date
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                    </ful-input>
+                    <ful-input name="date.icons.after" type="date" class="mb-3" disabled>
+                        date
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                    </ful-input>
+
+                    <ful-input name="time.plain" type="time" class="mb-3" disabled>
+                        time
+                    </ful-input>
+                    <ful-input name="time.icons.before" type="time" class="mb-3" disabled>
+                        time
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                    </ful-input>
+                    <ful-input name="time.icons.after" type="time" class="mb-3" disabled>
+                        time
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                    </ful-input>
+
+                    <ful-input name="texarea.plain" type="textarea" class="mb-3" disabled>
+                        texarea
+                    </ful-input>
+                    <ful-input name="texarea.plain" type="textarea" class="mb-3" disabled>
+                        texarea with icon
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                    </ful-input>
+                    <ful-input name="texarea.icons.both" type="textarea" class="mb-3" disabled>
+                        texarea with icons
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                    </ful-input>                
+                </fieldset>                
+                <fieldset disabled>
+                    <h2>Inputs: in a disabled fieldset</h2>
+                    <ful-input name="text.plain" class="mb-3" value="123">
+                        text plain <sup>*</sup>
+                    </ful-input>
+                    <ful-input name="text.icons.before" class="mb-3">
+                        Text with icon before
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
                     </ful-input>
                     <ful-input name="text.icons.both" class="mb-3">
                         Text with icons
                         <i slot="ibefore" class="bi bi-envelope-at"></i>
                         <i slot="iafter" class="bi bi-envelope-at"></i>
                     </ful-input>
-                    <ful-input name="datetime" type="datetime-local" class="mb-3">
+
+                    <ful-input name="datetime.plain" type="datetime-local" class="mb-3">
                         datetime-local
                     </ful-input>
-                    <ful-input name="date" type="date" class="mb-3">
-                        date
+                    <ful-input name="datetime.icons.before" type="datetime-local" class="mb-3">
+                        datetime-local
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
                     </ful-input>
-                    <ful-input name="time" type="time" class="mb-3">
-                        time
-                    </ful-input>
-                    <ful-input name="texarea" type="textarea" class="mb-3">
-                        time
+                    <ful-input name="datetime.icons" type="datetime-local" class="mb-3">
+                        datetime-local
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
                     </ful-input>
 
-                </fieldset>
-                <fieldset disabled>
-                    <h2>A disabled fieldset</h2>
-                    <ful-input name="text.disabled.plain" class="mb-3" value="123">
-                        text plain <sup>*</sup>
-                    </ful-input>
-                    <ful-input name="text.disabled.icons.before" class="mb-3">
-                        Text with icon before
-                        <i slot="ibefore" class="bi bi-envelope-at"></i>
-                    </ful-input>
-                    <ful-input name="text.disabled.icons.after" class="mb-3">
-                        Text with icon after
-                        <i slot="iafter" class="bi bi-envelope-at"></i>
-                    </ful-input>
-                    <ful-input name="text.disabled.icons.both" class="mb-3">
-                        Text with icons
-                        <i slot="ibefore" class="bi bi-envelope-at"></i>
-                        <i slot="iafter" class="bi bi-envelope-at"></i>
-                    </ful-input>
-                    <ful-input name="disabled.datetime" type="datetime-local" class="mb-3">
-                        datetime-local
-                    </ful-input>
-                    <ful-input name="disabled.date" type="date" class="mb-3">
+                    <ful-input name="date.plain" type="date" class="mb-3">
                         date
                     </ful-input>
-                    <ful-input name="disabled.time" type="time" class="mb-3">
+                    <ful-input name="date.icons.before" type="date" class="mb-3">
+                        date
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                    </ful-input>
+                    <ful-input name="date.icons.after" type="date" class="mb-3">
+                        date
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                    </ful-input>
+
+                    <ful-input name="time.plain" type="time" class="mb-3">
                         time
                     </ful-input>
-                    <ful-input name="disabled.texarea" type="textarea" class="mb-3">
+                    <ful-input name="time.icons.before" type="time" class="mb-3">
                         time
-                    </ful-input>                    
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                    </ful-input>
+                    <ful-input name="time.icons.after" type="time" class="mb-3">
+                        time
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                    </ful-input>
+
+                    <ful-input name="texarea.plain" type="textarea" class="mb-3">
+                        texarea
+                    </ful-input>
+                    <ful-input name="texarea.plain" type="textarea" class="mb-3">
+                        texarea with icon
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                    </ful-input>
+                    <ful-input name="texarea.icons.both" type="textarea" class="mb-3">
+                        texarea with icons
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                    </ful-input>                
                 </fieldset>
                 <fieldset>
-                    <h2>Readonly fields</h2>
-                    <ful-input name="text.readonly.plain" class="mb-3" value="123" readonly>
+                    <h2>Inputs: readonly</h2>
+                    <ful-input name="text.plain" class="mb-3" value="123" readonly>
                         text plain <sup>*</sup>
                     </ful-input>
-                    <ful-input name="text.readonly.icons.before" class="mb-3" readonly>
+                    <ful-input name="text.icons.before" class="mb-3" readonly>
                         Text with icon before
                         <i slot="ibefore" class="bi bi-envelope-at"></i>
                     </ful-input>
-                    <ful-input name="text.readonly.icons.after" class="mb-3" readonly>
-                        Text with icon after
-                        <i slot="iafter" class="bi bi-envelope-at"></i>
-                    </ful-input>
-                    <ful-input name="text.readonly.icons.both" class="mb-3" readonly>
+                    <ful-input name="text.icons.both" class="mb-3" readonly>
                         Text with icons
                         <i slot="ibefore" class="bi bi-envelope-at"></i>
                         <i slot="iafter" class="bi bi-envelope-at"></i>
                     </ful-input>
-                    <ful-input name="readonly.datetime" type="datetime-local" class="mb-3" readonly>
+
+                    <ful-input name="datetime.plain" type="datetime-local" class="mb-3" readonly>
                         datetime-local
                     </ful-input>
-                    <ful-input name="readonly.date" type="date" class="mb-3" readonly>
+                    <ful-input name="datetime.icons.before" type="datetime-local" class="mb-3" readonly>
+                        datetime-local
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                    </ful-input>
+                    <ful-input name="datetime.icons" type="datetime-local" class="mb-3" readonly>
+                        datetime-local
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                    </ful-input>
+
+                    <ful-input name="date.plain" type="date" class="mb-3" readonly>
                         date
                     </ful-input>
-                    <ful-input name="readonly.time" type="time" class="mb-3" readonly>
+                    <ful-input name="date.icons.before" type="date" class="mb-3" readonly>
+                        date
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                    </ful-input>
+                    <ful-input name="date.icons.after" type="date" class="mb-3" readonly>
+                        date
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                    </ful-input>
+
+                    <ful-input name="time.plain" type="time" class="mb-3" readonly>
                         time
                     </ful-input>
-                    <ful-input name="readonly.texarea" type="textarea" class="mb-3" readonly>
+                    <ful-input name="time.icons.before" type="time" class="mb-3" readonly>
                         time
-                    </ful-input>                    
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                    </ful-input>
+                    <ful-input name="time.icons.after" type="time" class="mb-3" readonly>
+                        time
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                    </ful-input>
+
+                    <ful-input name="texarea.plain" type="textarea" class="mb-3" readonly>
+                        texarea
+                    </ful-input>
+                    <ful-input name="texarea.plain" type="textarea" class="mb-3" readonly>
+                        texarea with icon
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                    </ful-input>
+                    <ful-input name="texarea.icons.both" type="textarea" class="mb-3" readonly>
+                        texarea with icons
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                    </ful-input>             
                 </fieldset>
 
                 <fieldset>
                     <h2>Select</h2>
-                    <ful-select name="select.single.noicons" class="mb-3">
+                    <ful-select name="select.single.plain" class="mb-3">
                         select local single no icons
                         <select slot="options">
                             <option value="16">aaa</option>
@@ -159,7 +334,7 @@
                         </select>
                     </ful-select>
 
-                    <ful-select name="select.single.iconbefore" class="mb-3">
+                    <ful-select name="select.single.icons.before" class="mb-3">
                         select local single icon before
                         <i slot="ibefore" class="bi bi-envelope-at"></i>
                         <select slot="options">
@@ -168,16 +343,8 @@
                         </select>
                     </ful-select>
 
-                    <ful-select name="select.single.iconafter" class="mb-3">
-                        select local single icon after
-                        <i slot="iafter" class="bi bi-envelope-at"></i>
-                        <select slot="options">
-                            <option value="16">aaa</option>
-                            <option value="17">zzz</option>
-                        </select>
-                    </ful-select>
 
-                    <ful-select name="select.single.icons" class="mb-3">
+                    <ful-select name="select.single.icons.both" class="mb-3">
                         select local single 2 icons
                         <i slot="ibefore" class="bi bi-envelope-at"></i>
                         <i slot="iafter" class="bi bi-envelope-at"></i>
@@ -186,7 +353,24 @@
                             <option value="17">zzz</option>
                         </select>
                     </ful-select>
-                    <ful-select type="remote" name="select.multiple" input-class="form-select" multiple class="mb-3">
+
+                    <ful-select type="remote" name="select.multiple.plain" input-class="form-select" multiple class="mb-3">
+                        select multiple
+                        <select slot="options">
+                            <option value="16">aaa</option>
+                            <option value="17">zzz</option>
+                        </select>
+                    </ful-select>
+
+                    <ful-select type="remote" name="select.multiple.icons.before" input-class="form-select" multiple class="mb-3">
+                        select multiple
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <select slot="options">
+                            <option value="16">aaa</option>
+                            <option value="17">zzz</option>
+                        </select>
+                    </ful-select>
+                    <ful-select type="remote" name="select.multiple.icons.both" input-class="form-select" multiple class="mb-3">
                         select multiple
                         <i slot="ibefore" class="bi bi-envelope-at"></i>
                         <i slot="iafter" class="bi bi-envelope-at"></i>
@@ -194,10 +378,216 @@
                             <option value="16">aaa</option>
                             <option value="17">zzz</option>
                         </select>
-                    </ful-select>
+                    </ful-select>                    
                 </fieldset>
                 <fieldset>
-                    <h2>Radio groups</h2>
+                    <h2>Select: disabled</h2>
+                    <ful-select name="select.single.plain" class="mb-3" disabled>
+                        select local single no icons
+                        <select slot="options">
+                            <option value="16">aaa</option>
+                            <option value="17">zzz</option>
+                        </select>
+                    </ful-select>
+
+                    <ful-select name="select.single.icons.before" class="mb-3" disabled>
+                        select local single icon before
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <select slot="options">
+                            <option value="16">aaa</option>
+                            <option value="17">zzz</option>
+                        </select>
+                    </ful-select>
+
+
+                    <ful-select name="select.single.icons.both" class="mb-3" disabled>
+                        select local single 2 icons
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                        <select slot="options">
+                            <option value="16">aaa</option>
+                            <option value="17">zzz</option>
+                        </select>
+                    </ful-select>
+
+                    <ful-select type="remote" name="select.multiple.plain" input-class="form-select" multiple class="mb-3" disabled>
+                        select multiple
+                        <select slot="options">
+                            <option value="16">aaa</option>
+                            <option value="17">zzz</option>
+                        </select>
+                    </ful-select>
+
+                    <ful-select type="remote" name="select.multiple.icons.before" input-class="form-select" multiple class="mb-3" disabled>
+                        select multiple
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <select slot="options">
+                            <option value="16">aaa</option>
+                            <option value="17">zzz</option>
+                        </select>
+                    </ful-select>
+                    <ful-select type="remote" name="select.multiple.icons.both" input-class="form-select" multiple class="mb-3" disabled>
+                        select multiple
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                        <select slot="options">
+                            <option value="16">aaa</option>
+                            <option value="17">zzz</option>
+                        </select>
+                    </ful-select>                    
+                </fieldset>
+                <fieldset disabled>
+                    <h2>Select: in a disabled fieldset</h2>
+                    <ful-select name="select.single.plain" class="mb-3">
+                        select local single no icons
+                        <select slot="options">
+                            <option value="16">aaa</option>
+                            <option value="17">zzz</option>
+                        </select>
+                    </ful-select>
+
+                    <ful-select name="select.single.icons.before" class="mb-3">
+                        select local single icon before
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <select slot="options">
+                            <option value="16">aaa</option>
+                            <option value="17">zzz</option>
+                        </select>
+                    </ful-select>
+
+
+                    <ful-select name="select.single.icons.both" class="mb-3">
+                        select local single 2 icons
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                        <select slot="options">
+                            <option value="16">aaa</option>
+                            <option value="17">zzz</option>
+                        </select>
+                    </ful-select>
+
+                    <ful-select type="remote" name="select.multiple.plain" input-class="form-select" multiple class="mb-3">
+                        select multiple
+                        <select slot="options">
+                            <option value="16">aaa</option>
+                            <option value="17">zzz</option>
+                        </select>
+                    </ful-select>
+
+                    <ful-select type="remote" name="select.multiple.icons.before" input-class="form-select" multiple class="mb-3">
+                        select multiple
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <select slot="options">
+                            <option value="16">aaa</option>
+                            <option value="17">zzz</option>
+                        </select>
+                    </ful-select>
+                    <ful-select type="remote" name="select.multiple.icons.both" input-class="form-select" multiple class="mb-3">
+                        select multiple
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                        <select slot="options">
+                            <option value="16">aaa</option>
+                            <option value="17">zzz</option>
+                        </select>
+                    </ful-select>                    
+                </fieldset>
+                <fieldset>
+                    <h2>Select: readonly</h2>
+                    <ful-select name="select.single.plain" class="mb-3" readonly>
+                        select local single no icons
+                        <select slot="options">
+                            <option value="16">aaa</option>
+                            <option value="17">zzz</option>
+                        </select>
+                    </ful-select>
+
+                    <ful-select name="select.single.icons.before" class="mb-3" readonly>
+                        select local single icon before
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <select slot="options">
+                            <option value="16">aaa</option>
+                            <option value="17">zzz</option>
+                        </select>
+                    </ful-select>
+
+
+                    <ful-select name="select.single.icons.both" class="mb-3" readonly>
+                        select local single 2 icons
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                        <select slot="options">
+                            <option value="16">aaa</option>
+                            <option value="17">zzz</option>
+                        </select>
+                    </ful-select>
+
+                    <ful-select type="remote" name="select.multiple.plain" input-class="form-select" multiple class="mb-3" readonly>
+                        select multiple
+                        <select slot="options">
+                            <option value="16">aaa</option>
+                            <option value="17">zzz</option>
+                        </select>
+                    </ful-select>
+
+                    <ful-select type="remote" name="select.multiple.icons.before" input-class="form-select" multiple class="mb-3" readonly>
+                        select multiple
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <select slot="options">
+                            <option value="16">aaa</option>
+                            <option value="17">zzz</option>
+                        </select>
+                    </ful-select>
+                    <ful-select type="remote" name="select.multiple.icons.both" input-class="form-select" multiple class="mb-3" readonly>
+                        select multiple
+                        <i slot="ibefore" class="bi bi-envelope-at"></i>
+                        <i slot="iafter" class="bi bi-envelope-at"></i>
+                        <select slot="options">
+                            <option value="16">aaa</option>
+                            <option value="17">zzz</option>
+                        </select>
+                    </ful-select>                    
+                </fieldset>
+
+
+
+                <fieldset>
+                    <h2>Radio groups: disabled</h2>
+                    <ful-radio-group name="radio.vertical" class="mb-3" disabled>
+                        A vertical radio group
+                        <ful-radio value="one">One</ful-radio>
+                        <ful-radio value="two">Two</ful-radio>
+                    </ful-radio-group>
+
+                    <ful-radio-group name="radio.horizontal" class="mb-3 horizontal" disabled>
+                        An horizontal radio group
+                        <ful-radio value="one">One</ful-radio>
+                        <ful-radio value="two">Two</ful-radio>
+                    </ful-radio-group>
+                    <empty></empty>
+
+                    <ful-radio-group name="radio.vertical" class="mb-3" disabled>
+                        A vertical radio group with multiline text
+                        <ful-radio value="one">
+                            <div class="text-black">One title</div>
+                            <div class="text-secondary">One subtitle</div>
+                        </ful-radio>
+                        <ful-radio value="two">Two</ful-radio>
+                    </ful-radio-group>
+                    
+                    <ful-radio-group name="radio.horizontal" class="mb-3 horizontal" disabled>
+                        An horizontal radio group with multiline text
+                        <ful-radio value="one">
+                            <div class="text-black">One title</div>
+                            <div class="text-secondary">One subtitle</div>
+                        </ful-radio>
+                        <ful-radio value="two">Two</ful-radio>
+                    </ful-radio-group>
+
+                </fieldset>
+
+                <fieldset disabled>
+                    <h2>Radio groups: in a disabled fieldset</h2>
                     <ful-radio-group name="radio.vertical" class="mb-3">
                         A vertical radio group
                         <ful-radio value="one">One</ful-radio>
@@ -209,6 +599,7 @@
                         <ful-radio value="one">One</ful-radio>
                         <ful-radio value="two">Two</ful-radio>
                     </ful-radio-group>
+                    <empty></empty>
 
                     <ful-radio-group name="radio.vertical" class="mb-3">
                         A vertical radio group with multiline text
@@ -231,8 +622,81 @@
                 </fieldset>
 
                 <fieldset>
+                    <h2>Radio groups: readonly</h2>
+                    <ful-radio-group name="radio.vertical" class="mb-3" readonly>
+                        A vertical radio group
+                        <ful-radio value="one">One</ful-radio>
+                        <ful-radio value="two">Two</ful-radio>
+                    </ful-radio-group>
+
+                    <ful-radio-group name="radio.horizontal" class="mb-3 horizontal"readonly>
+                        An horizontal radio group
+                        <ful-radio value="one">One</ful-radio>
+                        <ful-radio value="two">Two</ful-radio>
+                    </ful-radio-group>
+                    <empty></empty>
+
+                    <ful-radio-group name="radio.vertical" class="mb-3" readonly>
+                        A vertical radio group with multiline text
+                        <ful-radio value="one">
+                            <div class="text-black">One title</div>
+                            <div class="text-secondary">One subtitle</div>
+                        </ful-radio>
+                        <ful-radio value="two">Two</ful-radio>
+                    </ful-radio-group>
+                    
+                    <ful-radio-group name="radio.horizontal" class="mb-3 horizontal" readonly>
+                        An horizontal radio group with multiline text
+                        <ful-radio value="one">
+                            <div class="text-black">One title</div>
+                            <div class="text-secondary">One subtitle</div>
+                        </ful-radio>
+                        <ful-radio value="two">Two</ful-radio>
+                    </ful-radio-group>
+
+                </fieldset>
+
+                <fieldset>
+                    <h2>Radio groups</h2>
+                    <ful-radio-group name="radio.vertical" class="mb-3">
+                        A vertical radio group
+                        <ful-radio value="one">One</ful-radio>
+                        <ful-radio value="two">Two</ful-radio>
+                    </ful-radio-group>
+
+                    <ful-radio-group name="radio.horizontal" class="mb-3 horizontal">
+                        An horizontal radio group
+                        <ful-radio value="one">One</ful-radio>
+                        <ful-radio value="two">Two</ful-radio>
+                    </ful-radio-group>
+                    <empty></empty>
+
+                    <ful-radio-group name="radio.vertical" class="mb-3">
+                        A vertical radio group with multiline text
+                        <ful-radio value="one">
+                            <div class="text-black">One title</div>
+                            <div class="text-secondary">One subtitle</div>
+                        </ful-radio>
+                        <ful-radio value="two">Two</ful-radio>
+                    </ful-radio-group>
+                    
+                    <ful-radio-group name="radio.horizontal" class="mb-3 horizontal">
+                        An horizontal radio group with multiline text
+                        <ful-radio value="one">
+                            <div class="text-black">One title</div>
+                            <div class="text-secondary">One subtitle</div>
+                        </ful-radio>
+                        <ful-radio value="two">Two</ful-radio>
+                    </ful-radio-group>
+
+                </fieldset>
+
+
+
+
+                <fieldset>
                     <h2>Checkboxes</h2>
-                    <ful-checkbox name="checkbox.normal" class="mb-3">
+                    <ful-checkbox name="checkbox.normal" class="mb-3" value="true">
                         A checkbox
                     </ful-checkbox>
 
@@ -241,9 +705,10 @@
                         incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
                         nisi ut aliquip ex ea commodo consequat. 
                     </ful-checkbox>
+                    <empty></empty>
 
 
-                    <ful-checkbox type="switch" name="checkbox.switch" class="mb-3">
+                    <ful-checkbox type="switch" name="checkbox.switch" class="mb-3"  value="true">
                         A switch
                     </ful-checkbox>
                     <ful-checkbox type="switch" name="checkbox.longtext.switch" class="mb-3">
@@ -252,6 +717,77 @@
                         nisi ut aliquip ex ea commodo consequat. 
                     </ful-checkbox>
                 </fieldset>
+
+                <fieldset>
+                    <h2>Checkboxes: disabled</h2>
+                    <ful-checkbox name="checkbox.normal" class="mb-3"  value="true" disabled>
+                        A checkbox 
+                    </ful-checkbox>
+
+                    <ful-checkbox name="checkbox.longtext.normal" class="mb-3" disabled>
+                        A checkbox with long text: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
+                        nisi ut aliquip ex ea commodo consequat. 
+                    </ful-checkbox>
+                    <empty></empty>
+
+
+                    <ful-checkbox type="switch" name="checkbox.switch" class="mb-3"  value="true" disabled>
+                        A switch
+                    </ful-checkbox>
+                    <ful-checkbox type="switch" name="checkbox.longtext.switch" class="mb-3" disabled>
+                        A switch with long text: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
+                        nisi ut aliquip ex ea commodo consequat. 
+                    </ful-checkbox>
+                </fieldset>
+
+                <fieldset disabled>
+                    <h2>Checkboxes: in a disabled fieldset</h2>
+                    <ful-checkbox name="checkbox.normal" class="mb-3"  value="true">
+                        A checkbox
+                    </ful-checkbox>
+
+                    <ful-checkbox name="checkbox.longtext.normal" class="mb-3">
+                        A checkbox with long text: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
+                        nisi ut aliquip ex ea commodo consequat. 
+                    </ful-checkbox>
+                    <empty></empty>
+
+
+                    <ful-checkbox type="switch" name="checkbox.switch" class="mb-3"  value="true">
+                        A switch
+                    </ful-checkbox>
+                    <ful-checkbox type="switch" name="checkbox.longtext.switch" class="mb-3">
+                        A switch with long text: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
+                        nisi ut aliquip ex ea commodo consequat. 
+                    </ful-checkbox>
+                </fieldset>
+
+                <fieldset>
+                    <h2>Checkboxes: readonly</h2>
+                    <ful-checkbox name="checkbox.normal" class="mb-3" readonly  value="true">
+                        A checkbox
+                    </ful-checkbox>
+
+                    <ful-checkbox name="checkbox.longtext.normal" class="mb-3" readonly>
+                        A checkbox with long text: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
+                        nisi ut aliquip ex ea commodo consequat. 
+                    </ful-checkbox>
+
+                    <empty></empty>
+                    <ful-checkbox type="switch" name="checkbox.switch" class="mb-3" readonly >
+                        A switch
+                    </ful-checkbox>
+                    <ful-checkbox type="switch" name="checkbox.longtext.switch" class="mb-3" readonly>
+                        A switch with long text: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
+                        nisi ut aliquip ex ea commodo consequat. 
+                    </ful-checkbox>
+                </fieldset>                
 
                 <h2>Filters</h2>
                 <ful-filter-text name="filter.text" class="mb-3">

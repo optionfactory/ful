@@ -107,7 +107,9 @@ class Form extends ParsedElement {
             this.spinner(false);
         }
     }
-
+    reset(){
+        this.form.reset();
+    }
     spinner(spin) {
         this.querySelectorAll('ful-spinner').forEach(el => {
             const hel = /** @type HTMLElement */ (el);

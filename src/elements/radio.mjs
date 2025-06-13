@@ -1,7 +1,7 @@
 import { Attributes, Fragments, ParsedElement } from "@optionfactory/ftl"
 
 class RadioGroup extends ParsedElement {
-    static observed = ['value'];
+    static observed = ['value', 'readonly:presence'];
     static slots = true;
     static template = `
         <fieldset>
@@ -26,6 +26,7 @@ class RadioGroup extends ParsedElement {
         </fieldset>
     `;
     static formAssociated = true;
+    #fieldset;
     #fieldError;
     #firstRadio;
     #booleanType;
@@ -34,7 +35,7 @@ class RadioGroup extends ParsedElement {
         this.internals = this.attachInternals();
         this.internals.role = 'radiogroup';
     }
-    render({ slots }) {
+    render({ slots, observed, disabled }) {
         const name = this.getAttribute('name') ?? Attributes.uid('ful-radiogroup');
         const radioEls = Array.from(slots.default.querySelectorAll('ful-radio'));
         const inputsAndLabels = radioEls.map(el => {
@@ -61,6 +62,10 @@ class RadioGroup extends ParsedElement {
 
         radioEls.forEach(el => el.remove());
         this.template().withOverlay({ name, slots, inputsAndLabels }).renderTo(this);
+        this.#fieldset = this.firstElementChild;
+        this.disabled = disabled;
+        this.readonly = observed.readonly;
+        this.value = observed.value;
         this.#fieldError = this.querySelector('ful-field-error');
         this.ariaDescribedByElements = [this.#fieldError];
         this.#firstRadio = this.querySelector('input[type=radio]');
@@ -83,7 +88,19 @@ class RadioGroup extends ParsedElement {
         if (el) {
             el.checked = true;
         }
+    }     
+    get readonly(){
+        return this.#fieldset.inert;
     }
+    set readonly(v) {
+        this.#fieldset.inert = v;
+    }        
+    get disabled(){
+        return this.#fieldset.hasAttribute('disabled');
+    }
+    set disabled(d){
+        Attributes.toggle(this.#fieldset, 'disabled', d);
+    }    
     focus(options) {
         this.#firstRadio.focus(options);
     }
