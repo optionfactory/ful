@@ -129,7 +129,12 @@ class Bindings {
         });
         fieldErrors.forEach(e => {
             const name = e.context.replace("[", ".").replace("].", ".").replace("]", "");
-            form.querySelectorAll(`[name='${CSS.escape(name)}']`).forEach(input => input.setCustomValidity?.(e.reason));
+            const parts = name.split(".");
+            for (let i = parts.length; i != 0; --i) {
+                const prefix = parts.slice(0, i).join(".");
+                const suffix = parts.slice(i, parts.length).join(".");
+                form.querySelectorAll(`[name='${CSS.escape(prefix)}']`).forEach(input => input.setCustomValidity?.(e.reason, suffix));
+            }
         });
         form.querySelectorAll("ful-errors").forEach(el => {
             const hel = /** @type HTMLElement} */ (el);
