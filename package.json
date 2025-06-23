@@ -1,6 +1,6 @@
 {
     "name": "@optionfactory/ful",
-    "version": "1.0.15",
+    "version": "1.0.16",
     "main": "dist/ful.iife.js",
     "module": "dist/ful.mjs",
     "exports": {
@@ -30,7 +30,7 @@
         "build": "npx rollup --config rollup.conf.mjs"
     },
     "dependencies": {
-        "@optionfactory/ftl": "^2.0.11"
+        "@optionfactory/ftl": "^2.0.13"
     },
     "devDependencies": {
         "@rollup/plugin-node-resolve": "^16.0.1",
@@ -38,6 +38,6 @@
         "rollup-plugin-postcss": "^4.0.2",
         "@rollup/plugin-terser": "^0.4.4",
         "sass": "^1.88.0",
-        "terser": "^5.39.2"
+        "terser": "^5.43.1"
     }
 }
