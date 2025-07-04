@@ -176,10 +176,10 @@ class AuthorizationCodeFlowInterceptor {
         this.#gracePeriodBefore = gracePeriodBefore || 2000;
         this.#gracePeriodAfter = gracePeriodAfter || 30000;
     }
-    async intercept(request, chain) {
+    async intercept(url, request, chain) {
         await this.#session.refreshIf(this.#gracePeriodBefore);
         request.headers.set("Authorization", this.#session.bearerToken());
-        const response = await chain.proceed(request);
+        const response = await chain.proceed(url, request);
         await this.#session.refreshIf(this.#gracePeriodAfter);
         return response;
     }

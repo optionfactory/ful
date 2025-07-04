@@ -36,7 +36,7 @@ class MediaType {
  */
 /**
  * @typedef HttpInterceptor
- * @property {function(Request,HttpInterceptorChain):Promise<Response>} intercept  
+ * @property {function(URL,RequestInit|undefined,HttpInterceptorChain):Promise<Response>} intercept  
  */
 
 class HttpClientError extends Failure {
@@ -113,11 +113,11 @@ class CsrfTokenInterceptor {
         this.#k = document.querySelector("meta[name='_csrf_header']")?.getAttribute("content");
         this.#v = document.querySelector("meta[name='_csrf']")?.getAttribute("content");
     }
-    async intercept(request, chain) {
+    async intercept(url, request, chain) {
         if (this.#k && this.#v) {
             request.headers.set(this.#k, this.#v);
         }
-        return await chain.proceed(request);
+        return await chain.proceed(url, request);
     }
 }
 /**
@@ -131,8 +131,8 @@ class RedirectOnUnauthorizedInterceptor {
     constructor(redirectUri) {
         this.#redirectUri = redirectUri;
     }
-    async intercept(request, chain) {
-        const response = await chain.proceed(request);
+    async intercept(url, request, chain) {
+        const response = await chain.proceed(url, request);
         if (response.status === 401) {
             window.location.href = this.#redirectUri;
         }
@@ -172,8 +172,8 @@ class HttpClientBuilder {
  * @implements {HttpInterceptor}
  */
 class HttpCall {
-    async intercept(request, chain) {
-        return await fetch(request);
+    async intercept(url, request, chain) {
+        return await fetch(new Request(url, request));
     }
 }
 
@@ -191,12 +191,13 @@ class HttpInterceptorChain {
     }
     /**
      * 
-     * @param {Request} request 
+     * @param {URL} url
+     * @param {RequestInit} request 
      * @returns {Promise<Response>} the response
      */
-    async proceed(request) {
+    async proceed(url, request) {
         const interceptor = this.#interceptors[this.#current];
-        return await interceptor.intercept(request, new HttpInterceptorChain(this.#interceptors, this.#current + 1));
+        return await interceptor.intercept(url, request, new HttpInterceptorChain(this.#interceptors, this.#current + 1));
     }
 }
 
@@ -227,7 +228,8 @@ class HttpClient {
     async exchange(uri, options, interceptors) {
         const is = [...this.#interceptors, ...interceptors || [], new HttpCall()];
         const chain = new HttpInterceptorChain(is, 0);
-        return await chain.proceed(new Request(uri, options));
+        const url = new URL(new Request(uri).url);
+        return await chain.proceed(url, options ?? {});
     }
     /**
      * Creates a request builder.
