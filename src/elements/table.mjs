@@ -42,6 +42,7 @@ class Pagination extends ParsedElement {
             <ul class="pagination">
                 <li class="page-item ms-auto me-2" data-tpl-if="paginationLabel"> Showing page {{ curr.label }} of {{ total }}</li>
                 <li class="page-item ms-auto me-2" data-tpl-if="!paginationLabel"></li>
+                <li class="page-item reload me-2"><a role="button"><i class="bi bi-arrow-clockwise"></i></a></li>                
                 <li class="page-item">
                     <a data-tpl-class="prev.enabled?'page-link':'page-link disabled'" aria-label="Previous" role="button" data-tpl-data-page="prev.index">
                         <span aria-hidden="true">&laquo;</span>
@@ -75,7 +76,7 @@ class Pagination extends ParsedElement {
                 bubbles: true,
                 cancelable: true,
                 detail: {
-                    value: Number(el.dataset.page)
+                    value: Number(el.dataset.page ?? this.#current)
                 }
             }));
 
