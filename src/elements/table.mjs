@@ -43,9 +43,9 @@ class Pagination extends ParsedElement {
                 <li class="page-item ms-auto me-2" data-tpl-if="paginationLabel"> Showing page {{ curr.label }} of {{ total }}</li>
                 <li class="page-item ms-auto me-2" data-tpl-if="!paginationLabel"></li>
                 <li class="page-item reload me-2"><a role="button"><i class="bi bi-arrow-clockwise"></i></a></li>                
-                <li class="page-item">
+                <li class="page-item prev">
                     <a data-tpl-class="prev.enabled?'page-link':'page-link disabled'" aria-label="Previous" role="button" data-tpl-data-page="prev.index">
-                        <span aria-hidden="true">&laquo;</span>
+                        <i aria-hidden="true" class="bi bi-chevron-left"></i>
                     </a>
                 </li>
                 <li class="page-item" data-tpl-each="pages" data-tpl-var="page">
@@ -53,9 +53,9 @@ class Pagination extends ParsedElement {
                         {{ page.label }}
                     </a>
                 </li>
-                <li class="page-item">
+                <li class="page-item next">
                     <a data-tpl-class="next.enabled?'page-link':'page-link disabled'" aria-label="Next" role="button" data-tpl-data-page="next.index">
-                        <span aria-hidden="true">&raquo;</span>
+                        <i aria-hidden="true" class="bi bi-chevron-right"></i>
                     </a>
                 </li>
             </ul>
