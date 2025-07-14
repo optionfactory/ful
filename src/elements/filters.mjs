@@ -4,7 +4,10 @@ class InstantFilter extends ParsedElement {
     static observed = ["value:json"];
     static slots = true;
     static template = `
-        <label class="form-label" data-tpl-if="label">{{{{ label }}}}</label>
+        <div class="form-label" data-tpl-if="label">
+            <label>{{{{ label }}}}</label>
+            {{{{ slots.info }}}}
+        </div>
         <div class="input-group">
             <button data-ref="operator" class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" value="LTE" form="">&PrecedesSlantEqual;</button>
             <ul class="dropdown-menu">
@@ -106,7 +109,10 @@ class LocalDateFilter extends ParsedElement {
     static observed = ["value:json"];
     static slots = true;
     static template = `
-        <label class="form-label" data-tpl-if="label">{{{{ label }}}}</label>
+        <div class="form-label" data-tpl-if="label">
+            <label>{{{{ label }}}}</label>
+            {{{{ slots.info }}}}
+        </div>
         <div class="input-group">
             <button data-ref="operator" class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" value="EQ" form="">=</button>
             <ul class="dropdown-menu">
@@ -198,7 +204,10 @@ class TextFilter extends ParsedElement {
     static observed = ["value:json"];
     static slots = true;
     static template = `
-        <label class="form-label" data-tpl-if="label">{{{{ label }}}}</label>
+        <div class="form-label" data-tpl-if="label">
+            <label>{{{{ label }}}}</label>
+            {{{{ slots.info }}}}
+        </div>
         <div class="input-group">
             <button data-ref="operator" class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" value="CONTAINS" form="">&mldr;a&mldr;</button>
             <ul class="dropdown-menu">

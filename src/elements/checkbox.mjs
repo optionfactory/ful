@@ -8,7 +8,10 @@ class Checkbox extends ParsedElement {
             <div class="input-container">
                 <input class="form-check-input" type="checkbox" role="switch" form="" placeholder=" ">
             </div>
-            <label class="form-check-label">{{{{ slots.default }}}}</label>
+            <div class="form-check-label">
+                <label>{{{{ slots.default }}}}</label>
+                {{{{ slots.info }}}}
+            </div>
         </div>
         <ful-field-error></ful-field-error>
     `;

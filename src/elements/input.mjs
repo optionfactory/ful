@@ -4,7 +4,10 @@ class Input extends ParsedElement {
     static observed = ['value', 'readonly:presence'];
     static slots = true;
     static template = `
-        <label class="form-label">{{{{ slots.default }}}}</label>
+        <div class="form-label">
+            <label>{{{{ slots.default }}}}</label>
+            {{{{ slots.info }}}}
+        </div>
         <div class="input-group">
             <span data-tpl-if="slots.ibefore" class="input-group-text">{{{{ slots.ibefore }}}}</span>
             {{{{ slots.before }}}}
