@@ -1,4 +1,4 @@
-import { Attributes, Fragments, Nodes, ParsedElement, registry } from "@optionfactory/ftl"
+import { Attributes, Fragments, Nodes, ParsedElement, Rendering } from "@optionfactory/ftl"
 import { Loaders } from "./loaders.mjs";
 
 class SortButton extends ParsedElement {
@@ -281,7 +281,7 @@ class Table extends ParsedElement {
         this.#paginator = Nodes.queryChildren(fragment, 'ful-pagination');
         this.#sorters = table.querySelectorAll(':scope > thead ful-sorter') ?? [];
         this.replaceChildren(fragment);
-        await registry.waitForChildrenRendered(this);
+        await Rendering.waitForChildren(this);
         const orderFromSchema = schema.find(v => v.order);
 
         const maybeForm = /** @type any */(Nodes.queryChildren(this, 'ful-form'));
