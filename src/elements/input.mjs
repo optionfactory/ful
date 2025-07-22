@@ -19,24 +19,30 @@ class Input extends ParsedElement {
         <ful-field-error></ful-field-error>
     `;
     static formAssociated = true;
-    #input;
-    #fieldError;
+    _input;
+    _fieldError;
     constructor() {
         super();
         this.internals = this.attachInternals();
         this.internals.role = 'presentation';
     }
+    _type(){
+        return this.getAttribute("type") ?? 'text';;
+    }
+    _fragment(type, slots){
+        return this.template().withOverlay({ type, slots }).render();    
+    }
     render({ slots, observed, disabled }) {
-        const type = this.getAttribute("type") ?? 'text';
-        const fragment = this.template().withOverlay({ type, slots }).render();    
-        this.#input = fragment.querySelector("input,textarea");
+        const type = this._type();
+        const fragment = this._fragment(type, slots );    
+        this._input = fragment.querySelector("input,textarea");
 
-        Attributes.forward('input-', this, this.#input);
+        Attributes.forward('input-', this, this._input);
         this.disabled = disabled;
         this.readonly = observed.readonly;
         this.value = observed.value;
 
-        this.#input.addEventListener('change', (evt) => {
+        this._input.addEventListener('change', (evt) => {
             evt.stopPropagation();
             this.dispatchEvent(new CustomEvent('change', {
                 bubbles: true,
@@ -48,40 +54,40 @@ class Input extends ParsedElement {
         });
         const label = fragment.querySelector('label');
         label.addEventListener('click', () => this.focus());
-        this.#fieldError = fragment.querySelector('ful-field-error');
-        this.#input.ariaDescribedByElements = [this.#fieldError];
-        this.#input.ariaLabelledByElements = [label];
+        this._fieldError = fragment.querySelector('ful-field-error');
+        this._input.ariaDescribedByElements = [this._fieldError];
+        this._input.ariaLabelledByElements = [label];
         this.replaceChildren(fragment);
     }
     get value() {
-        return this.#input.value === '' ? null : this.#input.value;
+        return this._input.value === '' ? null : this._input.value;
     }
     set value(value) {
-        this.#input.value = value === '' ? null : value;
+        this._input.value = value === '' ? null : value;
     }
     get readonly(){
-        return this.#input.readOnly;
+        return this._input.readOnly;
     }
     set readonly(v) {
-        this.#input.readOnly = v;
+        this._input.readOnly = v;
     }    
     get disabled(){
-        return this.#input.hasAttribute('disabled');
+        return this._input.hasAttribute('disabled');
     }
     set disabled(d){
-        Attributes.toggle(this.#input, 'disabled', d);
+        Attributes.toggle(this._input, 'disabled', d);
     }
     focus(options) {
-        this.#input.focus(options);
+        this._input.focus(options);
     }
     setCustomValidity(error) {
         if (!error) {
             this.internals.setValidity({});
-            this.#fieldError.innerText = "";
+            this._fieldError.innerText = "";
             return;
         }
         this.internals.setValidity({ customError: true }, " ");
-        this.#fieldError.innerText = error;
+        this._fieldError.innerText = error;
     }
     formResetCallback(){
         this.value = this.getAttribute("value")
