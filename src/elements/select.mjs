@@ -1,4 +1,4 @@
-import { Attributes, ParsedElement } from "@optionfactory/ftl"
+import { ParsedElement } from "@optionfactory/ftl"
 import { Loaders } from "./loaders.mjs";
 import { timing } from "../timing.mjs";
 
@@ -186,7 +186,7 @@ class Dropdown extends ParsedElement {
         }
     }
     async moveOrShow(forward, loader) {
-        if (!this.hasAttribute("hidden")) {
+        if (this.shown) {
             const selected = this.#menu.querySelector('[selected]') ?? this.#menu.firstElementChild;
             const candidate = selected[`${forward ? 'next' : 'previous'}ElementSibling`];
             if (candidate) {
@@ -210,14 +210,16 @@ class Select extends ParsedElement {
         <div class="input-group flex-nowrap" tabindex="-1">
             <span data-tpl-if="slots.ibefore" class="input-group-text">{{{{ slots.ibefore }}}}</span>
             {{{{ slots.before }}}}
-            <div class="ful-select-input">
-                <badges></badges>
-                <input type="text" form="">
+            <div class="ful-select-input-container">
+                <div class="ful-select-input">
+                    <badges></badges>
+                    <input type="text" form="">
+                </div>
+                <ful-dropdown hidden></ful-dropdown>
             </div>
             {{{{ slots.after }}}}
             <span data-tpl-if="slots.iafter" class="input-group-text">{{{{ slots.iafter }}}}</span>
         </div>
-        <ful-dropdown hidden></ful-dropdown>
         <ful-field-error></ful-field-error>
     `;
     static mappers = {

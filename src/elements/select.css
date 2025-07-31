@@ -1,7 +1,6 @@
 ful-select {
     display: block;
     cursor: pointer;
-    position: relative;
 
     badges {
         display: flex;
@@ -27,10 +26,23 @@ ful-select {
     }
 
 
-
-    .ful-select-input {
+    .ful-select-input-container {
+        position: relative;
+        display: flex;
+        flex: 1 1 auto;
         border: var(--bs-border-width) solid var(--bs-border-color);
         border-radius: var(--bs-border-radius);
+
+
+        &:has(input:focus) {
+            border-color: #86b7fe;
+            outline: 0;
+            box-shadow: 0 0 0 .25rem rgba(13, 110, 253, .25);
+        }
+
+    }
+
+    .ful-select-input {
         display: flex;
         flex: 1 1 auto;
         padding-left: 5px;
@@ -43,11 +55,6 @@ ful-select {
         z-index: 5;
 
 
-        &:has(input:focus) {
-            border-color: #86b7fe;
-            outline: 0;
-            box-shadow: 0 0 0 .25rem rgba(13, 110, 253, .25);
-        }
     }
 
     &:invalid .ful-select-input {
@@ -73,13 +80,15 @@ ful-dropdown {
     position: absolute;
     z-index: 1000;
     padding: 0.5rem 0;
-    margin-top: 4px;
+    top: 100%;
+    margin-top: 2px;
+    
     background-color: var(--bs-body-bg);
     background-clip: padding-box;
     border: var(--bs-border-width) solid var(--bs-border-color-translucent);
     border-radius: var(--bs-border-radius);
     width: 100%;
-
+    
     menu {
         height: auto;
         max-height: 200px;
