@@ -9,13 +9,15 @@ class CompleteSelectLoader {
     #responseMapper;
     #prefetch;
     #data;
-    constructor(http, url, method, responseMapper, prefetch) {
+    #revision;
+    constructor(http, url, method, responseMapper, prefetch, revision) {
         this.#http = http;
         this.#url = url;
         this.#method = method;
         this.#responseMapper = responseMapper;
         this.#prefetch = prefetch;
         this.#data = null;
+        this.#revision = revision;
     }
     async prefetch() {
         if (!this.#prefetch) {
@@ -35,9 +37,25 @@ class CompleteSelectLoader {
         if (this.#data !== null) {
             return
         }
+        const storageKey = `${this.#method}@${this.#url}`;
+        if(this.#revision !== null){
+            const rawData  = localStorage.getItem(storageKey);
+            if(rawData !== null){
+                const data = JSON.parse(rawData);
+                if(data.revision === this.#revision){
+                    this.#data = data.data;
+                    return;
+                }else {
+                    localStorage.removeItem(storageKey);
+                }
+            }
+        }
         const data = await this.#http.request(this.#method, this.#url)
             .fetchJson()
         this.#data = this.#responseMapper(data);
+        if(this.#revision){
+            localStorage.setItem(storageKey, JSON.stringify({revision: this.#revision, data: this.#data}));
+        }
     }
     static create({ el, http, responseMapper }) {
         return new CompleteSelectLoader(
@@ -45,7 +63,8 @@ class CompleteSelectLoader {
             el.getAttribute("src"),
             el.getAttribute("method") ?? 'POST',
             responseMapper,
-            el.hasAttribute("preload")
+            el.hasAttribute("preload"),
+            el.getAttribute("revision")
         );
     }
 }
@@ -192,6 +211,7 @@ class Dropdown extends ParsedElement {
             if (candidate) {
                 selected.removeAttribute('selected');
                 candidate.setAttribute("selected", "");
+                candidate.scrollIntoView({block: "nearest", behavior: "smooth"});
             }
             return;
         }
@@ -215,7 +235,7 @@ class Select extends ParsedElement {
                     <badges></badges>
                     <input type="text" form="">
                 </div>
-                <ful-dropdown hidden></ful-dropdown>
+                <ful-dropdown hidden popover="manual"></ful-dropdown>
             </div>
             {{{{ slots.after }}}}
             <span data-tpl-if="slots.iafter" class="input-group-text">{{{{ slots.iafter }}}}</span>
@@ -265,7 +285,7 @@ class Select extends ParsedElement {
         this.#input.ariaLabelledByElements = [label];
 
         const self = this;
-        const [dload, abortdload] = timing.debounce(400, () => self.#ddmenu.show(() => self.#loader.load(self.#input.value)));
+        const [dload, abortdload] = timing.throttle(400, () => self.#ddmenu.show(() => self.#loader.load(self.#input.value)));
         this.addEventListener('click', (/** @type any */e) => {
             e.stopPropagation();
             if (e.target.matches('input')) {

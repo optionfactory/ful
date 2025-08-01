@@ -1,10 +1,10 @@
 ful-radio-group {
-    --ful-radio-group-label-border-color: var(--bs-border-color, #dee2e6);
-    --ful-radio-group-label-border-color-checked: #007376;
-    --ful-radio-group-label-border-color-disabled: var(--bs-border-color, #dee2e6);
-    --ful-radio-group-label-background-color: inherit;
-    --ful-radio-group-label-background-color-checked: #eefbfb;
-    --ful-radio-group-label-background-color-disabled: var(--bs-secondary-bg, #e9ecef);
+    --ful-radio-group-label-border-color: var(--ful-border-color);
+    --ful-radio-group-label-bg: inherit;
+    --ful-radio-group-label-checked-border-color: var(--ful-active-bg);
+    --ful-radio-group-label-checked-bg: #eefbfb;
+    --ful-radio-group-label-disabled-border-color: var(--ful-border-color);
+    --ful-radio-group-label-disabled-bg: var(--ful-disabled-bg);
     display: block;
 
     &:not(:defined) {
@@ -26,7 +26,7 @@ ful-radio-group {
                 display: flex;
                 align-items: center;
                 border: 1px solid var(--ful-radio-group-label-border-color);
-                background-color: var(--ful-radio-group-label-background-color);
+                background-color: var(--ful-radio-group-label-bg);
                 border-radius: 4px;
                 padding: 8px 10px;
                 height: 100%;
@@ -38,13 +38,13 @@ ful-radio-group {
             }
 
             & label:has(input[type=radio]:checked) {
-                background-color: var(--ful-radio-group-label-background-color-checked);
-                border-color: var(--ful-radio-group-label-border-color-checked);
+                background-color: var(--ful-radio-group-label-checked-bg);
+                border-color: var(--ful-radio-group-label-checked-border-color);
             }
 
             & label:has(input[type=radio]:disabled) {
-                background-color: var(--ful-radio-group-label-background-color-disabled);
-                border-color: var(--ful-radio-group-label-border-color-disabled);
+                background-color: var(--ful-radio-group-label-disabled-bg);
+                border-color: var(--ful-radio-group-label-disabled-border-color);
             }
 
             & input[type=radio] {

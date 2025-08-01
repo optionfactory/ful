@@ -1,8 +1,7 @@
 ful-errors {
-    --ful-errors-color: var(--bs-danger-text-emphasis, #58151c);
-    --ful-errors-bg: var(--bs-danger-bg-subtle, #f8d7da);
-    --ful-errors-border-color: var(--bs-danger-border-subtle, #f1aeb5);
-    --ful-errors-border-radius: 0.375rem;
+    --ful-errors-color: var(--ful-error-color);
+    --ful-errors-bg: var(--ful-error-bg);
+    --ful-errors-border-color: var(--ful-error-border-color);
 
     display: block;
     padding: 1rem;
@@ -10,16 +9,16 @@ ful-errors {
     color: var(--ful-errors-color);
     background-color: var(--ful-errors-bg);
     border: 1px solid var(--ful-errors-border-color);
-    border-radius: var(--ful-errors-border-radius);
+    border-radius: var(--ful-border-radius);
 }
 
 ful-field-error {
-    --ful-field-error-color-invalid: var(--ful-invalid-color);
+    --ful-field-error-invalid-color: var(--ful-invalid-color);
     display: none;
 
     :invalid & {
         display: block;
         margin-top: .25rem;
-        color: var(--ful-field-error-color-invalid);
+        color: var(--ful-field-error-invalid-color);
     }    
 }

@@ -4,6 +4,14 @@ ful-input {
     &:not(:defined) {
         visibility: hidden;
     }
+
+    & textarea:focus,
+    & input:focus {
+        border-color: var(--ful-focus-border-color);
+        box-shadow: var(--ful-focus-box-shadow);
+    }
+
+
     &:invalid textarea,
     &:invalid input {
         border-color: var(--ful-invalid-border-color);
