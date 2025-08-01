@@ -1,4 +1,5 @@
-ful-input {
+
+ful-input, .ful-input, ful-input-local-date, ful-input-local-time, ful-input-instant {
     display: block;
 
     &:not(:defined) {

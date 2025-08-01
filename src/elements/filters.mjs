@@ -1,4 +1,5 @@
 import { Attributes, Fragments, ParsedElement } from "@optionfactory/ftl";
+import { Instant } from "./temporals.mjs";
 
 class InstantFilter extends ParsedElement {
     static observed = ["value:json"];
@@ -76,20 +77,11 @@ class InstantFilter extends ParsedElement {
         }
         const [operator, ...values] = v;
         this.#operator.setAttribute('value', operator);
-        this.#value1.value = values[0] ? InstantFilter.isoToLocal(values[0]) : values[0];
-        this.#value2.value = values[1] ? InstantFilter.isoToLocal(values[1]) : values[1];
+        this.#value1.value = values[0] ? Instant.isoToLocal(values[0]) : values[0];
+        this.#value2.value = values[1] ? Instant.isoToLocal(values[1]) : values[1];
         this.reflect(() => {
             this.setAttribute('value', JSON.stringify(v));
         });
-    }
-
-    static isoToLocal(iso) {
-        //this is so sad
-        const d = new Date(iso);
-        const pad = (n, v) => String(v).padStart(n, '0');
-        const date = `${d.getFullYear()}-${pad(2, d.getMonth() + 1)}-${pad(2, d.getDate())}`;
-        const time = `${pad(2, d.getHours())}:${pad(2, d.getMinutes())}:${pad(2, d.getSeconds())}.${pad(3, d.getMilliseconds())}`;
-        return `${date}T${time}`
     }
     focus(options) {
         this.#value1.focus(options);

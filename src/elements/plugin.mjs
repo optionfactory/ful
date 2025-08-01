@@ -1,5 +1,6 @@
 import { HttpClient } from "../http-client.mjs";
 import { Checkbox } from "./checkbox.mjs";
+import { LocalDate, Instant, InputLocalDate, InputLocalTime, InputInstant } from "./temporals.mjs";
 import { InstantFilter, LocalDateFilter, TextFilter } from "./filters.mjs";
 import { FormLoader, Form } from "./form.mjs";
 import { Input } from "./input.mjs";
@@ -21,6 +22,11 @@ class Plugin {
             .defineElement('ful-form', Form)
             .defineElement('ful-checkbox', Checkbox)
             .defineElement('ful-input', Input)
+            .defineElement('ful-local-date', LocalDate)
+            .defineElement('ful-instant', Instant)
+            .defineElement('ful-input-local-date', InputLocalDate)
+            .defineElement('ful-input-local-time', InputLocalTime)
+            .defineElement('ful-input-instant', InputInstant)
             .defineElement('ful-radio-group', RadioGroup)
             .defineElement('ful-table', Table)
             .defineElement('ful-pagination', Pagination)
