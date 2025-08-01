@@ -63,12 +63,24 @@ ful-select {
         overflow: hidden;
         z-index: 5;
 
+        
+        
+    }
 
+
+    &:disabled .ful-select-input  {
+        background-size: 0;
+        background-color: var(--ful-disabled-bg);
+    }
+    &[readonly] .ful-select-input {
+        background-size: 0;
     }
 
     &:invalid .ful-select-input {
         border-color: var(--ful-invalid-border-color);
     }
+
+
 
     input {
         border: 0;

@@ -1,4 +1,4 @@
-import { ParsedElement } from "@optionfactory/ftl"
+import { Attributes, ParsedElement } from "@optionfactory/ftl"
 import { Loaders } from "./loaders.mjs";
 import { timing } from "../timing.mjs";
 
@@ -27,11 +27,11 @@ class CompleteSelectLoader {
     }
     async exact(...keys) {
         await this.#ensureFetched();
-        return this.#data.filter(([k, v]) => keys.includes(k));
+        return this.#data.filter(([k, v]) => keys.some(r => r == k));
     }
     async load(needle) {
         await this.#ensureFetched();
-        return this.#data.filter(([k, v]) => v.includes(needle?.toLowerCase()));
+        return this.#data.filter(([k, v]) => (v ?? '').includes(needle?.toLowerCase()));
     }
     async #ensureFetched() {
         if (this.#data !== null) {
@@ -108,10 +108,10 @@ class OptionsSlotSelectLoader {
         this.#data = data;
     }
     async exact(...keys) {
-        return this.#data.filter(([k, v]) => keys.includes(k));
+        return this.#data.filter(([k, v]) => keys.some(r => r == k));
     }
     async load(needle) {
-        return this.#data.filter(([k, v]) => v.includes(needle?.toLowerCase()));
+        return this.#data.filter(([k, v]) => (v ?? '').includes(needle?.toLowerCase()));
     }
 }
 
@@ -267,6 +267,7 @@ class Select extends ParsedElement {
     async render({ slots, observed, disabled }) {
         const name = this.getAttribute("name");
         this.#loader = Loaders.fromAttributes(this, 'loaders:select', { options: slots.options });
+        this.#multiple = this.hasAttribute("multiple");
         await this.#loader.prefetch?.();
         const fragment = this.template().withOverlay({ slots, name }).render();
         this.#input = fragment.querySelector('input');
@@ -277,7 +278,6 @@ class Select extends ParsedElement {
         this.readonly = observed.readonly;
 
         this.#ddmenu = fragment.querySelector('ful-dropdown');
-        this.#multiple = this.hasAttribute("multiple");
         const label = fragment.querySelector('label');
         label.addEventListener('click', () => this.focus());
         this.#fieldError = fragment.querySelector('ful-field-error');
@@ -291,6 +291,9 @@ class Select extends ParsedElement {
             if (e.target.matches('input')) {
                 return;
             }
+            if(this.disabled || this.readonly){
+                return;
+            }
             if (this.#ddmenu.shown) {
                 this.#ddmenu.hide();
                 return;
@@ -300,6 +303,9 @@ class Select extends ParsedElement {
         })
         this.#badges.addEventListener('click', (e) => {
             e.stopPropagation();
+            if(this.disabled || this.readonly){
+                return;
+            }
             const idx = [...this.#badges.children].indexOf(e.target);
             if (idx === -1) {
                 return;
@@ -317,6 +323,9 @@ class Select extends ParsedElement {
             this.#input.value = '';
         });
         this.#input.addEventListener('keydown', e => {
+            if(this.disabled || this.readonly){
+                return;
+            }
             switch (e.code) {
                 case 'ArrowUp': {
                     this.#ddmenu.moveOrShow(false, () => self.#loader.load(self.#input.value));
@@ -351,6 +360,9 @@ class Select extends ParsedElement {
             }
         });
         this.#input.addEventListener('input', e => {
+            if(this.disabled || this.readonly){
+                return;
+            }
             dload();
         });
         this.#ddmenu.addEventListener('change', (e) => {
@@ -375,14 +387,14 @@ class Select extends ParsedElement {
         this.#badges.innerHTML = '';
         this.#badges.append(...badges);
     }
-    set value(value) {
-        if(value === null){
+    set value(vs) {
+        if(vs === null){
             this.#values = new Map();
             this.#syncBadges();
             return;            
         }
         (async () => {
-            const entries = await (this.#multiple ? this.#loader.exact(...value) : this.#loader.exact(value));
+            const entries = await (this.#multiple ? this.#loader.exact(...vs) : this.#loader.exact(vs));
             this.#values = new Map(entries);
             this.#syncBadges();
         })();
@@ -393,6 +405,18 @@ class Select extends ParsedElement {
         }
         return [...this.#values.keys()][0] ?? null;
     }
+    get disabled(){
+        return this.#input.hasAttribute('disabled');
+    }
+    set disabled(d){
+        Attributes.toggle(this.#input, 'disabled', d);
+    }    
+    get readonly(){
+        return this.#input.readOnly;
+    }
+    set readonly(v) {
+        this.#input.readOnly = v;
+    }    
     focus(options) {
         this.#input.focus(options);
     }

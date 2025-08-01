@@ -32,3 +32,8 @@
     --ful-scrollbar-width: 12px;
     --ful-scrollbar-border-width: 1px;
 }
+
+
+[hidden] {
+    display: none !important;
+}
