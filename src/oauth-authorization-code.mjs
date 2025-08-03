@@ -3,8 +3,8 @@ import { SessionStorage } from "./storage.mjs";
 
 
 class AuthorizationCodeFlow {
-    static forKeycloak(clientId, realmBaseUrl, redirectUri) {
-        const scope = "openid profile";
+    static forKeycloak(clientId, realmBaseUrl, redirectUri, maybeScope) {
+        const scope = maybeScope ?? "openid profile";
         return new AuthorizationCodeFlow(clientId, scope, {
             auth: new URL("protocol/openid-connect/auth", realmBaseUrl),
             token: new URL("protocol/openid-connect/token", realmBaseUrl),
@@ -14,7 +14,6 @@ class AuthorizationCodeFlow {
         });
     }
     constructor(clientId, scope, { auth, token, registration, logout, redirect }) {
-        this.storage = new SessionStorage(clientId);
         this.clientId = clientId;
         this.scope = scope;
         this.uri = { auth, token, registration, logout, redirect };
@@ -23,7 +22,7 @@ class AuthorizationCodeFlow {
         const pkceVerifier = Base64.encode(crypto.getRandomValues(new Uint8Array(32)).buffer);
         const pkceChallenge = Base64.encode(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(pkceVerifier)));
         const state = this.clientId + Base64.encode(crypto.getRandomValues(new Uint8Array(16)).buffer);
-        this.storage.save(AuthorizationCodeFlow.PKCE_AND_STATE_KEY, {
+        SessionStorage.save(`${AuthorizationCodeFlow.PKCE_AND_STATE_KEY}-${this.clientId}`, {
             state: state,
             verifier: pkceVerifier
         });
@@ -51,7 +50,7 @@ class AuthorizationCodeFlow {
     }
     async #tokenExchange(code, state) {
         window.history.replaceState('', "", this.uri.redirect);
-        const stateAndVerifier = this.storage.pop(AuthorizationCodeFlow.PKCE_AND_STATE_KEY);
+        const stateAndVerifier = SessionStorage.pop(`${AuthorizationCodeFlow.PKCE_AND_STATE_KEY}-${this.clientId}`);
         if (stateAndVerifier.state !== state) {
             throw new Error("State mismatch");
         }
@@ -79,7 +78,7 @@ class AuthorizationCodeFlow {
     async ensureLoggedIn() {
         const url = new URL(window.location.href);
         const code = url.searchParams.get("code");
-        if (code && this.storage.load(AuthorizationCodeFlow.PKCE_AND_STATE_KEY)) {
+        if (code && SessionStorage.load(`${AuthorizationCodeFlow.PKCE_AND_STATE_KEY}-${this.clientId}`)) {
             //if callback from keycloak and we have our state still stored
             const state = url.searchParams.get("state");
             return await this.#tokenExchange(code, state);

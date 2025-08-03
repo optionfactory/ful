@@ -1,62 +1,76 @@
 
-class Storage {
-    constructor(prefix, storage) {
-        this.prefix = prefix;
-        this.storage = storage;
+class LocalStorage extends Storage {
+    static save(k, v) {
+        localStorage.setItem(k, JSON.stringify(v));
     }
-    save(k, v) {
-        this.storage.setItem(`${this.prefix}-${k}`, JSON.stringify(v));
+    static load(k) {
+        const got = localStorage.getItem(k);
+        return got === null ? undefined : JSON.parse(got);
     }
-    load(k) {
-        const got = this.storage.getItem(`${this.prefix}-${k}`);
-        return got === undefined ? undefined : JSON.parse(got);
+    static remove(k) {
+        localStorage.removeItem(k);
     }
-    remove(k) {
-        this.storage.removeItem(`${this.prefix}-${k}`);
+    static pop(k) {
+        const decoded = LocalStorage.load(k);
+        LocalStorage.remove(k);
+        return decoded;
     }
-    pop(k) {
-        const decoded = this.load(k);
-        this.remove(k);
+
+}
+
+
+
+class SessionStorage extends Storage {
+    static save(k, v) {
+        sessionStorage.setItem(k, JSON.stringify(v));
+    }
+    static load(k) {
+        const got = sessionStorage.getItem(k);
+        return got === null ? undefined : JSON.parse(got);
+    }
+    static remove(k) {
+        sessionStorage.removeItem(k);
+    }
+    static pop(k) {
+        const decoded = SessionStorage.load(k);
+        SessionStorage.remove(k);
         return decoded;
     }
 }
 
-class LocalStorage extends Storage {
-    constructor(prefix) {
-        super(prefix, localStorage);
-    }
-}
-
-class SessionStorage extends Storage {
-    constructor(prefix) {
-        super(prefix, sessionStorage);
-    }
-}
-
-class VersionedStorage {
-    constructor(storage, key, dataSupplier) {
-        this.storage = storage;
-        this.key = key;
-        this.dataSupplier = dataSupplier;
-        this.cache = null;
-
-    }
-    async load(revision) {
-        const saved = this.storage.load(this.key);
-        if (!!saved && saved.revision === revision) {
-            this.cache = saved.value;
-            return;
+class VersionedLocalStorage {
+    static save(key, revision, data){
+        LocalStorage.save(key, {revision, data});
+    }    
+    static load(key, revision){
+        const stored = LocalStorage.load(key);
+        if(stored === undefined){
+            return undefined;
         }
-        const freshData = await this.dataSupplier(revision, this.key);
-        this.storage.save(this.key, {
-            revision: revision,
-            value: freshData
-        });
-        this.cache = freshData;
-    }
-    data() {
-        return this.cache;
+        if(stored.revision !== revision){
+            localStorage.removeItem(key);
+            return undefined;
+        }
+        return stored.data;
     }
 }
 
-export { LocalStorage, SessionStorage, VersionedStorage };
+class VersionedSessionStorage {
+    static save(key, revision, data){
+        SessionStorage.save(key, {revision, data});
+    }    
+    static load(key, revision){
+        const stored = SessionStorage.load(key);
+        if(stored === undefined){
+            return undefined;
+        }
+        if(stored.revision !== revision){
+            localStorage.removeItem(key);
+            return undefined;
+        }
+        return stored.data;
+    }
+}
+
+
+export { LocalStorage, VersionedLocalStorage, SessionStorage, VersionedSessionStorage };

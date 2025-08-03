@@ -1,23 +1,34 @@
 import { Attributes, ParsedElement } from "@optionfactory/ftl"
 import { Loaders } from "./loaders.mjs";
-import { timing } from "../timing.mjs";
+import { Timing } from "../timing.mjs";
+import { VersionedLocalStorage } from "../storage.mjs";
 
-class CompleteSelectLoader {
+class RemoteLoader {
     #http;
     #url;
     #method;
     #responseMapper;
     #prefetch;
-    #data;
     #revision;
-    constructor(http, url, method, responseMapper, prefetch, revision) {
+    #data;
+    static create({ el, http, responseMapper }) {
+        return new RemoteLoader({
+            http,
+            url: el.getAttribute("src"),
+            method: el.getAttribute("method") ?? 'POST',
+            responseMapper,
+            prefetch: el.hasAttribute("preload"),
+            revision: el.getAttribute("revision")
+        });
+    }
+    constructor({http, url, method, responseMapper, prefetch, revision}) {
         this.#http = http;
         this.#url = url;
         this.#method = method;
         this.#responseMapper = responseMapper;
         this.#prefetch = prefetch;
-        this.#data = null;
         this.#revision = revision;
+        this.#data = null;
     }
     async prefetch() {
         if (!this.#prefetch) {
@@ -39,42 +50,35 @@ class CompleteSelectLoader {
         }
         const storageKey = `${this.#method}@${this.#url}`;
         if(this.#revision !== null){
-            const rawData  = localStorage.getItem(storageKey);
-            if(rawData !== null){
-                const data = JSON.parse(rawData);
-                if(data.revision === this.#revision){
-                    this.#data = data.data;
-                    return;
-                }else {
-                    localStorage.removeItem(storageKey);
-                }
+            const data = VersionedLocalStorage.load(storageKey, this.#revision);
+            if(data !== undefined){
+                this.#data = data;
+                return;
             }
         }
         const data = await this.#http.request(this.#method, this.#url)
             .fetchJson()
         this.#data = this.#responseMapper(data);
-        if(this.#revision){
-            localStorage.setItem(storageKey, JSON.stringify({revision: this.#revision, data: this.#data}));
+        if(this.#revision !== null){
+            VersionedLocalStorage.save(storageKey, this.#revision, this.#data);
         }
-    }
-    static create({ el, http, responseMapper }) {
-        return new CompleteSelectLoader(
-            http,
-            el.getAttribute("src"),
-            el.getAttribute("method") ?? 'POST',
-            responseMapper,
-            el.hasAttribute("preload"),
-            el.getAttribute("revision")
-        );
     }
 }
 
-class ChunkedSelectLoader {
+class PartialRemoteLoader {
     #http;
     #url;
     #method;
     #responseMapper;
-    constructor(http, url, method, responseMapper) {
+    static create({ el, http, responseMapper }) {
+        return new PartialRemoteLoader({
+            http,
+            url: el.getAttribute("src"),
+            method: el.getAttribute("method") ?? 'POST',
+            responseMapper
+        });
+    }
+    constructor({http, url, method, responseMapper}) {
         this.#http = http;
         this.#url = url;
         this.#method = method;
@@ -92,25 +96,20 @@ class ChunkedSelectLoader {
             .fetchJson()
         return this.#responseMapper(data);
     }
-    static create({ el, http, responseMapper }) {
-        return new ChunkedSelectLoader(
-            http,
-            el.getAttribute("src"),
-            el.getAttribute("method") ?? 'POST',
-            responseMapper
-        );
-    }
 }
 
-class OptionsSlotSelectLoader {
+class InMemoryLoader {
     #data
     constructor(data) {
         this.#data = data;
     }
-    async exact(...keys) {
+    update(data) {
+        this.#data = data;
+    }
+    exact(...keys) {
         return this.#data.filter(([k, v]) => keys.some(r => r == k));
     }
-    async load(needle) {
+    load(needle) {
         return this.#data.filter(([k, v]) => (v ?? '').includes(needle?.toLowerCase()));
     }
 }
@@ -123,10 +122,10 @@ class SelectLoader {
             const data = els.map(e => {
                 return [e.getAttribute("value") ?? e.innerText.trim(), e.innerText.trim()];
             })
-            return new OptionsSlotSelectLoader(data);
+            return new InMemoryLoader(data);
         }
         const chunked = "chunked" == conf.el.getAttribute("mode");
-        return chunked ? ChunkedSelectLoader.create(conf) : CompleteSelectLoader.create(conf);
+        return chunked ? PartialRemoteLoader.create(conf) : RemoteLoader.create(conf);
     }
 }
 
@@ -136,8 +135,9 @@ class Dropdown extends ParsedElement {
         <ful-spinner class="centered" hidden></ful-spinner>
         <menu tabindex="-1" hidden></menu>
     `;
-    #spinner
-    #menu
+    #spinner;
+    #menu;
+    #options = new Map();
     render({ slots }) {
         const fragment = this.template().render();
         this.#spinner = fragment.querySelector("ful-spinner");
@@ -160,30 +160,31 @@ class Dropdown extends ParsedElement {
         if (values === undefined) {
             throw new Error("null data");
         }
+        this.#options = new Map(values.map((v,i) => [String(i), v]));
         if (values.length === 0) {
             const el = document.createElement('div');
             el.classList.add('text-center', 'py-2', 'bi', 'bi-database-slash');
             this.#menu.replaceChildren(el);
             return;
         }
-        this.#menu.replaceChildren(...values.map(([k, v], i) => {
+        this.#menu.replaceChildren(...values.map(([k, v, m], i) => {
             const el = document.createElement('li');
             if (i === 0) {
                 el.setAttribute("selected", '');
             }
-            el.setAttribute("value", k);
+            el.setAttribute("value", i);
             el.innerText = v;
             return el;
         }));
     }
     #change(target) {
-        const value = target.getAttribute('value');
-        const label = target.innerText
+        const index = target.getAttribute('value');
+        const data = this.#options.get(index)
         this.hide();
         this.dispatchEvent(new CustomEvent('change', {
             bubbles: true,
             cancelable: false,
-            detail: { label, value }
+            detail: { index, data }
         }));
     }
     hide() {
@@ -285,9 +286,8 @@ class Select extends ParsedElement {
         this.#input.ariaLabelledByElements = [label];
 
         const self = this;
-        const [dload, abortdload] = timing.throttle(400, () => self.#ddmenu.show(() => self.#loader.load(self.#input.value)));
+        const [dload, abortdload] = Timing.throttle(400, () => self.#ddmenu.show(() => self.#loader.load(self.#input.value)));
         this.addEventListener('click', (/** @type any */e) => {
-            e.stopPropagation();
             if (e.target.matches('input')) {
                 return;
             }
@@ -311,10 +311,12 @@ class Select extends ParsedElement {
                 return;
             }
             this.#values.delete(Array.from(this.#values.keys()).pop())
+            this.#changed();
             this.#syncBadges();
         })
 
         this.#input.addEventListener('blur', e => {
+            e.stopPropagation();
             if (e.relatedTarget && this.contains(e.relatedTarget)) {
                 return;
             }
@@ -323,6 +325,7 @@ class Select extends ParsedElement {
             this.#input.value = '';
         });
         this.#input.addEventListener('keydown', e => {
+            e.stopPropagation();
             if(this.disabled || this.readonly){
                 return;
             }
@@ -348,6 +351,7 @@ class Select extends ParsedElement {
                     //remove last if caret a position 0
                     if (this.#values.size && this.#input.selectionStart === 0 && this.#input.selectionEnd === 0) {
                         this.#values.delete(Array.from(this.#values.keys()).pop())
+                        this.#changed();
                         this.#syncBadges();
                     }
                     break;
@@ -360,21 +364,36 @@ class Select extends ParsedElement {
             }
         });
         this.#input.addEventListener('input', e => {
+            e.stopPropagation();
             if(this.disabled || this.readonly){
                 return;
             }
             dload();
         });
         this.#ddmenu.addEventListener('change', (e) => {
+            e.stopPropagation();
             if (!this.#multiple) {
                 this.#values.clear();
             }
-            this.#values.set(e.detail.value, e.detail.label);
+            this.#values.set(e.detail.data[0], e.detail.data.slice(1));
+            this.#changed();
             this.#syncBadges();
             this.#input.focus();
             this.#ddmenu.hide();
         });
         this.replaceChildren(fragment);
+    }
+    withLoader(fn) {
+        fn(this.#loader);
+    }
+    #changed() {
+        const selection = [...this.#values.entries()].map(e => ({key: e[0], label: e[1][0], metadata: e[1].slice(1)}))
+        const value = this.#multiple ? selection : (selection[0] ?? null);
+        this.dispatchEvent(new CustomEvent('change', {
+            bubbles: true,
+            cancelable: false,
+            detail: { value }
+        }));
     }
     #syncBadges() {
         const badges = Array.from(this.#values.entries()).map(([k, v]) => {
@@ -404,7 +423,12 @@ class Select extends ParsedElement {
             return [...this.#values.keys()];
         }
         return [...this.#values.keys()][0] ?? null;
-        
+    }
+    get entry() {
+        if (this.#multiple) {
+            return [...this.#values.entries()];
+        }
+        return [...this.#values.entries()][0] ?? null;
     }
     //@ts-ignore
     get disabled(){
