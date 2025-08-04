@@ -33,6 +33,7 @@ ful-select {
         background-color: var(--ful-select-badge-bg);
         display: flex;
         align-items: center;        
+        line-height: 1em;
     }
 
 
@@ -40,7 +41,7 @@ ful-select {
         position: relative;
         display: block;
         flex: 1 1 auto;
-        min-width: 0;
+        width: 1%;
         border: var(--ful-select-border-width) solid var(--ful-select-border-color);
         border-radius: var(--ful-select-border-radius);
            
