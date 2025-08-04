@@ -67,7 +67,8 @@ class Checkbox extends ParsedElement {
     }
     set readonly(v) {
         this.#container.inert = v;
-    }     
+    }
+    //@ts-ignore
     get disabled() {
         return this.#input.hasAttribute('disabled');
     }

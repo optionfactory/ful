@@ -24,13 +24,17 @@
     --ful-error-bg: var(--bs-danger-bg-subtle, #f8d7da);
     --ful-error-border-color: var(--bs-danger-border-subtle, #f1aeb5);
 
-
-
-
-    --ful-scrollbar-bg: #f5f5f5;
+    --ful-scrollbar-bg: #e9ecef;
     --ful-scrollbar-thumb-bg: var(--ful-active-bg);
     --ful-scrollbar-width: 12px;
     --ful-scrollbar-border-width: 1px;
+
+
+    --ful-inputs-bg: var(--ful-bg);
+    --ful-inputs-border-width: var(--ful-border-width);
+    --ful-inputs-border-radius: var(--ful-border-radius);
+    --ful-inputs-border-color: var(--ful-border-color);
+
 }
 
 

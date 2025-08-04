@@ -1,10 +1,12 @@
 ful-select {
-    --ful-select-border-width: var(--ful-border-width);
-    --ful-select-border-radius: var(--ful-border-radius);
-    --ful-select-border-color: var(--ful-border-color);
+    --ful-select-border-width: var(--ful-inputs-border-width);
+    --ful-select-border-radius: var(--ful-inputs-border-radius);
+    --ful-select-border-color: var(--ful-inputs-border-color);
+    --ful-select-bg: var(--ful-inputs-bg);
+
     --ful-select-badge-color: var(--ful-active-color);
     --ful-select-badge-bg: var(--ful-active-bg);
-
+    --ful-select-badge-border-radius: var(--ful-border-radius);
     --ful-select-focus-border-color: var(--ful-focus-border-color);
     --ful-select-focus-box-shadow: var(--ful-focus-box-shadow);
 
@@ -23,14 +25,13 @@ ful-select {
     }
 
     badge {
-        line-height: 16px;
         padding: 5px 7px;
         margin: 5px 0;
         color: var(--ful-select-badge-color);
         text-align: center;
         white-space: nowrap;
         vertical-align: baseline;
-        border-radius: var(--ful-select-border-radius);
+        border-radius: var(--ful-select-badge-border-radius);
         background-color: var(--ful-select-badge-bg);
     }
 
@@ -60,12 +61,25 @@ ful-select {
         background-position: right .75rem center;
         background-repeat: no-repeat;
         background-size: 16px 12px;
+        background-color: var(--ful-select-bg);
         overflow: hidden;
         z-index: 5;
+        border-radius: var(--ful-select-border-radius);
 
         
         
     }
+
+    .ful-select-input-container:not(:first-child) .ful-select-input {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;        
+    }
+
+    .ful-select-input-container:not(:last-child) .ful-select-input  {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;        
+    }
+
 
 
     &:disabled .ful-select-input  {
@@ -80,8 +94,6 @@ ful-select {
         border-color: var(--ful-invalid-border-color);
     }
 
-
-
     input {
         border: 0;
         margin: 0;
@@ -91,6 +103,7 @@ ful-select {
         flex: 1 1 auto;
         min-width: 1em;
         width: 1em;
+        background-color: transparent;
     }
 
 
