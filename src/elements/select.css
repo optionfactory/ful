@@ -28,11 +28,11 @@ ful-select {
         padding: 5px 7px;
         margin: 5px 0;
         color: var(--ful-select-badge-color);
-        text-align: center;
         white-space: nowrap;
-        vertical-align: baseline;
         border-radius: var(--ful-select-badge-border-radius);
         background-color: var(--ful-select-badge-bg);
+        display: flex;
+        align-items: center;        
     }
 
 
@@ -160,7 +160,7 @@ ful-dropdown {
     }
 
     li {
-        padding: 0.25rem 1rem;
+        padding: .5rem .751rem;
         color: var(--ful-dropdown-color);
         display: block;
         border: 0;

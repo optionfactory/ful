@@ -53,19 +53,26 @@ class InputLocalDate extends Input {
     _type() {
         return 'date';
     }
+    render(conf){
+        const {observed} = conf;
+        super.render(conf);
+        this.min = observed.min;
+        this.max = observed.max;
+        this.step = observed.step;
+    }    
     get min() {
         const v = this._input.min;
         return v === '' ? null : v;
     }
     set min(v) {
-        this._input.min = v;
+        this._input.min = InputLocalDate.#fromIsoOrOffset(v);
     }
     get max() {
         const v = this._input.max;
         return v === '' ? null : v;
     }
     set max(v) {
-        this._input.max = v;
+        this._input.max = InputLocalDate.#fromIsoOrOffset(v);
     }
     get step() {
         const v = this._input.step;
@@ -74,7 +81,34 @@ class InputLocalDate extends Input {
     set step(v) {
         this._input.step = (v ?? '');
     }
-
+    static #fromIsoOrOffset(v) {
+        if (!v) {
+            return '';
+        }
+        if (v === 'now') {
+            return new Date().toISOString().split("T")[0];
+        }
+        const re = /^([+-])(\d+)([dmy])$/;
+        const match = re.exec(v);
+        if (!match) {
+            return v;
+        }
+        const sign = match[1] === "-" ? -1 : 1;
+        const offset = +match[2];
+        const r = new Date();
+        switch (match[3]) {
+            case 'd':
+                r.setDate(r.getDate() + offset * sign);
+                break;
+            case 'm':
+                r.setMonth(r.getMonth() + offset * sign);
+                break;
+            case 'y':
+                r.setFullYear(r.getFullYear() + offset * sign);
+                break;
+        }
+        return r.toISOString().split("T")[0];
+    }
 }
 
 class InputLocalTime extends InputLocalDate {
@@ -88,6 +122,13 @@ class InputInstant extends Input {
     static observed = ['value', 'readonly:presence', 'min', 'max', 'step'];
     _type() {
         return 'datetime-local';
+    }
+    render(conf){
+        const {observed} = conf;
+        super.render(conf);
+        this.min = observed.min;
+        this.max = observed.min;
+        this.step = observed.min;
     }
     get value() {
         const v = this._input.value;
