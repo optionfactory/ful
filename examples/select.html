@@ -15,25 +15,30 @@
     <script src="../node_modules/@optionfactory/ftl/dist/ftl.iife.js"></script>
     <link href="../dist/ful.css" rel="stylesheet">
     <script src="../dist/ful.iife.min.js"></script>
-<style>
-ful-dropdown {
-    
-}
-
-</style>
     <script>
         ftl.registry
             .plugin(new ful.Plugin())
             .defineComponent("response:mapper:posts", (data) => data.map(e => ([e.id, e.title])))
             .configure();
     </script>
+    <style>
+        ful-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1rem;
+        }
+        ful-form form {
+            display: contents;
+        }
+    </style>
 </head>
 
 <body>
     <div class="container-fluid">
         <div class="row">
             <ful-form class="col-6 border border-primary">
-                <h1>Test</h1>
+                <h1>ful-select</h1>
 
                 <ful-select name="test.multi.select">
                     <span slot="ibefore">@</span>
@@ -69,19 +74,26 @@ ful-dropdown {
                         <option value="test-key-3">test-label-3</option>
                         <option value="test-key-4">test-label-4</option>
                         <option value="test-key-5">test-label-5</option>
+                        <option value="test-key-6">test-label-6</option>
+                        <option value="test-key-7">test-label-7</option>
+                        <option value="test-key-8">test-label-8</option>
+                        <option value="test-key-9">test-label-9</option>
+                        <option value="test-key-10">test-label-10</option>
+                        <option value="test-key-11">test-label-11</option>
+                        <option value="test-key-12">test-label-12</option>
+                        <option value="test-key-13">test-label-13</option>
+                        <option value="test-key-14">test-label-14</option>
+                        <option value="test-key-15">test-label-15</option>
+                        <option value="test-key-16">test-label-16</option>
+                        <option value="test-key-17">test-label-17</option>
+                        <option value="test-key-18">test-label-18</option>
+                        <option value="test-key-19">test-label-19</option>
                     </select>
                     A ful-select with multiple
                 </ful-select>
                 <ful-select method="GET" src="https://jsonplaceholder.typicode.com/posts" revision="12" response-mapper="response:mapper:posts">
                     <span slot="ibefore">@</span>
                     A ful select with revision
-                    <select slot="input">
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                    </select>
                 </ful-select>
 
                 <div>
