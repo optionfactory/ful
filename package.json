@@ -1,6 +1,6 @@
 {
     "name": "@optionfactory/ful",
-    "version": "3.0.3-dev.0",
+    "version": "4.0.0",
     "main": "dist/ful.iife.js",
     "module": "dist/ful.mjs",
     "exports": {
@@ -30,7 +30,7 @@
         "build": "npx rollup --config rollup.conf.mjs"
     },
     "dependencies": {
-        "@optionfactory/ftl": "^3.0.2"
+        "@optionfactory/ftl": "^4.0.0"
     },
     "devDependencies": {
         "@rollup/plugin-node-resolve": "^16.0.1",
