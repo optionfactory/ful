@@ -1,5 +1,5 @@
 class Timing  {
-    sleep(ms) {
+    static sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
     static DEBOUNCE_DEFAULT = 0;

@@ -1,8 +1,16 @@
 ful-checkbox {
+
+    --ful-checkbox-active-bg: var(--ful-active-bg);
+
     display: block;
 
     &:not(:defined) {
         visibility: hidden;
+    }
+
+    & input[type=checkbox]:checked {
+        background-color: var(--ful-checkbox-active-bg);
+        border-color: var(--ful-checkbox-active-bg);
     }
 
     &:invalid input[type=checkbox] {

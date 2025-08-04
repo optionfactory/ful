@@ -5,6 +5,8 @@ ful-radio-group {
     --ful-radio-group-label-checked-bg: #eefbfb;
     --ful-radio-group-label-disabled-border-color: var(--ful-border-color);
     --ful-radio-group-label-disabled-bg: var(--ful-disabled-bg);
+    --ful-radio-group-active-bg: var(--ful-active-bg);
+
     display: block;
 
     &:not(:defined) {
@@ -53,6 +55,7 @@ ful-radio-group {
                 height: 16px;
                 width: 16px;
                 vertical-align: text-bottom;
+                accent-color: var(--ful-radio-group-label-checked-border-color);
             }
         }
     }
@@ -63,7 +66,7 @@ ful-radio-group {
     }
 
     &:invalid>fieldset>section label {
-        border-color: var(--ful-invalid-border-color);
+        border-color: var(--ful-radio-group-active-bg);
     }
 }
 
