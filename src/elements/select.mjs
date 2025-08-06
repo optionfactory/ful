@@ -42,7 +42,7 @@ class RemoteLoader {
     }
     async load(needle) {
         await this.#ensureFetched();
-        return this.#data.filter(([k, v]) => (v ?? '').includes(needle?.toLowerCase()));
+        return this.#data.filter(([k, v]) => (v ?? '').toLowerCase().includes(needle?.toLowerCase()));
     }
     async #ensureFetched() {
         if (this.#data !== null) {
@@ -110,7 +110,7 @@ class InMemoryLoader {
         return this.#data.filter(([k, v]) => keys.some(r => r == k));
     }
     load(needle) {
-        return this.#data.filter(([k, v]) => (v ?? '').includes(needle?.toLowerCase()));
+        return this.#data.filter(([k, v]) => (v ?? '').toLowerCase().includes(needle?.toLowerCase()));
     }
 }
 
