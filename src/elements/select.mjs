@@ -400,7 +400,7 @@ class Select extends ParsedElement {
             const b = document.createElement('badge');
             b.setAttribute("role", "button");
             b.setAttribute("value", k);
-            b.innerText = v;
+            b.innerText = v[0];
             return b;
         });
         this.#badges.innerHTML = '';

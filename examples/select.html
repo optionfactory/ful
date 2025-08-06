@@ -18,7 +18,7 @@
     <script>
         ftl.registry
             .plugin(new ful.Plugin())
-            .defineComponent("response:mapper:posts", (data) => data.map(e => ([e.id, e.title])))
+            .defineComponent("response:mapper:posts", (data) => data.map(e => ([e.id, e.title, e])))
             .configure();
     </script>
     <style>
