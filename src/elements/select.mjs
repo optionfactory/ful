@@ -414,7 +414,7 @@ class Select extends ParsedElement {
         }
         (async () => {
             const entries = await (this.#multiple ? this.#loader.exact(...vs) : this.#loader.exact(vs));
-            this.#values = new Map(entries);
+            this.#values = new Map(entries.map(e => [e[0], e.slice(1)]));
             this.#syncBadges();
         })();
     }
