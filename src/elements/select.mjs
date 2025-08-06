@@ -272,6 +272,7 @@ class Select extends ParsedElement {
         await this.#loader.prefetch?.();
         const fragment = this.template().withOverlay({ slots, name }).render();
         this.#input = fragment.querySelector('input');
+        Attributes.forward('input-', this, this.#input);
         this.#badges = fragment.querySelector('badges');
 
         this.value = observed.value;
