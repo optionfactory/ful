@@ -94,6 +94,9 @@ class RadioGroup extends ParsedElement {
     }
     set readonly(v) {
         this.#fieldset.inert = v;
+        this.reflect(() => {
+            Attributes.toggle(this, 'readonly', v);
+        })
     }
     //@ts-ignore
     get disabled(){

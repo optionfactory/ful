@@ -438,10 +438,13 @@ class Select extends ParsedElement {
         Attributes.toggle(this.#input, 'disabled', d);
     }    
     get readonly(){
-        return this.#input.readOnly;
+        return this.#input.readOnly;        
     }
     set readonly(v) {
         this.#input.readOnly = v;
+        this.reflect(() => {
+            Attributes.toggle(this, 'readonly', v);
+        })
     }    
     focus(options) {
         this.#input.focus(options);

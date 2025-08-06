@@ -70,6 +70,9 @@ class Input extends ParsedElement {
     }
     set readonly(v) {
         this._input.readOnly = v;
+        this.reflect(() => {
+            Attributes.toggle(this, 'readonly', v);
+        })
     }
     //@ts-ignore
     get disabled() {
