@@ -38,7 +38,7 @@ class InstantFilter extends ParsedElement {
     render({ slots }) {
         const label = Fragments.toHtml(slots.default.cloneNode(true)).trim().length === 0 ? null : slots.default;
         const name = this.getAttribute("name")
-        const fragment = this.template().withOverlay({ label, name }).render(this);
+        const fragment = this.template().withOverlay({ slots, label, name  }).render();
         this.#operator = fragment.querySelector('[data-ref=operator]');
         this.#value1 = fragment.querySelector('[data-ref=value1]');
         this.#value2 = fragment.querySelector('[data-ref=value2]');
@@ -134,7 +134,7 @@ class LocalDateFilter extends ParsedElement {
     render({ slots }) {
         const label = Fragments.toHtml(slots.default.cloneNode(true)).trim().length === 0 ? null : slots.default;
         const name = this.getAttribute("name")
-        const fragment = this.template().withOverlay({ label, name }).render(this);
+        const fragment = this.template().withOverlay({ slots, label, name }).render();
         this.#operator = fragment.querySelector('[data-ref=operator]');
         this.#value1 = fragment.querySelector('[data-ref=value1]');
         this.#value2 = fragment.querySelector('[data-ref=value2]');
@@ -224,7 +224,7 @@ class TextFilter extends ParsedElement {
     render({ slots }) {
         const label = Fragments.toHtml(slots.default.cloneNode(true)).trim().length === 0 ? null : slots.default;
         const name = this.getAttribute("name")
-        const fragment = this.template().withOverlay({ label, name }).render(this);
+        const fragment = this.template().withOverlay({ slots, label, name }).render();
         this.#operator = fragment.querySelector('[data-ref=operator]');
         this.#value = fragment.querySelector('[data-ref=value]');
         this.#fieldError = fragment.querySelector('ful-field-error');

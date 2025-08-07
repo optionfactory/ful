@@ -37,15 +37,33 @@ class SortButton extends ParsedElement {
 
 class Pagination extends ParsedElement {
     static observed = ["total:number", "current:number"];
+    static l10n = {
+        en: {
+            'showing': 'Page {0} of {1}',
+            'navigation': "Page navigation",
+            'previous': "Previous",
+            'next': "Next",
+        },
+        it: {
+            'showing': 'Pagina {0} di {1}',
+            'navigation': "Navigazione pagine",
+            'previous': "Precedente",
+            'next': "Successivo",
+        }
+    }
+    static config = {
+        prevIcon: 'bi bi-chevron-left',
+        nextIcon: 'bi bi-chevron-right',
+        reloadIcon: 'bi bi-arrow-clockwise',
+    }
     static template = `
-        <nav aria-label="Page navigation" class="user-select-none">
+        <nav data-tpl-aria-label="#l10n:t('navigation')" class="user-select-none">
             <ul class="pagination">
-                <li class="page-item ms-auto me-2" data-tpl-if="paginationLabel"> Showing page {{ curr.label }} of {{ total }}</li>
-                <li class="page-item ms-auto me-2" data-tpl-if="!paginationLabel"></li>
-                <li class="page-item reload me-2"><a role="button"><i class="bi bi-arrow-clockwise"></i></a></li>                
+                <li class="page-item ms-auto me-2 pagination-index"> {{ #l10n:t('showing', curr.label, total) }}</li>
+                <li class="page-item reload me-2"><a role="button"><i data-tpl-class="config.reloadIcon"></i></a></li>                
                 <li class="page-item prev">
-                    <a data-tpl-class="prev.enabled?'page-link':'page-link disabled'" aria-label="Previous" role="button" data-tpl-data-page="prev.index">
-                        <i aria-hidden="true" class="bi bi-chevron-left"></i>
+                    <a data-tpl-class="prev.enabled?'page-link':'page-link disabled'" data-tpl-aria-label="#l10n:t('previous')" role="button" data-tpl-data-page="prev.index">
+                        <i aria-hidden="true" data-tpl-class="config.prevIcon"></i>
                     </a>
                 </li>
                 <li class="page-item" data-tpl-each="pages" data-tpl-var="page">
@@ -54,18 +72,16 @@ class Pagination extends ParsedElement {
                     </a>
                 </li>
                 <li class="page-item next">
-                    <a data-tpl-class="next.enabled?'page-link':'page-link disabled'" aria-label="Next" role="button" data-tpl-data-page="next.index">
-                        <i aria-hidden="true" class="bi bi-chevron-right"></i>
+                    <a data-tpl-class="next.enabled?'page-link':'page-link disabled'" data-tpl-aria-label="#l10n:t('next')" role="button" data-tpl-data-page="next.index">
+                        <i aria-hidden="true" data-tpl-class="config.nextIcon"></i>
                     </a>
                 </li>
             </ul>
         </nav>
     `;
-    #paginationLabel;
     #total = 0;
     #current = 0;
     render({ observed }) {
-        this.#paginationLabel = this.hasAttribute('pagination-label');
         this.update(observed.current ?? 0, observed.total ?? 0);
         this.addEventListener('click', (/** @type any */evt) => {
             const el = evt.target.closest('a');
@@ -101,8 +117,7 @@ class Pagination extends ParsedElement {
                 pages.push({ index: n, label: n + 1 })
             }
         }
-        const paginationLabel = this.#paginationLabel;
-        this.template().withOverlay({ total, prev, curr, next, pages, paginationLabel }).renderTo(this);
+        this.template().withOverlay({ total, prev, curr, next, pages }).renderTo(this);
     }
     get total() {
         return this.#total;
@@ -194,6 +209,21 @@ class TableLoader{
 
 class Table extends ParsedElement {
     static slots = true;
+    static l10n = {
+        en: {
+            'notloaded': 'Start searching to see results.',
+            'error': 'Error while loading data:',
+            'nodata': 'No elements found.',
+        },
+        it: {
+            'notloaded': 'Avvia la ricerca per visualizzare i risultati.',
+            'error': 'Errore nel caricamento dei dati:',
+            'nodata': 'Nessun elemento trovato.',
+        }
+    }
+    static conf = {
+        sortIcon: '',
+    }
     static template = `
         <ful-form data-tpl-if="slots.filters">
             {{{{ slots.filters }}}}
@@ -215,7 +245,7 @@ class Table extends ParsedElement {
                         <td data-tpl-colspan="schema.length" class="text-center align-middle p-4">
                             <i class="bi bi-search" style="font-size: 40px; color: #BDC3CA"></i>
                             <p class="mt-3 mb-0" style="color: #BDC3CA">
-                                Avvia la ricerca per visualizzare i risultati...
+                                {{ #l10n:t('notloaded') }}
                             </p>
                         </td>
                     </tr>
@@ -231,7 +261,7 @@ class Table extends ParsedElement {
                     <tr>
                         <td data-tpl-colspan="schema.length" class="text-center align-middle p-4">
                             <div class="alert alert-danger">
-                                <p>Errore nel caricamento della tabella:</p>
+                                <p>{{ #l10n:t('error') }}</p>
                                 <p class="mb-0" data-ref="feedback-error"></p>
                             </div>
                         </td>
@@ -248,7 +278,7 @@ class Table extends ParsedElement {
         row: `
             <tr data-tpl-if="pageResponse.data.length == 0">
                 <td data-tpl-colspan="schema.length" class="text-center align-middle p-4">
-                    Nessun elemento trovato.
+                    {{ #l10n:t('nodata') }}
                 </td>
             </tr>
             <tr data-tpl-each="pageResponse.data" data-tpl-var="row">

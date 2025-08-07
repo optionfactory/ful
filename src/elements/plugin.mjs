@@ -17,6 +17,17 @@ class Plugin {
             .withRedirectOnUnauthorized("/")
             .build();
         registry
+            .defineModule("l10n", {
+                t: function (k, ...args) {
+                    const format = this.l10n[this.language][k] ?? this.l10n['en'][k] ?? k;
+                    if (args.length === 0) {
+                        return format;
+                    }
+                    return format.replace(/{(\d+)}/g, (m, is) => {
+                        return args[Number(is)];
+                    });
+                }
+            })
             .defineComponent('http-client', httpClient)
             .defineElement('ful-spinner', Spinner)
             .defineElement('ful-form', Form)
@@ -39,6 +50,9 @@ class Plugin {
             .defineComponent("loaders:select", SelectLoader)
             .defineComponent("loaders:form", FormLoader)
             .defineComponent("loaders:table", TableLoader)
+            .defineOverlay({
+                language: navigator?.language?.split("-")?.[0] ?? "en"
+            });
     }
 }
 

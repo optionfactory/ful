@@ -81,6 +81,9 @@ ful-select {
         border-bottom-right-radius: 0;        
     }
 
+    &:invalid .ful-select-input-container {
+        border-color: var(--ful-invalid-border-color);
+    }
 
 
     &:disabled .ful-select-input  {
@@ -91,9 +94,6 @@ ful-select {
         background-size: 0;
     }
 
-    &:invalid .ful-select-input {
-        border-color: var(--ful-invalid-border-color);
-    }
 
     input {
         border: 0;

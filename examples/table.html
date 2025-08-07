@@ -15,7 +15,7 @@
         class MockDataLoader {
             #mockdata = Array.from({ length: 100 }, (x, i) => ({ id: i + 1, types: ['type1', 'type2'], username: `test${i}@exaqmple.com`, date: '2025-01-01' }));
             async load(pageRequest, sortRequest, filterRequest) {
-                await ful.timing.sleep(500);
+                await ful.Timing.sleep(500);
                 console.log(pageRequest);
                 return {
                     size: this.#mockdata.length,

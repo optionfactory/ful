@@ -26,6 +26,10 @@ ful-table {
         height: 360px;
     }
 
+    & .pagination-index {
+        align-self: center;
+    }
+
 }
 
 
