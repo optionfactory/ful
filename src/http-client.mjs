@@ -321,11 +321,12 @@ class HttpRequestBuilder {
      * @returns {HttpRequestBuilder} the builder
      */
     static create(client, method, uri) {
+        const [baseUri, queryString = ''] = uri.split('?');
         return new HttpRequestBuilder(
             client,
             method,
-            uri,
-            new URLSearchParams(),
+            baseUri,
+            new URLSearchParams(queryString),
             new Headers(),
             undefined,
             {},
