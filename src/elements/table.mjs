@@ -60,7 +60,7 @@ class Pagination extends ParsedElement {
         <nav data-tpl-aria-label="#l10n:t('navigation')" class="user-select-none">
             <ul class="pagination">
                 <li class="page-item ms-auto me-2 pagination-index"> {{ #l10n:t('showing', curr.label, total) }}</li>
-                <li class="page-item reload me-2"><a role="button"><i data-tpl-class="config.reloadIcon"></i></a></li>                
+                <li class="page-item me-2 reload"><a role="button"><i data-tpl-class="config.reloadIcon"></i></a></li>
                 <li class="page-item prev">
                     <a data-tpl-class="prev.enabled?'page-link':'page-link disabled'" data-tpl-aria-label="#l10n:t('previous')" role="button" data-tpl-data-page="prev.index">
                         <i aria-hidden="true" data-tpl-class="config.prevIcon"></i>
@@ -147,47 +147,68 @@ class TableSchemaParser {
         if (!schema) {
             throw new Error(`missing expected <schema> in ${nodeOrFragment}`);
         }
-        return Nodes.queryChildrenAll(schema, "column")
-            .map(el => {
-                return {
-                    sorter: el.getAttribute("sorter"),
-                    order: el.getAttribute("order"),
-                    title: TableSchemaParser.#parseTitle(el, template),
-                    content: TableSchemaParser.#parseContent(el, template)
-                }
-            });
-    }
-
-    static #parseTitle(el, template) {
-        const maybeTitleTag = Nodes.queryChildren(el, 'title');
-        if (maybeTitleTag) {
-            maybeTitleTag.remove();
+        const headersTr = document.createElement("tr");
+        const rowsTr = document.createElement("tr");
+        rowsTr.setAttribute("data-tpl-each", "rows");
+        for (const attr of schema.getAttributeNames()) {
+            const value = schema.getAttribute(attr);
+            headersTr.setAttribute(attr, value ?? '');
+            rowsTr.setAttribute(attr, value ?? '');
         }
-        const fragment = maybeTitleTag ? template.withFragment(Fragments.fromChildNodes(maybeTitleTag)).render() : document.createTextNode(el.getAttribute("title") ?? '');
-        return {
-            classes: el.getAttribute("th-class"),
-            fragment
-        };
-    }
+        const columns = Nodes.queryChildrenAll(schema, "column");
+        const sort = columns.filter(v => v.hasAttribute('order')).map(v => ({sorter: v.getAttribute("sorter"), order: v.getAttribute("order")}))[0] ?? null;
+        for(var column of columns){
+            const maybeTitleTag = Nodes.queryChildren(column, 'title');
+            const sorter = column.getAttribute("sorter");
+            const order = column.getAttribute("order");
+            const titleNode = maybeTitleTag ?? document.createTextNode(column.getAttribute("title") ?? '');
+            maybeTitleTag?.remove();
+            column.removeAttribute("sorter");
+            column.removeAttribute("order");
+            column.removeAttribute("title");
+            const wrappedTitleNode = (!sorter &&  !order ) ? titleNode : (() => {
+                const fulSorter = document.createElement("ful-sorter");
+                if(sorter){
+                    fulSorter.setAttribute("sorter", sorter);
+                }
+                if(order){
+                    fulSorter.setAttribute("order", order);
+                }
+                fulSorter.append(titleNode)
+                return fulSorter;
+            })();
+            const th = document.createElement("th");
+            const td = document.createElement("td");
+            for (const attr of column.getAttributeNames()) {
+                const value = column.getAttribute(attr);
+                th.setAttribute(attr, value ?? '');
+                td.setAttribute(attr, value ?? '');
+            }
+            th.append(wrappedTitleNode);
+            td.append(...column.childNodes);
+            headersTr.append(th);
+            rowsTr.append(td);
+        }
 
-    static #parseContent(el, template) {
         return {
-            classes: el.getAttribute("td-class"),
-            template: template.withFragment(Fragments.fromChildNodes(el))
+            headersTemplate: template.withOverlay({inHeaders: true, inRows: false}).withFragment(Fragments.from(headersTr)),
+            rowsTemplate: template.withOverlay({inHeaders: false, inRows: true}).withFragment(Fragments.from(rowsTr)),
+            sort: sort,
+            length: columns.length
         }
     }
 }
 
-class RemoteTableLoader{
+class RemoteTableLoader {
     #http;
     #url;
     #method;
-    constructor(http, url, method){
+    constructor(http, url, method) {
         this.#http = http;
         this.#url = url;
         this.#method = method;
     }
-    async load(pageRequest, sortRequest, filterRequest){
+    async load(pageRequest, sortRequest, filterRequest) {
         const filters = Object.entries(filterRequest).filter(([k, v]) => v);
         return await this.#http.request(this.#method, this.#url)
             .param("page", pageRequest.page)
@@ -195,12 +216,12 @@ class RemoteTableLoader{
             .param("sort", sortRequest.order ? `${sortRequest.sorter},${sortRequest.order}` : null)
             .param("filters", filters.length > 0 ? JSON.stringify(Object.fromEntries(filters)) : null)
             .fetchJson();
-    }    
+    }
 }
 
 
-class TableLoader{
-    static create({el, http}){
+class TableLoader {
+    static create({ el, http }) {
         const url = el.getAttribute("src");
         const method = el.getAttribute("method") ?? 'GET';
         return new RemoteTableLoader(http, url, method);
@@ -211,18 +232,18 @@ class Table extends ParsedElement {
     static slots = true;
     static l10n = {
         en: {
-            'notloaded': 'Start searching to see results.',
+            'initial': 'Start searching to see results.',
             'error': 'Error while loading data:',
             'nodata': 'No elements found.',
         },
         it: {
-            'notloaded': 'Avvia la ricerca per visualizzare i risultati.',
+            'initial': 'Avvia la ricerca per visualizzare i risultati.',
             'error': 'Errore nel caricamento dei dati:',
             'nodata': 'Nessun elemento trovato.',
         }
     }
-    static conf = {
-        sortIcon: '',
+    static config = {
+        searchIcon: 'bi bi-search'
     }
     static template = `
         <ful-form data-tpl-if="slots.filters">
@@ -231,38 +252,31 @@ class Table extends ParsedElement {
         <div class="table-wrapper">
             <table class="table">
                 <caption data-tpl-if="slots.caption">{{{{ slots.caption }}}}</caption>
-                <thead>
-                    <tr>
-                        <th data-tpl-each="schema" scope="col" data-tpl-class="title.classes">
-                            {{{{ title.fragment }}}}
-                            <ful-sorter data-tpl-if="sorter || order" data-tpl-sorter="sorter" data-tpl-order="order"></ful-sorter>
-                        </th>
-                    </tr>
-                </thead>
+                <thead></thead>
                 <tbody></tbody>
-                <tbody data-ref="no-autoload">
+                <tbody data-ref="initial">
                     <tr>
-                        <td data-tpl-colspan="schema.length" class="text-center align-middle p-4">
-                            <i class="bi bi-search" style="font-size: 40px; color: #BDC3CA"></i>
-                            <p class="mt-3 mb-0" style="color: #BDC3CA">
-                                {{ #l10n:t('notloaded') }}
-                            </p>
+                        <td data-tpl-colspan="schema.length">
+                            <div>
+                                <p data-tpl-if="config.searchIcon"><i data-tpl-class="config.searchIcon"></i></p>
+                                {{{ #l10n:t('initial') }}}
+                            </div>
                         </td>
                     </tr>
                 </tbody>
                 <tbody data-ref="loading" hidden>
                     <tr>
-                        <td data-tpl-colspan="schema.length" class="text-center align-middle p-4">
+                        <td data-tpl-colspan="schema.length">
                             <ful-spinner class="big"></ful-spinner>
                         </td>
                     </tr>
                 </tbody>
                 <tbody data-ref="feedback" hidden>
                     <tr>
-                        <td data-tpl-colspan="schema.length" class="text-center align-middle p-4">
+                        <td data-tpl-colspan="schema.length">
                             <div class="alert alert-danger">
                                 <p>{{ #l10n:t('error') }}</p>
-                                <p class="mb-0" data-ref="feedback-error"></p>
+                                <div data-ref="feedback-error"></div>
                             </div>
                         </td>
                     </tr>
@@ -281,11 +295,7 @@ class Table extends ParsedElement {
                     {{ #l10n:t('nodata') }}
                 </td>
             </tr>
-            <tr data-tpl-each="pageResponse.data" data-tpl-var="row">
-                <td data-tpl-each="schema" data-tpl-class="content.classes">
-                    {{{{ content.template.withOverlay(row).render() }}}}
-                </td>
-            </tr>
+            {{{{ schema.rowsTemplate.withOverlay({'rows': pageResponse.data}).render() }}}}
         `
     };
     #schema;
@@ -306,13 +316,13 @@ class Table extends ParsedElement {
         this.#schema = schema;
         this.#body = table.querySelector(':scope > tbody');
         this.#loading = table.querySelector(":scope > tbody[data-ref=loading]");
-        this.#noAutoload = table.querySelector(":scope > tbody[data-ref=no-autoload]");
+        this.#noAutoload = table.querySelector(":scope > tbody[data-ref=initial]");
         this.#feedback = table.querySelector(":scope > tbody[data-ref=feedback]");
         this.#paginator = Nodes.queryChildren(fragment, 'ful-pagination');
         this.#sorters = table.querySelectorAll(':scope > thead ful-sorter') ?? [];
         this.replaceChildren(fragment);
+        schema.headersTemplate.renderTo(this.querySelector('thead'));
         await Rendering.waitForChildren(this);
-        const orderFromSchema = schema.find(v => v.order);
 
         const maybeForm = /** @type any */(Nodes.queryChildren(this, 'ful-form'));
         this.#latestRequest = {
@@ -320,7 +330,7 @@ class Table extends ParsedElement {
                 page: 0,
                 size: this.getAttribute("page-size") ? Number(this.getAttribute("page-size")) : 10
             },
-            sortRequest: { order: orderFromSchema?.order, sorter: orderFromSchema?.sorter },
+            sortRequest: schema.sort,
             filterRequest: maybeForm?.values ?? {}
         }
         maybeForm?.addEventListener('submit:success', async (evt) => {
@@ -355,7 +365,7 @@ class Table extends ParsedElement {
         this.#noAutoload.setAttribute("hidden", "");
         try {
             const loader = Loaders.fromAttributes(this, 'loaders:table');
-            const pageResponse =await loader.load(pageRequest, sortRequest, filterRequest);
+            const pageResponse = await loader.load(pageRequest, sortRequest, filterRequest);
             this.#latestRequest = { pageRequest, sortRequest, filterRequest };
             this.#update(pageRequest, sortRequest, filterRequest, pageResponse);
         } catch (/** @type any */error) {

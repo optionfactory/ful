@@ -22,8 +22,20 @@ ful-table {
         visibility: hidden;
     }
 
-    & tbody:last-of-type {
+    & tbody[data-ref=initial],
+    & tbody[data-ref=loading],
+    & tbody[data-ref=feedback]
+    {
         height: 360px;
+        padding: 1.5rem;
+        & td {
+
+            text-align: center;
+            vertical-align: middle;
+            & p {
+                margin-top: 1rem;
+            }
+        }
     }
 
     & .pagination-index {
@@ -34,27 +46,29 @@ ful-table {
 
 
 ful-sorter {
-    display: inline;
+    display: block;
 
     &:not(:defined) {
         visibility: hidden;
     }
 
+    cursor: pointer;
+
     &::before {
         display: inline-block;
-        font-family: bootstrap-icons !important;
+        vertical-align: text-top;
+        font-family: bootstrap-icons;
         font-style: normal;
-        font-weight: 400 !important;
+        font-weight: 400;
         font-variant: normal;
         text-transform: none;
         line-height: 1;
-        vertical-align: -.125em;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         content: "\f574";
     }
 
-    &:not([order]) {
+    &:not([order])::before {
         color: #cccccc;
     }
 
