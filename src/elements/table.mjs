@@ -213,7 +213,7 @@ class RemoteTableLoader {
         return await this.#http.request(this.#method, this.#url)
             .param("page", pageRequest.page)
             .param("size", pageRequest.size)
-            .param("sort", sortRequest.order ? `${sortRequest.sorter},${sortRequest.order}` : null)
+            .param("sort", sortRequest ? `${sortRequest.sorter},${sortRequest.order}` : null)
             .param("filters", filters.length > 0 ? JSON.stringify(Object.fromEntries(filters)) : null)
             .fetchJson();
     }
