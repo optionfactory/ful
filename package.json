@@ -1,6 +1,6 @@
 {
     "name": "@optionfactory/ful",
-    "version": "4.0.10",
+    "version": "4.0.11-dev.0",
     "main": "dist/ful.iife.js",
     "module": "dist/ful.mjs",
     "exports": {

@@ -315,7 +315,9 @@ class Select extends ParsedElement {
             this.#changed();
             this.#syncBadges();
         })
-
+        this.#input.addEventListener('change', e => {
+            e.stopPropagation();
+        });
         this.#input.addEventListener('blur', e => {
             e.stopPropagation();
             if (e.relatedTarget && this.contains(e.relatedTarget)) {
@@ -381,6 +383,7 @@ class Select extends ParsedElement {
             this.#syncBadges();
             this.#input.focus();
             this.#ddmenu.hide();
+            this.#input.value = '';
         });
         this.replaceChildren(fragment);
     }

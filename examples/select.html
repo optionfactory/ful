@@ -64,7 +64,6 @@
                         <option value="test-key-18">test-label-18</option>
                         <option value="test-key-19">test-label-19</option>
                     </select>
-
                 </ful-select>
                 <ful-select multiple name="test.multi.select2">
                     <span slot="ibefore">@</span>
@@ -110,6 +109,11 @@
             </ful-form>
         </div>
     </div>
+    <script>
+        document.querySelector('[name="test.multi.select"]').addEventListener('change', e => {
+            console.log(e);
+        })
+    </script>
 </body>
 
 </html>
