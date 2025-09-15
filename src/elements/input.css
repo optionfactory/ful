@@ -1,13 +1,11 @@
 ful-input,
 .ful-input,
+ful-input-file,
 ful-input-local-date,
 ful-input-local-time,
 ful-input-instant {
-
-
-
     display: block;
-
+    
     &:not(:defined) {
         visibility: hidden;
     }

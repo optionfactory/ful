@@ -10,6 +10,24 @@ import { Spinner } from "./spinner.mjs";
 import { TableLoader, Table, Pagination, SortButton } from "./table.mjs";
 
 
+class LocalizationModule {
+    static t(k, ...args) {
+        //@ts-ignore
+        const format = this.l10n[this.language][k] ?? this.l10n['en'][k] ?? k;
+        if (args.length === 0) {
+            return format;
+        }
+        return format.replace(/{(\d+)}/g, (m, is) => {
+            return args[Number(is)];
+        });        
+    }
+    static tl(k, args) {
+        return LocalizationModule.t(k, ...args);
+    }    
+
+}
+
+
 class Plugin {
     configure(registry) {
         const httpClient = HttpClient.builder()
@@ -17,17 +35,7 @@ class Plugin {
             .withRedirectOnUnauthorized("/")
             .build();
         registry
-            .defineModule("l10n", {
-                t: function (k, ...args) {
-                    const format = this.l10n[this.language][k] ?? this.l10n['en'][k] ?? k;
-                    if (args.length === 0) {
-                        return format;
-                    }
-                    return format.replace(/{(\d+)}/g, (m, is) => {
-                        return args[Number(is)];
-                    });
-                }
-            })
+            .defineModule("l10n", LocalizationModule)
             .defineComponent('http-client', httpClient)
             .defineElement('ful-spinner', Spinner)
             .defineElement('ful-form', Form)

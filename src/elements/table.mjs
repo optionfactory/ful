@@ -359,7 +359,7 @@ class Table extends ParsedElement {
         return await this.load(this.#latestRequest.pageRequest, this.#latestRequest.sortRequest, this.#latestRequest.filterRequest);
     }
     async load(pageRequest, sortRequest, filterRequest) {
-        this.#body.innerHTML = "";
+        this.#body.replaceChildren();
         this.#loading.removeAttribute("hidden", "");
         this.#feedback.setAttribute("hidden", "");
         this.#noAutoload.setAttribute("hidden", "");

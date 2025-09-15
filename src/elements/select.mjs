@@ -407,7 +407,7 @@ class Select extends ParsedElement {
             b.innerText = v[0];
             return b;
         });
-        this.#badges.innerHTML = '';
+        this.#badges.replaceChildren();
         this.#badges.append(...badges);
     }
     set value(vs) {
