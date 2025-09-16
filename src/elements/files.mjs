@@ -1,0 +1,246 @@
+import { Attributes } from "@optionfactory/ftl";
+import { Input } from "./input.mjs";
+
+
+
+class InputFile extends Input {
+    static l10n = {
+        en: {
+            'dropzonelabel': 'Click or drop your files here',
+            'unaccepptablefiletype': "Only files of type {0} are supported",
+            'maxfilesizeexceeded': "Maximum supported file size is {0}",
+            'maxtotalsizeexceeded': "Maximum supported total file size is {0}"
+        },
+        it: {
+            'dropzonelabel': 'Clicca o trascina i file qui',
+            'unaccepptablefiletype': "Solo i file di tipo {0} sono supportati",
+            'maxfilesizeexceeded': "La dimensione massima di un file è di {0}",
+            'maxtotalsizeexceeded': "La dimensione massima complessiva dei file è di {0}"
+        }
+    }
+    static observed = ['value', 'readonly:presence', "accept:csv", 'multiple:presence', "itemlist:presence", "dropzone:presence", "maxfilesize:number", "maxtotalsize:number"];
+    #accept;
+    #items;
+    #dropzone;
+    #warnings;
+    _type() {
+        return 'file';
+    }
+    static template = `
+        <div class="form-label">
+            <label>{{{{ slots.default }}}}</label>
+            {{{{ slots.info }}}}
+        </div>
+        <div class="input-group">
+            <span data-tpl-if="slots.ibefore" class="input-group-text">{{{{ slots.ibefore }}}}</span>
+            {{{{ slots.before }}}}
+            <input class="form-control" data-tpl-type="type" placeholder=" " form="">
+            {{{{ slots.after }}}}
+            <span data-tpl-if="slots.iafter" class="input-group-text">{{{{ slots.iafter }}}}</span>
+        </div>
+        <div data-ref="dropzone" class="dropzone" data-tpl-if="slots.dropzone">
+            {{{{ slots.dropzone }}}}
+        </div>
+        <div data-ref="dropzone" class="dropzone" data-tpl-if="!slots.dropzone">
+            {{ #l10n:t('dropzonelabel') }}
+        </div>
+        <div data-ref="items" class="items"></div>
+        <ful-field-warnings></ful-field-warnings>
+        <ful-field-error></ful-field-error>
+    `;
+    static templates = {
+        items: `
+            <div class="item" data-tpl-each="files" data-tpl-var="file" data-tpl-data-name="file.name">
+                <div class="filename"><span>{{ file.name }}</span></div>
+                <div class="size">{{ #bytes:format(file.size) }}</div>
+                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-x-lg"></i></button>
+            </div>
+        `,
+        warning: `<ful-field-warning>{{ #l10n:t(key, args) }}</ful-field-warning>`
+    }
+    render(conf) {
+        const { observed } = conf;
+        super.render(conf);
+        this.#items = this.querySelector("[data-ref=items]");
+        this.#dropzone = this.querySelector("[data-ref=dropzone]");
+        this.#warnings = this.querySelector("ful-field-warnings");
+        this.accept = observed.accept;
+        this.multiple = observed.multiple;
+        this.itemlist = observed.itemlist;
+        this.dropzone = observed.dropzone;
+        this.maxfilesize = observed.maxfilesize;
+        this.maxtotalsize = observed.maxtotalsize;
+        this.#warnings.addEventListener('animationend', e => {
+            e.target.remove();
+        });
+        this.#items.addEventListener('click', (e) => {
+            if (!e.target.closest("button")) {
+                return;
+            }
+            const fileName = e.target.closest(".item").dataset.name;
+            const dt = new DataTransfer();
+            [...this.files].filter(f => f.name !== fileName).forEach(f => dt.items.add(f));
+            this.files = dt.files;
+            this.#update();
+        })
+        this.#dropzone.addEventListener("click", (e) => {
+            this.querySelector('input')?.click();
+        });
+
+        this.#dropzone.addEventListener("dragover", (e) => {
+            e.preventDefault();
+        });
+        this.#dropzone.addEventListener("drop", (e) => {
+            e.preventDefault();
+            const dt = new DataTransfer();
+            [...e.dataTransfer.items].filter(i => i.kind === 'file').forEach(i => dt.items.add(i.getAsFile()));
+            this.files = dt.files;
+            this.#update();
+        });
+        this._input.addEventListener("change", (e) => {
+            this.#update();
+        });
+    }
+    #formatByteSize(v) {
+        return (v > 1024 * 1024) ? `${Math.round(v / 1024 / 1024 * 100) / 100}MiB` : (v > 1024 ? `${Math.round(v / 1024 * 100) / 100}KiB` : `${v}B`);
+    }
+    #update() {
+        this.setCustomValidity();
+        this.#ensureAcceptable();
+        this.#ensureFileSizes();
+        this.#ensureTotalSize();
+        if(this.#useItemlist){
+            this.template('items').withOverlay({ files: this.files }).withModule('bytes', { format: this.#formatByteSize }).renderTo(this.#items);
+        }else {
+            this.#items.replaceChildren();
+        }
+    }
+    warning(key, args) {
+        this.template('warning').withOverlay({ key, args }).renderTo(this.#warnings);
+    }
+    #ensureAcceptable() {
+        if (!this.#accept) {
+            return;
+        }
+        const unacceptable = [...this.files]
+            .filter(file => this.#accept.some(type => !file.name.toLowerCase().endsWith(type.toLowerCase())));
+
+        if (unacceptable.length === 0) {
+            return;
+        }
+        this.warning('unaccepptablefiletype', this.#accept.join(","));
+        const dt = new DataTransfer();
+        [...this.files].filter(f => !unacceptable.includes(f)).forEach(f => dt.items.add(f));
+        this.files = dt.files;
+    }
+    #ensureFileSizes() {
+        if (this.#maxfilesize === null) {
+            return;
+        }
+        const oversized = [...this.files]
+            .filter(file => file.size > this.#maxfilesize);
+        if (oversized.length === 0) {
+            return;
+        }
+        this.warning('maxfilesizeexceeded', this.#formatByteSize(this.#maxfilesize));
+        const dt = new DataTransfer();
+        [...this.files].filter(f => !oversized.includes(f)).forEach(f => dt.items.add(f));
+        this.files = dt.files;
+    }
+    #ensureTotalSize() {
+        if (this.#maxtotalsize === null) {
+            return;
+        }
+        const totalSize = [...this.files].reduce((acc, file) => acc + file.size, 0);
+        if (totalSize <= this.#maxtotalsize) {
+            return;
+        }
+        this.warning('maxtotalsizeexceeded', this.#formatByteSize(this.#maxtotalsize));
+        this.files = new DataTransfer().files;
+    }
+    get accept() {
+        return this.#accept;
+    }
+    set accept(vs) {
+        this._input.accept = vs.join(",");
+        this.#accept = vs;
+        this.reflect(() => {
+            this.setAttribute('accept', this._input.accept);
+        })
+    }
+    get multiple() {
+        return this._input.multiple;
+    }
+    set multiple(v) {
+        this._input.multiple = v;
+        this.reflect(() => {
+            this.setAttribute('multiple', this._input.multiple);
+        })
+    }
+    get files() {
+        return this._input.files;
+    }
+    set files(vs) {
+        this._input.files = vs;
+    }
+    get file() {
+        return this.files[0] ?? null;
+    }
+    set file(v) {
+        const dt = new DataTransfer();
+        dt.items.add(v);
+        this.files = dt.files;
+    }
+    get value() {
+        const names = Array.from(this._input.files).map(f => f.name);
+        return this.multiple ? names : (names[0] ?? null);
+    }
+    set value(v) {
+        //TODO:
+    }
+    #maxfilesize;
+    get maxfilesize() {
+        return this.#maxfilesize;
+    }
+    set maxfilesize(v) {
+        this.#maxfilesize = v;
+        this.reflect(() => {
+            this.setAttribute('maxfilesize', v);
+        })
+
+    }
+    #maxtotalsize;
+    get maxtotalsize() {
+        return this.#maxtotalsize;
+    }
+    set maxtotalsize(v) {
+        this.#maxtotalsize = v;
+        this.reflect(() => {
+            this.setAttribute('maxtotalsize', v);
+        })
+    }
+    #useItemlist;
+    get itemlist() {
+        return this.#useItemlist;
+    }
+    set itemlist(v) {
+        this.#useItemlist = v;
+        Attributes.toggle(this.#items, "hidden", !v);
+        this.reflect(() => {
+            Attributes.toggle(this, "itemlist", v);
+        })
+    }
+    #useDropzone;
+    get dropzone() {
+        return this.#useDropzone;
+    }
+    set dropzone(v) {
+        this.#useDropzone = v;
+        Attributes.toggle(this.#dropzone, "hidden", !v);
+        this.reflect(() => {
+            Attributes.toggle(this, "dropzone", v);
+        })
+    }    
+}
+
+export { InputFile }

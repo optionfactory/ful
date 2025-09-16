@@ -6,6 +6,8 @@ import "./form.css"
 export { Input } from "./input.mjs";
 export { LocalDate, Instant, InputLocalDate, InputLocalTime, InputInstant } from "./temporals.mjs";
 import "./input.css"
+export { InputFile } from "./files.mjs";
+import "./files.css"
 export { SelectLoader, Select, Dropdown } from "./select.mjs";
 import "./select.css"
 export { RadioGroup } from "./radio.mjs";

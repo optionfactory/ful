@@ -4,6 +4,7 @@ import { LocalDate, Instant, InputLocalDate, InputLocalTime, InputInstant } from
 import { InstantFilter, LocalDateFilter, TextFilter } from "./filters.mjs";
 import { FormLoader, Form } from "./form.mjs";
 import { Input } from "./input.mjs";
+import { InputFile } from "./files.mjs";
 import { RadioGroup } from "./radio.mjs";
 import { SelectLoader, Dropdown, Select } from "./select.mjs";
 import { Spinner } from "./spinner.mjs";
@@ -28,6 +29,7 @@ class LocalizationModule {
 }
 
 
+
 class Plugin {
     configure(registry) {
         const httpClient = HttpClient.builder()
@@ -41,6 +43,7 @@ class Plugin {
             .defineElement('ful-form', Form)
             .defineElement('ful-checkbox', Checkbox)
             .defineElement('ful-input', Input)
+            .defineElement('ful-input-file', InputFile)
             .defineElement('ful-local-date', LocalDate)
             .defineElement('ful-instant', Instant)
             .defineElement('ful-input-local-date', InputLocalDate)

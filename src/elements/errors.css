@@ -22,3 +22,42 @@ ful-field-error {
         color: var(--ful-field-error-invalid-color);
     }    
 }
+
+ful-field-warnings {
+    display: none;
+    &:not(:empty) {
+        display: block;
+    }
+}
+
+ful-field-warning {
+    display: block;
+    margin: 0.5rem 0;
+    padding: 15px;
+    color: var(--ful-warning-color);
+    background-color: var(--ful-warning-bg);
+    border-color: var(--ful-warning-border-color);
+    border-radius: 8px;
+    animation: show-and-hide 5s ease forwards;
+    animation-composition: initial;
+}
+
+@keyframes show-and-hide {
+    0% {
+        opacity: 0;
+        display: block;
+    }
+
+    3% {
+        opacity: 1;
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        display: none;
+    }
+}
