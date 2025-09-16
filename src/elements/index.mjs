@@ -20,5 +20,5 @@ export { SortButton, Table, TableSchemaParser, Pagination } from "./table.mjs";
 import "./table.css"
 export { InstantFilter, LocalDateFilter, TextFilter } from "./filters.mjs";
 import "./filters.css"
-
+export { LocalizationModule } from "./l10n.mjs"
 export { Plugin } from "./plugin.mjs"
