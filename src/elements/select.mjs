@@ -44,6 +44,10 @@ class RemoteLoader {
         await this.#ensureFetched();
         return this.#data.filter(([k, v]) => (v ?? '').toLowerCase().includes(needle?.toLowerCase()));
     }
+    async reconfigureUrl(url){
+        this.#data = null;
+        this.#url = url;
+    }
     async #ensureFetched() {
         if (this.#data !== null) {
             return
@@ -387,8 +391,8 @@ class Select extends ParsedElement {
         });
         this.replaceChildren(fragment);
     }
-    withLoader(fn) {
-        fn(this.#loader);
+    async withLoader(fn) {
+        await fn(this.#loader);
     }
     #changed() {
         const selection = [...this.#values.entries()].map(e => ({key: e[0], label: e[1][0], metadata: e[1].slice(1)}))
@@ -449,7 +453,7 @@ class Select extends ParsedElement {
         this.reflect(() => {
             Attributes.toggle(this, 'readonly', v);
         })
-    }    
+    }
     focus(options) {
         this.#input.focus(options);
     }
