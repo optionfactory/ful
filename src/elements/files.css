@@ -1,4 +1,5 @@
 ful-input-file {
+
     &>.dropzone {
         border: 5px solid blue;
         min-height: 100px;
@@ -8,38 +9,22 @@ ful-input-file {
         cursor: pointer;
     }
 
-    &>.items {
-        display: grid;
-        grid-template-columns: 1fr auto auto;
-        gap: 4px;
 
-        &>.item:first-of-type {
-            margin-top: 6px;
-        }
-
-        &>.item:last-of-type {
-            margin-bottom: 6px;
-        }
-
-        &>.item {
-            display: grid;
-            grid-column: 1 / -1;
-            grid-template-columns: subgrid;
-            align-items: center;
-
-            &>.filename {
-                min-width: 30px;
-                display: inline-block;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-
-            &>.size {
-                text-align: right;
-            }
-        }
+    &:not([dropzone])>.dropzone {
+        display: none;
     }
 
+    &:not([itemlist])>ful-item-list {
+        display: none;
+    }
+
+    &[readonly] {
+        &>.dropzone {
+            pointer-events: none;
+        }
+        &>.input-group>input {
+            pointer-events: none;
+        }
+    }
 
 }

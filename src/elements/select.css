@@ -19,10 +19,20 @@ ful-select {
         flex-wrap: nowrap;
         gap: 3px;
         overflow: hidden;
+
         &:has(badge) {
             min-width: 2em;
         }
     }
+
+    &[itemlist] badges {
+        display: none;
+    }
+
+    &:not([itemlist])>ful-item-list {
+        display: none;
+    }
+
 
     badge {
         padding: 5px 7px;
@@ -32,7 +42,7 @@ ful-select {
         border-radius: var(--ful-select-badge-border-radius);
         background-color: var(--ful-select-badge-bg);
         display: flex;
-        align-items: center;        
+        align-items: center;
         line-height: 1em;
     }
 
@@ -44,7 +54,7 @@ ful-select {
         width: 1%;
         border: var(--ful-select-border-width) solid var(--ful-select-border-color);
         border-radius: var(--ful-select-border-radius);
-           
+
         &:has(input:focus) {
             border-color: var(--ful-select-focus-border-color);
             outline: 0;
@@ -67,18 +77,18 @@ ful-select {
         z-index: 5;
         border-radius: var(--ful-select-border-radius);
 
-        
-        
+
+
     }
 
     .ful-select-input-container:not(:first-child) .ful-select-input {
         border-top-left-radius: 0;
-        border-bottom-left-radius: 0;        
+        border-bottom-left-radius: 0;
     }
 
-    .ful-select-input-container:not(:last-child) .ful-select-input  {
+    .ful-select-input-container:not(:last-child) .ful-select-input {
         border-top-right-radius: 0;
-        border-bottom-right-radius: 0;        
+        border-bottom-right-radius: 0;
     }
 
     &:invalid .ful-select-input-container {
@@ -86,14 +96,30 @@ ful-select {
     }
 
 
-    &:disabled .ful-select-input  {
+    &:disabled .ful-select-input {
         background-size: 0;
         background-color: var(--ful-disabled-bg);
     }
+
+
     &[readonly] .ful-select-input {
         background-size: 0;
     }
 
+    &[itemlist][readonly], &[itemlist]:disabled {
+        &>.input-group {
+            display: none;
+        }
+        &> ful-item-list > ful-item:first-child {
+            margin-top: 0;
+            & > *:first-child {
+                grid-column: 1 / -1;
+            }
+            & > *:last-child {
+                display: none;
+            }
+        }
+    }
 
     input {
         border: 0;

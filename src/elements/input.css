@@ -5,7 +5,7 @@ ful-input-local-date,
 ful-input-local-time,
 ful-input-instant {
     display: block;
-    
+
     &:not(:defined) {
         visibility: hidden;
     }
@@ -33,4 +33,54 @@ ful-input-instant {
         box-shadow: var(--ful-invalid-box-shadow);
     }
 
+}
+
+ful-item-list {
+    --ful-item-list-item-color: var(--ful-active-color);
+    --ful-item-list-item-border-radius: var(--ful-border-radius);
+    --ful-item-list-item-bg: var(--ful-active-bg);
+
+
+
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4px;
+
+    &:has(> ful-item > *:nth-child(3):last-child) {
+        grid-template-columns: 1fr auto auto;
+    }
+
+    &>ful-item:first-child {
+        margin-top: 6px;
+    }
+
+    &>ful-item:last-child {
+        margin-bottom: 6px;
+    }
+
+    &>ful-item {
+        display: grid;
+        grid-column: 1 / -1;
+        grid-template-columns: subgrid;
+        align-items: center;
+        text-align: right;
+        line-height: 21px;
+
+        &>*:first-child {
+            text-align: left;
+            min-width: 30px;
+            display: inline-block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding: 5px 0.5rem;
+            color: var(--ful-item-list-item-color);
+            border-radius: var(--ful-item-list-item-border-radius);
+            background-color: var(--ful-item-list-item-bg);
+        }
+
+        &>*:last-child {
+            text-align: left;
+        }
+    }
 }

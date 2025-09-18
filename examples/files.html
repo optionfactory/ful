@@ -24,19 +24,11 @@
             .configure();
     </script>
     <style>
-        ful-form {
+        fieldset {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1rem;
             padding: 1rem;
-
-            h1, h2 {
-                grid-column: 1 / -1;
-            }
-        }
-
-        ful-form form {
-            display: contents;
         }
     </style>
 </head>
@@ -45,66 +37,106 @@
     <ful-form>
         <h1>ful-input-file</h1>
         <h2>single</h2>
-        <ful-input-file>
-            Single
-        </ful-input-file>
-        <ful-input-file itemlist>
-            Single with itemlist 
-        </ful-input-file>
+        <fieldset>
+            <ful-input-file>
+                Single
+            </ful-input-file>
+            <ful-input-file itemlist>
+                Single with itemlist
+            </ful-input-file>
 
-        <ful-input-file dropzone>
-            Single with dropzone
-        </ful-input-file>
-        <ful-input-file itemlist dropzone>
-            Single with itemlist and dropzone
-        </ful-input-file>
+            <ful-input-file dropzone>
+                Single with dropzone
+            </ful-input-file>
+            <ful-input-file itemlist dropzone>
+                Single with itemlist and dropzone
+            </ful-input-file>
 
-        <ful-input-file dropzone>
-            Single with custom dropzone
-            <span slot="dropzone">Drop your file here</span>
-        </ful-input-file>
+            <ful-input-file dropzone>
+                Single with custom dropzone
+                <span slot="dropzone">Drop your file here</span>
+            </ful-input-file>
+        </fieldset>
 
         <h2>multiple</h2>
-        <ful-input-file multiple>
-            Multiple
-        </ful-input-file>
-        <ful-input-file multiple itemlist>
-            Multiple with itemlist
-        </ful-input-file>
-        <ful-input-file multiple dropzone>
-            Multiple with dropzone
-        </ful-input-file>
-        <ful-input-file multiple itemlist dropzone>
-            Multiple with itemlist and dropzone
-        </ful-input-file>
-        <ful-input-file multiple dropzone>
-            Multiple with custom dropzone
-            <span slot="dropzone">Drop your file here</span>
-        </ful-input-file>
+        <fieldset>
+            <ful-input-file multiple>
+                Multiple
+            </ful-input-file>
+            <ful-input-file multiple itemlist>
+                Multiple with itemlist
+            </ful-input-file>
+            <ful-input-file multiple dropzone>
+                Multiple with dropzone
+            </ful-input-file>
+            <ful-input-file multiple itemlist dropzone>
+                Multiple with itemlist and dropzone
+            </ful-input-file>
+            <ful-input-file multiple dropzone>
+                Multiple with custom dropzone
+                <span slot="dropzone">Drop your file here</span>
+            </ful-input-file>
+        </fieldset>
 
         <h2>Accept</h2>
-        <ful-input-file itemlist dropzone accept=".svg">
-            accept .svg
-        </ful-input-file>
-        <ful-input-file multiple itemlist dropzone accept=".svg">
-            Multiple, accept .svg
-        </ful-input-file>
+        <fieldset>
+            <ful-input-file itemlist dropzone accept=".svg">
+                accept .svg
+            </ful-input-file>
+            <ful-input-file multiple itemlist dropzone accept=".svg">
+                Multiple, accept .svg
+            </ful-input-file>
+        </fieldset>
+
 
         <h2>maxfilesize</h2>
-        <ful-input-file itemlist dropzone maxfilesize="1024">
-            Single, maxfilesize 1024
-        </ful-input-file>
-        <ful-input-file multiple itemlist dropzone maxfilesize="1024">
-            Multiple, maxfilesize 1024
-        </ful-input-file>
+        <fieldset>
+            <ful-input-file itemlist dropzone maxfilesize="1024">
+                Single, maxfilesize 1024
+            </ful-input-file>
+            <ful-input-file multiple itemlist dropzone maxfilesize="1024">
+                Multiple, maxfilesize 1024
+            </ful-input-file>
+        </fieldset>
         <h2>maxtotalsize</h2>
-        <ful-input-file itemlist dropzone maxtotalsize="1024">
-            Single, maxtotalsize 1024
-        </ful-input-file>
-        <ful-input-file multiple itemlist dropzone maxtotalsize="1024">
-            Multiple, maxtotalsize 1024
-        </ful-input-file>
+        <fieldset>
+            <ful-input-file itemlist dropzone maxtotalsize="1024">
+                Single, maxtotalsize 1024
+            </ful-input-file>
+            <ful-input-file multiple itemlist dropzone maxtotalsize="1024">
+                Multiple, maxtotalsize 1024
+            </ful-input-file>
+        </fieldset>
 
+        <h2>Readonly</h2>
+        <fieldset>
+            <ful-input-file itemlist dropzone readonly>
+                Single, maxfilesize 1024
+            </ful-input-file>
+            <ful-input-file multiple itemlist dropzone readonly>
+                Multiple, maxfilesize 1024
+            </ful-input-file>
+
+        </fieldset>
+        <h2>Disabled</h2>
+        <fieldset>
+            <ful-input-file itemlist dropzone disabled>
+                Single, maxfilesize 1024
+            </ful-input-file>
+            <ful-input-file multiple itemlist dropzone disabled>
+                Multiple, maxfilesize 1024
+            </ful-input-file>
+
+        </fieldset>
+        <h2>In disabled fieldset</h2>
+        <fieldset disabled>
+            <ful-input-file itemlist dropzone>
+                Single, maxfilesize 1024
+            </ful-input-file>
+            <ful-input-file multiple itemlist dropzone>
+                Multiple, maxfilesize 1024
+            </ful-input-file>
+        </fieldset>
     </ful-form>
 </body>
 

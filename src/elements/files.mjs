@@ -44,24 +44,24 @@ class InputFile extends Input {
         <div data-ref="dropzone" class="dropzone" data-tpl-if="!slots.dropzone">
             {{ #l10n:t('dropzonelabel') }}
         </div>
-        <div data-ref="items" class="items"></div>
+        <ful-item-list></ful-item-list>
         <ful-field-warnings></ful-field-warnings>
         <ful-field-error></ful-field-error>
     `;
     static templates = {
         items: `
-            <div class="item" data-tpl-each="files" data-tpl-var="file" data-tpl-data-name="file.name">
-                <div class="filename"><span>{{ file.name }}</span></div>
-                <div class="size">{{ #bytes:format(file.size) }}</div>
-                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-x-lg"></i></button>
-            </div>
+            <ful-item data-tpl-each="files" data-tpl-var="file" data-tpl-data-name="file.name">
+                <div>{{ file.name }}</div>
+                <div>{{ #bytes:format(file.size) }}</div>
+                <button type="button" class="btn btn-sm btn-outline-danger bi bi-x-lg"></button>
+            </ful-item>
         `,
         warning: `<ful-field-warning>{{ #l10n:t(key, args) }}</ful-field-warning>`
     }
     render(conf) {
         const { observed } = conf;
         super.render(conf);
-        this.#items = this.querySelector("[data-ref=items]");
+        this.#items = this.querySelector("ful-item-list");
         this.#dropzone = this.querySelector("[data-ref=dropzone]");
         this.#warnings = this.querySelector("ful-field-warnings");
         this.accept = observed.accept;
@@ -77,7 +77,7 @@ class InputFile extends Input {
             if (!e.target.closest("button")) {
                 return;
             }
-            const fileName = e.target.closest(".item").dataset.name;
+            const fileName = e.target.closest("ful-item").dataset.name;
             const dt = new DataTransfer();
             [...this.files].filter(f => f.name !== fileName).forEach(f => dt.items.add(f));
             this.files = dt.files;
@@ -109,11 +109,7 @@ class InputFile extends Input {
         this.#ensureAcceptable();
         this.#ensureFileSizes();
         this.#ensureTotalSize();
-        if(this.#useItemlist){
-            this.template('items').withOverlay({ files: this.files }).withModule('bytes', { format: this.#formatByteSize }).renderTo(this.#items);
-        }else {
-            this.#items.replaceChildren();
-        }
+        this.template('items').withOverlay({ files: this.files }).withModule('bytes', { format: this.#formatByteSize }).renderTo(this.#items);
     }
     warning(key, args) {
         this.template('warning').withOverlay({ key, args }).renderTo(this.#warnings);
@@ -174,7 +170,7 @@ class InputFile extends Input {
     set multiple(v) {
         this._input.multiple = v;
         this.reflect(() => {
-            this.setAttribute('multiple', this._input.multiple);
+            Attributes.toggle(this, "multiple", v);
         })
     }
     get files() {
@@ -207,7 +203,6 @@ class InputFile extends Input {
         this.reflect(() => {
             this.setAttribute('maxfilesize', v);
         })
-
     }
     #maxtotalsize;
     get maxtotalsize() {
@@ -225,7 +220,6 @@ class InputFile extends Input {
     }
     set itemlist(v) {
         this.#useItemlist = v;
-        Attributes.toggle(this.#items, "hidden", !v);
         this.reflect(() => {
             Attributes.toggle(this, "itemlist", v);
         })
@@ -236,7 +230,6 @@ class InputFile extends Input {
     }
     set dropzone(v) {
         this.#useDropzone = v;
-        Attributes.toggle(this.#dropzone, "hidden", !v);
         this.reflect(() => {
             Attributes.toggle(this, "dropzone", v);
         })

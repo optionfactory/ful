@@ -225,7 +225,7 @@ class Dropdown extends ParsedElement {
 }
 
 class Select extends ParsedElement {
-    static observed = ['value:csvm', 'readonly:presence']
+    static observed = ['value:csvm', 'readonly:presence', 'itemlist:presence']
     static slots = true
     static template = `
         <div class="form-label">
@@ -245,8 +245,17 @@ class Select extends ParsedElement {
             {{{{ slots.after }}}}
             <span data-tpl-if="slots.iafter" class="input-group-text">{{{{ slots.iafter }}}}</span>
         </div>
+        <ful-item-list></ful-item-list>
         <ful-field-error></ful-field-error>
     `;
+    static templates = {
+        items: `
+            <ful-item data-tpl-each="entries" data-tpl-var="entry" data-tpl-data-key="entry[0]">
+                <div>{{ entry[1] }}</div>
+                <button type="button" class="btn btn-sm btn-outline-danger bi bi-x-lg"></button>
+            </ful-item>
+        `
+    }    
     static mappers = {
         "csvm": (v, name, el) => {
             if (el.hasAttribute("multiple")) {
@@ -261,6 +270,7 @@ class Select extends ParsedElement {
     #badges
     #ddmenu
     #input
+    #items;
     #multiple
     #fieldError
     #values = new Map()
@@ -276,12 +286,14 @@ class Select extends ParsedElement {
         await this.#loader.prefetch?.();
         const fragment = this.template().withOverlay({ slots, name }).render();
         this.#input = fragment.querySelector('input');
+        this.#items = fragment.querySelector("ful-item-list");
         Attributes.forward('input-', this, this.#input);
         this.#badges = fragment.querySelector('badges');
 
         this.value = observed.value;
         this.disabled = disabled;
         this.readonly = observed.readonly;
+        this.itemlist = observed.itemlist;
 
         this.#ddmenu = fragment.querySelector('ful-dropdown');
         const label = fragment.querySelector('label');
@@ -305,6 +317,22 @@ class Select extends ParsedElement {
             }
             this.#input.focus();
             dload();
+        })
+        this.#items.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (!e.target.closest("button")) {
+                return;
+            }
+            if(this.disabled || this.readonly){
+                return;
+            }            
+            const idx = [...this.#items.children].indexOf(e.target.closest('ful-item'));
+            if (idx === -1) {
+                return;
+            }
+            this.#values.delete(Array.from(this.#values.keys()).pop())
+            this.#changed();
+            this.#syncBadges();
         })
         this.#badges.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -413,6 +441,8 @@ class Select extends ParsedElement {
         });
         this.#badges.replaceChildren();
         this.#badges.append(...badges);
+        this.#items.replaceChildren();
+        this.template('items').withOverlay({ entries: this.#values.entries() }).renderTo(this.#items);
     }
     set value(vs) {
         if(vs === null){
@@ -452,6 +482,16 @@ class Select extends ParsedElement {
         this.#input.readOnly = v;
         this.reflect(() => {
             Attributes.toggle(this, 'readonly', v);
+        })
+    }
+    #useItemlist;
+    get itemlist() {
+        return this.#useItemlist;
+    }
+    set itemlist(v) {
+        this.#useItemlist = v;
+        this.reflect(() => {
+            Attributes.toggle(this, "itemlist", v);
         })
     }
     focus(options) {
