@@ -32,7 +32,7 @@ class Input extends ParsedElement {
     _fragment(type, slots) {
         return this.template().withOverlay({ type, slots }).render();
     }
-    render({ slots, observed, disabled }) {
+    render({ slots, observed, disabled, skipValueSetup }) {
         const type = this._type();
         const fragment = this._fragment(type, slots);
         this._input = fragment.querySelector("input,textarea");
@@ -40,7 +40,9 @@ class Input extends ParsedElement {
         Attributes.forward('input-', this, this._input);
         this.disabled = disabled;
         this.readonly = observed.readonly;
-        this.value = observed.value;
+        if(!skipValueSetup){
+            this.value = observed.value;
+        }
 
         this._input.addEventListener('change', (evt) => {
             evt.stopPropagation();

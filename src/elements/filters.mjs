@@ -1,15 +1,17 @@
-import { Attributes, Fragments, ParsedElement } from "@optionfactory/ftl";
+import { Attributes } from "@optionfactory/ftl";
 import { Instant } from "./temporals.mjs";
+import { Input } from "./input.mjs";
 
-class InstantFilter extends ParsedElement {
-    static observed = ["value:json"];
-    static slots = true;
+class InstantFilter extends Input {
+    static observed = ['value:json', 'readonly:presence'];
     static template = `
-        <div class="form-label" data-tpl-if="label">
-            <label>{{{{ label }}}}</label>
+        <div class="form-label">
+            <label>{{{{ slots.default }}}}</label>
             {{{{ slots.info }}}}
         </div>
         <div class="input-group">
+            <span data-tpl-if="slots.ibefore" class="input-group-text">{{{{ slots.ibefore }}}}</span>
+            {{{{ slots.before }}}}
             <button data-ref="operator" class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" value="LTE" form="">&PrecedesSlantEqual;</button>
             <ul class="dropdown-menu">
                 <li><a class="dropdown-item" role="button" value="EQ">=</a></li>
@@ -22,32 +24,21 @@ class InstantFilter extends ParsedElement {
             </ul>
             <input data-ref="value1" type="datetime-local" class="form-control" form="">
             <input data-ref="value2" type="datetime-local" class="form-control" form="" hidden>
-            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            {{{{ slots.after }}}}
+            <span data-tpl-if="slots.iafter" class="input-group-text">{{{{ slots.iafter }}}}</span>
         </div>
         <ful-field-error></ful-field-error>
     `;
-    static formAssociated = true;
     #operator;
     #value1;
     #value2;
-    #fieldError;
-    constructor() {
-        super();
-        this.internals = this.attachInternals();
-    }
-    render({ slots }) {
-        const label = Fragments.toHtml(slots.default.cloneNode(true)).trim().length === 0 ? null : slots.default;
-        const name = this.getAttribute("name")
-        const fragment = this.template().withOverlay({ slots, label, name  }).render();
-        this.#operator = fragment.querySelector('[data-ref=operator]');
-        this.#value1 = fragment.querySelector('[data-ref=value1]');
-        this.#value2 = fragment.querySelector('[data-ref=value2]');
-        this.#fieldError = fragment.querySelector('ful-field-error');
-        const labelEl = fragment.querySelector('label')
-        labelEl?.addEventListener('click', () => this.focus());
-        this.#value1.ariaDescribedByElements = [this.#fieldError];
-        this.#value1.ariaLabelledByElements = labelEl ? [labelEl] : [];
-        this.replaceChildren(fragment);
+    render(conf) {
+        super.render({...conf, skipValueSetup: true});
+        this.#operator = this.querySelector('[data-ref=operator]');
+        this.#value1 = this.querySelector('[data-ref=value1]');
+        this.#value2 = this.querySelector('[data-ref=value2]');
+        this.value = conf.observed.value;
+
         this.addEventListener('click', (evt) => {
             const target = /** @type HTMLElement */ (evt.target);
             if (!target.matches('ul > li > a')) {
@@ -70,42 +61,25 @@ class InstantFilter extends ParsedElement {
         if (v === null || v === undefined) {
             this.#value1.value = '';
             this.#value2.value = '';
-            this.reflect(() => {
-                this.removeAttribute('value');
-            });
             return;
         }
         const [operator, ...values] = v;
         this.#operator.setAttribute('value', operator);
         this.#value1.value = values[0] ? Instant.isoToLocal(values[0]) : values[0];
         this.#value2.value = values[1] ? Instant.isoToLocal(values[1]) : values[1];
-        this.reflect(() => {
-            this.setAttribute('value', JSON.stringify(v));
-        });
-    }
-    focus(options) {
-        this.#value1.focus(options);
-    }
-    setCustomValidity(error) {
-        if (!error) {
-            this.internals.setValidity({});
-            this.#fieldError.innerText = "";
-            return;
-        }
-        this.internals.setValidity({ customError: true }, " ");
-        this.#fieldError.innerText = error;
     }
 }
 
-class LocalDateFilter extends ParsedElement {
-    static observed = ["value:json"];
-    static slots = true;
+class LocalDateFilter extends Input {
+    static observed = ["value:json", 'readonly:presence'];
     static template = `
-        <div class="form-label" data-tpl-if="label">
-            <label>{{{{ label }}}}</label>
+        <div class="form-label">
+            <label>{{{{ slots.default }}}}</label>
             {{{{ slots.info }}}}
         </div>
         <div class="input-group">
+            <span data-tpl-if="slots.ibefore" class="input-group-text">{{{{ slots.ibefore }}}}</span>
+            {{{{ slots.before }}}}
             <button data-ref="operator" class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" value="EQ" form="">=</button>
             <ul class="dropdown-menu">
                 <li><a class="dropdown-item" role="button" value="EQ">=</a></li>
@@ -118,32 +92,22 @@ class LocalDateFilter extends ParsedElement {
             </ul>
             <input data-ref="value1" type="date" class="form-control" form="">
             <input data-ref="value2" type="date" class="form-control" form="" hidden>
-            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            {{{{ slots.after }}}}
+            <span data-tpl-if="slots.iafter" class="input-group-text">{{{{ slots.iafter }}}}</span>
         </div>
         <ful-field-error></ful-field-error>
     `;
-    static formAssociated = true;
     #operator;
     #value1;
     #value2;
-    #fieldError;
-    constructor() {
-        super();
-        this.internals = this.attachInternals();
-    }
-    render({ slots }) {
-        const label = Fragments.toHtml(slots.default.cloneNode(true)).trim().length === 0 ? null : slots.default;
-        const name = this.getAttribute("name")
-        const fragment = this.template().withOverlay({ slots, label, name }).render();
-        this.#operator = fragment.querySelector('[data-ref=operator]');
-        this.#value1 = fragment.querySelector('[data-ref=value1]');
-        this.#value2 = fragment.querySelector('[data-ref=value2]');
-        this.#fieldError = fragment.querySelector('ful-field-error');
-        const labelEl = fragment.querySelector('label')
-        labelEl?.addEventListener('click', () => this.focus());
-        this.#value1.ariaDescribedByElements = [this.#fieldError];
-        this.#value1.ariaLabelledByElements = labelEl ? [labelEl] : [];
-        this.replaceChildren(fragment);
+    render(conf) {
+        super.render({...conf, skipValueSetup: true});
+
+        this.#operator = this.querySelector('[data-ref=operator]');
+        this.#value1 = this.querySelector('[data-ref=value1]');
+        this.#value2 = this.querySelector('[data-ref=value2]');
+        this.value = conf.observed.value;
+        
         this.addEventListener('click', (evt) => {
             const target = /** @type HTMLElement */(evt.target);
             if (!target.matches('ul > li > a')) {
@@ -165,42 +129,25 @@ class LocalDateFilter extends ParsedElement {
         if (v === null || v === undefined) {
             this.#value1.value = '';
             this.#value2.value = '';
-            this.reflect(() => {
-                this.removeAttribute('value');
-            });
             return;
         }
         const [operator, ...values] = v;
         this.#operator.setAttibute('value', operator);
         this.#value1.value = values[0];
         this.#value2.value = values[1];
-        this.reflect(() => {
-            this.setAttribute('value', JSON.stringify(v));
-        });
-    }
-    focus(options) {
-        this.#value1.focus(options);
-    }
-    setCustomValidity(error) {
-        if (!error) {
-            this.internals.setValidity({});
-            this.#fieldError.innerText = "";
-            return;
-        }
-        this.internals.setValidity({ customError: true }, " ");
-        this.#fieldError.innerText = error;
     }
 }
 
-class TextFilter extends ParsedElement {
-    static observed = ["value:json"];
-    static slots = true;
+class TextFilter extends Input {
+    static observed = ["value:json", 'readonly:presence'];
     static template = `
-        <div class="form-label" data-tpl-if="label">
-            <label>{{{{ label }}}}</label>
+        <div class="form-label">
+            <label>{{{{ slots.default }}}}</label>
             {{{{ slots.info }}}}
         </div>
         <div class="input-group">
+            <span data-tpl-if="slots.ibefore" class="input-group-text">{{{{ slots.ibefore }}}}</span>
+            {{{{ slots.before }}}}
             <button data-ref="operator" class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" value="CONTAINS" form="">&mldr;a&mldr;</button>
             <ul class="dropdown-menu">
                 <li><a class="dropdown-item" role="button" value="CONTAINS">&mldr;a&mldr;</a></li>
@@ -209,30 +156,20 @@ class TextFilter extends ParsedElement {
                 <li><a class="dropdown-item" role="button" value="EQ">=</a></li>
             </ul>
             <input data-ref="value" type="text" class="form-control" form="">
-            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            {{{{ slots.after }}}}
+            <span data-tpl-if="slots.iafter" class="input-group-text">{{{{ slots.iafter }}}}</span>
         </div>
         <ful-field-error></ful-field-error>
     `;
-    static formAssociated = true;
     #operator;
     #value;
-    #fieldError;
-    constructor() {
-        super();
-        this.internals = this.attachInternals();
-    }
-    render({ slots }) {
-        const label = Fragments.toHtml(slots.default.cloneNode(true)).trim().length === 0 ? null : slots.default;
-        const name = this.getAttribute("name")
-        const fragment = this.template().withOverlay({ slots, label, name }).render();
-        this.#operator = fragment.querySelector('[data-ref=operator]');
-        this.#value = fragment.querySelector('[data-ref=value]');
-        this.#fieldError = fragment.querySelector('ful-field-error');
-        const labelEl = fragment.querySelector('label')
-        labelEl?.addEventListener('click', () => this.focus());
-        this.#value.ariaDescribedByElements = [this.#fieldError];
-        this.#value.ariaLabelledByElements = labelEl ? [labelEl] : [];        
-        this.replaceChildren(fragment);
+    render(conf) {
+        super.render({...conf, skipValueSetup: true});
+
+        this.#operator = this.querySelector('[data-ref=operator]');
+        this.#value = this.querySelector('[data-ref=value]');
+        this.value = conf.observed.value;
+
         this.addEventListener('click', (evt) => {
             const target = /** @type HTMLElement */(evt.target);
             if (!target.matches('ul > li > a')) {
@@ -253,29 +190,11 @@ class TextFilter extends ParsedElement {
     set value(v) {
         if (v === null || v === undefined) {
             this.#value.value = '';
-            this.reflect(() => {
-                this.removeAttribute('value');
-            });
             return;
         }
         const [operator, sensitivity, value] = v;
         this.#operator.setAttribute('value', operator);
         this.#value.value = value;
-        this.reflect(() => {
-            this.setAttribute('value', JSON.stringify(v));
-        });
-    }
-    focus(options) {
-        this.#value.focus(options);
-    }
-    setCustomValidity(error) {
-        if (!error) {
-            this.internals.setValidity({});
-            this.#fieldError.innerText = "";
-            return;
-        }
-        this.internals.setValidity({ customError: true }, " ");
-        this.#fieldError.innerText = error;
     }
 }
 
