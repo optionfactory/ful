@@ -110,8 +110,10 @@ ful-select {
         &>.input-group {
             display: none;
         }
-        &> ful-item-list > ful-item {
+        &> ful-item-list > ful-item:first-child {
             margin-top: 0;
+        }
+        &> ful-item-list > ful-item {
             & > *:first-child {
                 grid-column: 1 / -1;
             }
