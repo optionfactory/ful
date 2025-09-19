@@ -251,7 +251,7 @@ class Select extends ParsedElement {
     static templates = {
         items: `
             <ful-item data-tpl-each="entries" data-tpl-var="entry" data-tpl-data-key="entry[0]">
-                <div>{{ entry[1] }}</div>
+                <div>{{ entry[1][0] }}</div>
                 <button type="button" class="btn btn-sm btn-outline-danger bi bi-x-lg"></button>
             </ful-item>
         `
