@@ -346,7 +346,8 @@ class Table extends ParsedElement {
             }, this.#latestRequest.sortRequest, this.#latestRequest.filterRequest);
         });
         this.addEventListener('sort-requested', async (/** @type any */e) => {
-            await this.load(this.#latestRequest.pageRequest, e.detail.value, this.#latestRequest.filterRequest);
+            const sortRequest = e.detail.value.order ? e.detail.value : null;
+            await this.load(this.#latestRequest.pageRequest, sortRequest, this.#latestRequest.filterRequest);
             this.#sorters.forEach(s => s.order = null);
             e.target.order = e.detail.value.order;
         })
