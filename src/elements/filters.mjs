@@ -33,10 +33,13 @@ class InstantFilter extends Input {
     #value1;
     #value2;
     render(conf) {
-        super.render({...conf, skipValueSetup: true});
+        super.render({...conf, skipObservedSetup: true});
         this.#operator = this.querySelector('[data-ref=operator]');
         this.#value1 = this.querySelector('[data-ref=value1]');
         this.#value2 = this.querySelector('[data-ref=value2]');
+
+        this.disabled = conf.disabled;
+        this.readonly = conf.observed.readonly;
         this.value = conf.observed.value;
 
         this.addEventListener('click', (evt) => {
@@ -68,6 +71,19 @@ class InstantFilter extends Input {
         this.#value1.value = values[0] ? Instant.isoToLocal(values[0]) : values[0];
         this.#value2.value = values[1] ? Instant.isoToLocal(values[1]) : values[1];
     }
+    set readonly(v) {
+        this.#value2.readOnly = v;
+        super.readonly = v;
+    }    
+    set disabled(d) {
+        Attributes.toggle(this.#value2, 'disabled', d);
+        super.disabled = d;
+    }
+    formResetCallback() {
+        const v = this.getAttribute("value");
+        this.value = v === null ? null : JSON.parse(v);
+    }
+
 }
 
 class LocalDateFilter extends Input {
@@ -101,13 +117,16 @@ class LocalDateFilter extends Input {
     #value1;
     #value2;
     render(conf) {
-        super.render({...conf, skipValueSetup: true});
+        super.render({...conf, skipObservedSetup: true});
 
         this.#operator = this.querySelector('[data-ref=operator]');
         this.#value1 = this.querySelector('[data-ref=value1]');
         this.#value2 = this.querySelector('[data-ref=value2]');
+
+        this.disabled = conf.disabled;
+        this.readonly = conf.observed.readonly;
         this.value = conf.observed.value;
-        
+
         this.addEventListener('click', (evt) => {
             const target = /** @type HTMLElement */(evt.target);
             if (!target.matches('ul > li > a')) {
@@ -135,6 +154,18 @@ class LocalDateFilter extends Input {
         this.#operator.setAttibute('value', operator);
         this.#value1.value = values[0];
         this.#value2.value = values[1];
+    }
+    set readonly(v) {
+        this.#value2.readOnly = v;
+        super.readonly = v;
+    }
+    set disabled(d) {
+        Attributes.toggle(this.#value2, 'disabled', d);
+        super.disabled = d;
+    }
+    formResetCallback() {
+        const v = this.getAttribute("value");
+        this.value = v === null ? null : JSON.parse(v);
     }
 }
 
@@ -164,10 +195,13 @@ class TextFilter extends Input {
     #operator;
     #value;
     render(conf) {
-        super.render({...conf, skipValueSetup: true});
+        super.render({...conf, skipObservedSetup: true});
 
         this.#operator = this.querySelector('[data-ref=operator]');
         this.#value = this.querySelector('[data-ref=value]');
+
+        this.disabled = conf.disabled;
+        this.readonly = conf.observed.readonly;
         this.value = conf.observed.value;
 
         this.addEventListener('click', (evt) => {
@@ -181,12 +215,10 @@ class TextFilter extends Input {
             btn.innerHTML = target.innerHTML;
         })
     }
-
     get value() {
         const operator = this.#operator.getAttribute('value');
         return this.#value.value === '' ? undefined : [operator, 'IGNORE_CASE', this.#value.value];
     }
-
     set value(v) {
         if (v === null || v === undefined) {
             this.#value.value = '';
@@ -195,6 +227,10 @@ class TextFilter extends Input {
         const [operator, sensitivity, value] = v;
         this.#operator.setAttribute('value', operator);
         this.#value.value = value;
+    }
+    formResetCallback() {
+        const v = this.getAttribute("value");
+        this.value = v === null ? null : JSON.parse(v);
     }
 }
 

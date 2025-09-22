@@ -32,15 +32,15 @@ class Input extends ParsedElement {
     _fragment(type, slots) {
         return this.template().withOverlay({ type, slots }).render();
     }
-    render({ slots, observed, disabled, skipValueSetup }) {
+    render({ slots, observed, disabled, skipObservedSetup }) {
         const type = this._type();
         const fragment = this._fragment(type, slots);
         this._input = fragment.querySelector("input,textarea");
 
         Attributes.forward('input-', this, this._input);
-        this.disabled = disabled;
-        this.readonly = observed.readonly;
-        if(!skipValueSetup){
+        if (!skipObservedSetup) {
+            this.disabled = disabled;
+            this.readonly = observed.readonly;
             this.value = observed.value;
         }
 
