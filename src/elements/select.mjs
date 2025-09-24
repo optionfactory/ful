@@ -225,7 +225,7 @@ class Dropdown extends ParsedElement {
 }
 
 class Select extends ParsedElement {
-    static observed = ['value:csvm', 'readonly:presence', 'itemlist:presence']
+    static observed = ['value:csvm', 'readonly:presence', "required:presence", 'itemlist:presence']
     static slots = true
     static template = `
         <div class="form-label">
@@ -256,14 +256,6 @@ class Select extends ParsedElement {
             </ful-item>
         `
     }    
-    static mappers = {
-        "csvm": (v, name, el) => {
-            if (el.hasAttribute("multiple")) {
-                return v === null ? [] : v.split(",").map(e => e.trim()).filter(e => e)
-            }
-            return v === null || v === '' ? null : v
-        }
-    };
     static formAssociated = true
     internals
     #loader
@@ -293,6 +285,7 @@ class Select extends ParsedElement {
         this.value = observed.value;
         this.disabled = disabled;
         this.readonly = observed.readonly;
+        this.required = observed.required;        
         this.itemlist = observed.itemlist;
 
         this.#ddmenu = fragment.querySelector('ful-dropdown');
@@ -484,6 +477,15 @@ class Select extends ParsedElement {
             Attributes.toggle(this, 'readonly', v);
         })
     }
+    get required() {
+        return this.#input.getAttribute('aria-required') === 'true';
+    }
+    set required(d) {
+        Attributes.set(this.#input, "aria-required", d ? "true" : null);
+        this.reflect(() => {
+            Attributes.toggle(this, 'required', d);
+        })
+    }        
     #useItemlist;
     get itemlist() {
         return this.#useItemlist;
@@ -493,7 +495,7 @@ class Select extends ParsedElement {
         this.reflect(() => {
             Attributes.toggle(this, "itemlist", v);
         })
-    }
+    }    
     focus(options) {
         this.#input.focus(options);
     }

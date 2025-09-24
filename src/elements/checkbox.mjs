@@ -1,7 +1,7 @@
 import { Attributes, ParsedElement } from "@optionfactory/ftl";
 
 class Checkbox extends ParsedElement {
-    static observed = ['value:bool', 'readonly:presence'];
+    static observed = ['value:bool', 'readonly:presence', "required:presence"];
     static slots = true;
     static template = `
         <div data-tpl-class="klass">
@@ -32,6 +32,7 @@ class Checkbox extends ParsedElement {
         Attributes.forward('input-', this, this.#input)
         this.disabled = disabled;
         this.readonly = observed.readonly;
+        this.required = observed.required;
         this.value = observed.value;
         this.#input.addEventListener('change', (evt) => {
             evt.stopPropagation();
@@ -78,6 +79,15 @@ class Checkbox extends ParsedElement {
     set disabled(d) {
         Attributes.toggle(this.#input, 'disabled', d);
     }
+    get required() {
+        return this.#input.getAttribute('aria-required') === 'true';
+    }
+    set required(d) {
+        Attributes.set(this.#input, "aria-required", d ? "true" : null);
+        this.reflect(() => {
+            Attributes.toggle(this, 'required', d);
+        })
+    }        
     focus(options) {
         this.#input.focus(options);
     }

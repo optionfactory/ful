@@ -3,7 +3,7 @@ import { Instant } from "./temporals.mjs";
 import { Input } from "./input.mjs";
 
 class InstantFilter extends Input {
-    static observed = ['value:json', 'readonly:presence'];
+    static observed = ['value:json', 'readonly:presence', 'required:presence'];
     static template = `
         <div class="form-label">
             <label>{{{{ slots.default }}}}</label>
@@ -33,13 +33,14 @@ class InstantFilter extends Input {
     #value1;
     #value2;
     render(conf) {
-        super.render({...conf, skipObservedSetup: true});
+        super.render({ ...conf, skipObservedSetup: true });
         this.#operator = this.querySelector('[data-ref=operator]');
         this.#value1 = this.querySelector('[data-ref=value1]');
         this.#value2 = this.querySelector('[data-ref=value2]');
 
         this.disabled = conf.disabled;
         this.readonly = conf.observed.readonly;
+        this.required = conf.observed.required;
         this.value = conf.observed.value;
 
         this.addEventListener('click', (evt) => {
@@ -61,7 +62,7 @@ class InstantFilter extends Input {
         return values.some(v => v === '') ? undefined : [operator, ...values.map(v => new Date(v).toISOString())];
     }
     set value(v) {
-        if (v === null || v === undefined) {
+        if (v == null) {
             this.#value1.value = '';
             this.#value2.value = '';
             return;
@@ -74,20 +75,15 @@ class InstantFilter extends Input {
     set readonly(v) {
         this.#value2.readOnly = v;
         super.readonly = v;
-    }    
+    }
     set disabled(d) {
         Attributes.toggle(this.#value2, 'disabled', d);
         super.disabled = d;
     }
-    formResetCallback() {
-        const v = this.getAttribute("value");
-        this.value = v === null ? null : JSON.parse(v);
-    }
-
 }
 
 class LocalDateFilter extends Input {
-    static observed = ["value:json", 'readonly:presence'];
+    static observed = ["value:json", 'readonly:presence', 'required:presence'];
     static template = `
         <div class="form-label">
             <label>{{{{ slots.default }}}}</label>
@@ -117,7 +113,7 @@ class LocalDateFilter extends Input {
     #value1;
     #value2;
     render(conf) {
-        super.render({...conf, skipObservedSetup: true});
+        super.render({ ...conf, skipObservedSetup: true });
 
         this.#operator = this.querySelector('[data-ref=operator]');
         this.#value1 = this.querySelector('[data-ref=value1]');
@@ -125,6 +121,7 @@ class LocalDateFilter extends Input {
 
         this.disabled = conf.disabled;
         this.readonly = conf.observed.readonly;
+        this.required = conf.observed.required;
         this.value = conf.observed.value;
 
         this.addEventListener('click', (evt) => {
@@ -145,7 +142,7 @@ class LocalDateFilter extends Input {
         return values.some(v => v === '') ? undefined : [operator, ...values];
     }
     set value(v) {
-        if (v === null || v === undefined) {
+        if (v == null) {
             this.#value1.value = '';
             this.#value2.value = '';
             return;
@@ -163,14 +160,10 @@ class LocalDateFilter extends Input {
         Attributes.toggle(this.#value2, 'disabled', d);
         super.disabled = d;
     }
-    formResetCallback() {
-        const v = this.getAttribute("value");
-        this.value = v === null ? null : JSON.parse(v);
-    }
 }
 
 class TextFilter extends Input {
-    static observed = ["value:json", 'readonly:presence'];
+    static observed = ["value:json", 'readonly:presence', 'required:presence'];
     static template = `
         <div class="form-label">
             <label>{{{{ slots.default }}}}</label>
@@ -195,13 +188,14 @@ class TextFilter extends Input {
     #operator;
     #value;
     render(conf) {
-        super.render({...conf, skipObservedSetup: true});
+        super.render({ ...conf, skipObservedSetup: true });
 
         this.#operator = this.querySelector('[data-ref=operator]');
         this.#value = this.querySelector('[data-ref=value]');
 
         this.disabled = conf.disabled;
         this.readonly = conf.observed.readonly;
+        this.required = conf.observed.required;
         this.value = conf.observed.value;
 
         this.addEventListener('click', (evt) => {
@@ -220,17 +214,13 @@ class TextFilter extends Input {
         return this.#value.value === '' ? undefined : [operator, 'IGNORE_CASE', this.#value.value];
     }
     set value(v) {
-        if (v === null || v === undefined) {
+        if (v == null) {
             this.#value.value = '';
             return;
         }
         const [operator, sensitivity, value] = v;
         this.#operator.setAttribute('value', operator);
         this.#value.value = value;
-    }
-    formResetCallback() {
-        const v = this.getAttribute("value");
-        this.value = v === null ? null : JSON.parse(v);
     }
 }
 

@@ -1,7 +1,7 @@
 import { Attributes, ParsedElement } from "@optionfactory/ftl"
 
 class Input extends ParsedElement {
-    static observed = ['value', 'readonly:presence'];
+    static observed = ['value', 'readonly:presence', 'required:presence'];
     static slots = true;
     static template = `
         <div class="form-label">
@@ -41,6 +41,7 @@ class Input extends ParsedElement {
         if (!skipObservedSetup) {
             this.disabled = disabled;
             this.readonly = observed.readonly;
+            this.required = observed.required;
             this.value = observed.value;
         }
 
@@ -83,6 +84,15 @@ class Input extends ParsedElement {
     set disabled(d) {
         Attributes.toggle(this._input, 'disabled', d);
     }
+    get required() {
+        return this._input.getAttribute('aria-required') === 'true';
+    }
+    set required(d) {
+        Attributes.set(this._input, "aria-required", d ? "true" : null);
+        this.reflect(() => {
+            Attributes.toggle(this, 'required', d);
+        })
+    }    
     focus(options) {
         this._input.focus(options);
     }
@@ -96,7 +106,7 @@ class Input extends ParsedElement {
         this._fieldError.innerText = error;
     }
     formResetCallback() {
-        this.value = this.getAttribute("value")
+        this.value = this.unmarshal('value', this.getAttribute("value"));
     }
 }
 

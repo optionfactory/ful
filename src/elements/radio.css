@@ -13,6 +13,14 @@ ful-radio-group {
         visibility: hidden;
     }
 
+    &[required] > fieldset > legend::before {
+        content: '* ';
+        display: inline;
+        font-weight: 700;
+        color: var(--ful-color);
+    }
+
+
     &>fieldset {
         &>legend {
             font-size: 16px;

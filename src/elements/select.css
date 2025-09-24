@@ -123,6 +123,14 @@ ful-select {
         }
     }
 
+    &[required] > .form-label > label::before {
+        content: '* ';
+        display: inline;
+        font-weight: 700;
+        color: var(--ful-color);
+    }
+
+
     input {
         border: 0;
         margin: 0;

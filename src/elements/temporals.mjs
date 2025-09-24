@@ -44,22 +44,22 @@ class Instant extends ParsedElement {
         const date = `${d.getFullYear()}-${pad(2, d.getMonth() + 1)}-${pad(2, d.getDate())}`;
         const time = `${pad(2, d.getHours())}:${pad(2, d.getMinutes())}:${pad(2, d.getSeconds())}.${pad(3, d.getMilliseconds())}`;
         return `${date}T${time}`
-    }    
+    }
 }
 
 
 class InputLocalDate extends Input {
-    static observed = ['value', 'readonly:presence', 'min', 'max', 'step'];
+    static observed = ['value', 'readonly:presence', 'required:presence', 'min', 'max', 'step'];
     _type() {
         return 'date';
     }
-    render(conf){
-        const {observed} = conf;
+    render(conf) {
+        const { observed } = conf;
         super.render(conf);
         this.min = observed.min;
         this.max = observed.max;
         this.step = observed.step;
-    }    
+    }
     get min() {
         const v = this._input.min;
         return v === '' ? null : v;
@@ -119,12 +119,12 @@ class InputLocalTime extends InputLocalDate {
 
 
 class InputInstant extends Input {
-    static observed = ['value', 'readonly:presence', 'min', 'max', 'step'];
+    static observed = ['value', 'readonly:presence', 'required:presence', 'min', 'max', 'step'];
     _type() {
         return 'datetime-local';
     }
-    render(conf){
-        const {observed} = conf;
+    render(conf) {
+        const { observed } = conf;
         super.render(conf);
         this.min = observed.min;
         this.max = observed.min;

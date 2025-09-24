@@ -8,6 +8,13 @@ ful-checkbox {
         visibility: hidden;
     }
 
+    &[required]>.form-check>.form-check-label>label::before {
+        content: '* ';
+        display: inline;
+        font-weight: 700;
+        color: var(--ful-color);
+    }
+
     & input[type=checkbox]:checked {
         background-color: var(--ful-checkbox-active-bg);
         border-color: var(--ful-checkbox-active-bg);

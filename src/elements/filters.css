@@ -9,6 +9,14 @@ ful-filter-text, ful-filter-instant, ful-filter-local-date {
         visibility: hidden;
     }
 
+    &[required] > .form-label > label::before {
+        content: '* ';
+        display: inline;
+        font-weight: 700;
+        color: var(--ful-color);
+    }
+
+
     .dropdown-item:active {
         color: var(--ful-filter-active-color);
         background-color: var(--ful-filter-active-bg);

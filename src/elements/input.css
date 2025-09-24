@@ -6,9 +6,19 @@ ful-input-local-time,
 ful-input-instant {
     display: block;
 
+
+
     &:not(:defined) {
         visibility: hidden;
     }
+
+    &[required] > .form-label > label::before {
+        content: '* ';
+        display: inline;
+        font-weight: 700;
+        color: var(--ful-color);
+    }
+
 
     & textarea:focus,
     & input:focus {

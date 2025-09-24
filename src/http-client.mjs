@@ -361,7 +361,7 @@ class HttpRequestBuilder {
      */
     headers(hs) {
         for (const [k, v] of new Headers(hs).entries()) {
-            if (v === null || v === undefined) {
+            if (v == null) {
                 this.#headers.delete(k);
             } else {
                 this.#headers.set(k, v);
@@ -376,7 +376,7 @@ class HttpRequestBuilder {
      * @returns {HttpRequestBuilder} this builder
      */
     header(k, v) {
-        if (v === null || v === undefined) {
+        if (v == null) {
             this.#headers.delete(k);
         } else {
             this.#headers.set(k, v);
@@ -390,7 +390,7 @@ class HttpRequestBuilder {
      */
     params(ps) {
         for (const [k, v] of new URLSearchParams(ps).entries()) {
-            if (v === null || v === undefined) {
+            if (v == null) {
                 this.#params.delete(k);
             } else {
                 this.#params.set(k, v);
@@ -405,7 +405,7 @@ class HttpRequestBuilder {
      * @returns {HttpRequestBuilder} this builder
      */
     param(k, ...vs) {
-        if (vs.length === 0 || vs[0] === null || vs[0] === undefined) {
+        if (vs.length === 0 || vs[0] == null) {
             this.#params.delete(k);
             return this;
         }

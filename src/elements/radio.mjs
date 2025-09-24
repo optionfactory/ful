@@ -1,7 +1,7 @@
 import { Attributes, Fragments, ParsedElement } from "@optionfactory/ftl"
 
 class RadioGroup extends ParsedElement {
-    static observed = ['value', 'readonly:presence'];
+    static observed = ['value', 'readonly:presence', "required:presence"];
     static slots = true;
     static template = `
         <fieldset>
@@ -65,6 +65,7 @@ class RadioGroup extends ParsedElement {
         this.#fieldset = this.firstElementChild;
         this.disabled = disabled;
         this.readonly = observed.readonly;
+        this.required = observed.required;
         this.value = observed.value;
         this.#fieldError = this.querySelector('ful-field-error');
         this.ariaDescribedByElements = [this.#fieldError];
@@ -105,6 +106,15 @@ class RadioGroup extends ParsedElement {
     set disabled(d){
         Attributes.toggle(this.#fieldset, 'disabled', d);
     }    
+    get required() {
+        return this.#fieldset.getAttribute('aria-required') === 'true';
+    }
+    set required(d) {
+        Attributes.set(this.#fieldset, "aria-required", d ? "true" : null);
+        this.reflect(() => {
+            Attributes.toggle(this, 'required', d);
+        })
+    }      
     focus(options) {
         this.#firstRadio.focus(options);
     }

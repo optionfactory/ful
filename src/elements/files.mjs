@@ -18,7 +18,7 @@ class InputFile extends Input {
             'maxtotalsizeexceeded': "La dimensione massima complessiva dei file è di {0}"
         }
     }
-    static observed = ['value', 'readonly:presence', "accept:csv", 'multiple:presence', "itemlist:presence", "dropzone:presence", "maxfilesize:number", "maxtotalsize:number"];
+    static observed = ['value', 'readonly:presence', 'required:presence', "accept:csv", 'multiple:presence', "itemlist:presence", "dropzone:presence", "maxfilesize:number", "maxtotalsize:number"];
     #accept;
     #items;
     #dropzone;
