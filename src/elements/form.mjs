@@ -1,7 +1,6 @@
-import { Attributes, ParsedElement } from "@optionfactory/ftl"
+import { Attributes, ParsedElement, registry } from "@optionfactory/ftl"
 import { Failure } from "../failure.mjs";
 import { Bindings } from "./bindings.mjs"
-import { Loaders } from "./loaders.mjs"
 import { AsyncEvents } from "../events/async.mjs";
 
 class RemoteJsonFormLoader {
@@ -49,7 +48,10 @@ class LocalFormLoader {
 }
 
 class FormLoader {
-    static create({ el, http, requestMapper, responseMapper }) {
+    static create(el, conf) {
+        const http = registry.component("http-client");
+        const requestMapper = el.hasAttribute("request-mapper") ? registry.component(el.getAttribute("request-mapper")) : v => v;
+        const responseMapper = el.hasAttribute("response-mapper") ? registry.component(el.getAttribute("response-mapper")) : v => v;
         const url = el.getAttribute("action");
         if (!url) {
             return new LocalFormLoader(requestMapper, responseMapper);
@@ -81,7 +83,7 @@ class Form extends ParsedElement {
     async submit() {
         this.spinner(true)
         try {
-            const loader = Loaders.fromAttributes(this, 'loaders:form');
+            const loader = registry.component(this.getAttribute("loader") ?? 'loaders:form').create(this);
             const values = this.values;
             let request = await loader.prepare(values, this)
             try {

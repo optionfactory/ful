@@ -1,5 +1,4 @@
-import { Attributes, Fragments, Nodes, ParsedElement, Rendering } from "@optionfactory/ftl"
-import { Loaders } from "./loaders.mjs";
+import { Attributes, Fragments, Nodes, ParsedElement, registry, Rendering } from "@optionfactory/ftl"
 
 class SortButton extends ParsedElement {
     static observed = ["order"];
@@ -221,7 +220,8 @@ class RemoteTableLoader {
 
 
 class TableLoader {
-    static create({ el, http }) {
+    static create(el, conf) {
+        const http = registry.component("http-client");
         const url = el.getAttribute("src");
         const method = el.getAttribute("method") ?? 'GET';
         return new RemoteTableLoader(http, url, method);
@@ -365,7 +365,7 @@ class Table extends ParsedElement {
         this.#feedback.setAttribute("hidden", "");
         this.#noAutoload.setAttribute("hidden", "");
         try {
-            const loader = Loaders.fromAttributes(this, 'loaders:table');
+            const loader = registry.component(this.getAttribute("loader") ?? 'loaders:table').create(this);
             const pageResponse = await loader.load(pageRequest, sortRequest, filterRequest);
             this.#latestRequest = { pageRequest, sortRequest, filterRequest };
             this.#update(pageRequest, sortRequest, filterRequest, pageResponse);
