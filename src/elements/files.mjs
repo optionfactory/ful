@@ -119,7 +119,7 @@ class InputFile extends Input {
             return;
         }
         const unacceptable = [...this.files]
-            .filter(file => this.#accept.some(type => !file.name.toLowerCase().endsWith(type.toLowerCase())));
+            .filter(file => !this.#accept.some(type => file.name.toLowerCase().endsWith(type.toLowerCase())));
 
         if (unacceptable.length === 0) {
             return;
