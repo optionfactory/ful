@@ -70,16 +70,16 @@ class PartialRemoteLoader {
         this.#responseMapper = responseMapper;
     }
     async exact(...keys) {
-        const data = await this.#http.request(this.#method, this.#url)
+        const response = await this.#http.request(this.#method, this.#url)
             .param("k", ...keys)
             .fetchJson()
-        return this.#responseMapper(data);
+        return this.#responseMapper(response);
     }
     async load(needle) {
-        const data = await this.#http.request(this.#method, this.#url)
+        const response = await this.#http.request(this.#method, this.#url)
             .param("s", needle)
             .fetchJson()
-        return this.#responseMapper(data);
+        return this.#responseMapper(response);
     }
 }
 
@@ -131,19 +131,22 @@ class SelectLoader {
     }
     static #responseMapperFrom(el) {
         if (el.hasAttribute("k-expr") && el.hasAttribute("l-expr")) {
-            return v => {
-                const evaluator = registry.evaluator().withOverlay(v);
-                return [
-                    evaluator.evaluateExpression(el.getAttribute("k-expr")),
-                    evaluator.evaluateExpression(el.getAttribute("l-expr")),
-                    evaluator.evaluateExpression(el.getAttribute("m-expr") ?? 'self'),
-                ];
+            return response => {
+                const rows = registry.evaluator().withOverlay(response).evaluateExpression(el.getAttribute("d-expr") ?? 'self');
+                return rows.map(row => {
+                    const evaluator = registry.evaluator().withOverlay(row);
+                    return [
+                        evaluator.evaluateExpression(el.getAttribute("k-expr")),
+                        evaluator.evaluateExpression(el.getAttribute("l-expr")),
+                        evaluator.evaluateExpression(el.getAttribute("m-expr") ?? 'self'),
+                    ];
+                })
             };
         }
         if (el.hasAttribute("response-mapper")) {
             return registry.component(el.getAttribute("response-mapper"));
         }
-        return v => v;
+        return response => response;
     }
 }
 
@@ -287,7 +290,7 @@ class Select extends ParsedElement {
     }
     async render({ slots, observed, disabled }) {
         const name = this.getAttribute("name");
-        this.#loader = registry.component(this.getAttribute("loader") ?? 'loaders:select').create(this, {options: slots.options});
+        this.#loader = registry.component(this.getAttribute("loader") ?? 'loaders:select').create(this, { options: slots.options });
 
         this.#multiple = this.hasAttribute("multiple");
         await this.#loader.prefetch?.();
