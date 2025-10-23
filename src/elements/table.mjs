@@ -155,8 +155,8 @@ class TableSchemaParser {
             rowsTr.setAttribute(attr, value ?? '');
         }
         const columns = Nodes.queryChildrenAll(schema, "column");
-        const sort = columns.filter(v => v.hasAttribute('order')).map(v => ({sorter: v.getAttribute("sorter"), order: v.getAttribute("order")}))[0] ?? null;
-        for(var column of columns){
+        const sort = columns.filter(v => v.hasAttribute('order')).map(v => ({ sorter: v.getAttribute("sorter"), order: v.getAttribute("order") }))[0] ?? null;
+        for (var column of columns) {
             const maybeTitleTag = Nodes.queryChildren(column, 'title');
             const sorter = column.getAttribute("sorter");
             const order = column.getAttribute("order");
@@ -165,12 +165,12 @@ class TableSchemaParser {
             column.removeAttribute("sorter");
             column.removeAttribute("order");
             column.removeAttribute("title");
-            const wrappedTitleNode = (!sorter &&  !order ) ? titleNode : (() => {
+            const wrappedTitleNode = (!sorter && !order) ? titleNode : (() => {
                 const fulSorter = document.createElement("ful-sorter");
-                if(sorter){
+                if (sorter) {
                     fulSorter.setAttribute("sorter", sorter);
                 }
-                if(order){
+                if (order) {
                     fulSorter.setAttribute("order", order);
                 }
                 fulSorter.append(titleNode)
@@ -190,11 +190,29 @@ class TableSchemaParser {
         }
 
         return {
-            headersTemplate: template.withOverlay({inHeaders: true, inRows: false}).withFragment(Fragments.from(headersTr)),
-            rowsTemplate: template.withOverlay({inHeaders: false, inRows: true}).withFragment(Fragments.from(rowsTr)),
+            headersTemplate: template.withOverlay({ inHeaders: true, inRows: false }).withFragment(Fragments.from(headersTr)),
+            rowsTemplate: template.withOverlay({ inHeaders: false, inRows: true }).withFragment(Fragments.from(rowsTr)),
             sort: sort,
             length: columns.length
         }
+    }
+}
+
+
+
+class InMemoryTableLoader {
+    #data
+    constructor(data) {
+        this.#data = data;
+    }
+    async load(pageRequest, sortRequest, filterRequest) {
+        return { 
+            page: this.#data, 
+            size: this.#data.length 
+        };
+    }
+    update(data) {
+        this.#data = data;
     }
 }
 
@@ -221,10 +239,13 @@ class RemoteTableLoader {
 
 class TableLoader {
     static create(el, conf) {
-        const http = registry.component("http-client");
         const url = el.getAttribute("src");
-        const method = el.getAttribute("method") ?? 'GET';
-        return new RemoteTableLoader(http, url, method);
+        if (url) {
+            const http = registry.component("http-client");
+            const method = el.getAttribute("method") ?? 'GET';
+            return new RemoteTableLoader(http, url, method);
+        }
+        return new InMemoryTableLoader([]);
     }
 }
 
@@ -298,6 +319,7 @@ class Table extends ParsedElement {
             {{{{ schema.rowsTemplate.withOverlay({'rows': pageResponse.data}).render() }}}}
         `
     };
+    #loader;
     #schema;
     #body;
     #loading;
@@ -313,6 +335,8 @@ class Table extends ParsedElement {
         const tableWrapper = /** @type HTMLTableElement */ (Nodes.queryChildren(fragment, '.table-wrapper'));
         const table = /** @type HTMLTableElement */ (tableWrapper.querySelector("table"));
         Attributes.forward('table-', this, table);
+        this.#loader = registry.component(this.getAttribute("loader") ?? 'loaders:table').create(this);
+
         this.#schema = schema;
         this.#body = table.querySelector(':scope > tbody');
         this.#loading = table.querySelector(":scope > tbody[data-ref=loading]");
@@ -365,8 +389,7 @@ class Table extends ParsedElement {
         this.#feedback.setAttribute("hidden", "");
         this.#noAutoload.setAttribute("hidden", "");
         try {
-            const loader = registry.component(this.getAttribute("loader") ?? 'loaders:table').create(this);
-            const pageResponse = await loader.load(pageRequest, sortRequest, filterRequest);
+            const pageResponse = await this.#loader.load(pageRequest, sortRequest, filterRequest);
             this.#latestRequest = { pageRequest, sortRequest, filterRequest };
             this.#update(pageRequest, sortRequest, filterRequest, pageResponse);
         } catch (/** @type any */error) {
@@ -380,14 +403,15 @@ class Table extends ParsedElement {
             throw error;
         }
     }
-
+    async withLoader(fn) {
+        return await fn(this.#loader);
+    }
     async resetWithFilter(filterRequest) {
         return await this.load({
             page: 0,
             size: this.#latestRequest.pageRequest.size
         }, this.#latestRequest.sortRequest, filterRequest);
     }
-
     #update(pageRequest, sortRequest, filterRequest, pageResponse) {
         this.#loading.setAttribute("hidden", "");
         this.#body.replaceChildren(this.template('row').withOverlay({

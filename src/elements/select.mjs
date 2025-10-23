@@ -431,7 +431,7 @@ class Select extends ParsedElement {
         this.replaceChildren(fragment);
     }
     async withLoader(fn) {
-        await fn(this.#loader);
+        return await fn(this.#loader);
     }
     #changed() {
         const selection = [...this.#values.entries()].map(e => ({ key: e[0], label: e[1][0], metadata: e[1].slice(1) }))

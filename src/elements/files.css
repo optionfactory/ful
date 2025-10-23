@@ -1,12 +1,16 @@
 ful-input-file {
 
-    &>.dropzone {
+    &>.default-dropzone {
         border: 5px solid blue;
         min-height: 100px;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
+    }
+
+    &[noinput] > .input-group {
+        display: none;
     }
 
 
@@ -19,12 +23,16 @@ ful-input-file {
     }
 
     &[readonly] {
+        &>.default-dropzone,
         &>.dropzone {
             pointer-events: none;
         }
+
         &>.input-group>input {
             pointer-events: none;
         }
     }
+
+
 
 }
