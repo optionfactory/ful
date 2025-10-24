@@ -137,8 +137,6 @@ class InputFile extends Input {
         if (this.#maxfiles === null) {
             return;
         }
-        console.log("maxfiles", this.#maxfiles);
-        console.log("len", this.files.length);
         if (this.files.length <= this.#maxfiles) {
             return;
         }
