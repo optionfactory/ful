@@ -341,7 +341,7 @@ class Select extends ParsedElement {
             if (idx === -1) {
                 return;
             }
-            this.#values.delete(Array.from(this.#values.keys()).pop())
+            this.#values.delete(Array.from(this.#values.keys())[idx])
             this.#changed();
             this.#syncBadges();
         })
@@ -354,7 +354,7 @@ class Select extends ParsedElement {
             if (idx === -1) {
                 return;
             }
-            this.#values.delete(Array.from(this.#values.keys()).pop())
+            this.#values.delete(Array.from(this.#values.keys())[idx])
             this.#changed();
             this.#syncBadges();
         })
