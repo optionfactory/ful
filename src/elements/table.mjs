@@ -330,7 +330,7 @@ class Table extends ParsedElement {
     #latestRequest;
     async render({ slots, observed }) {
         const template = this.template();
-        const schema = TableSchemaParser.parse(slots.default, template);
+        const schema = TableSchemaParser.parse(slots.schema, template);
         const fragment = template.withOverlay({ slots, schema }).render();
         const tableWrapper = /** @type HTMLTableElement */ (Nodes.queryChildren(fragment, '.table-wrapper'));
         const table = /** @type HTMLTableElement */ (tableWrapper.querySelector("table"));

@@ -45,16 +45,18 @@
                 </ful-filter-instant>
                 <button class="btn btn-primary" type="submit">Search</button>
             </div>
-            <schema>
-                <column title="Id" sorter="byId" order="desc">
-                    {{ id }}
-                </column>
-                <column title="Tipo">
-                    <span class="badge badge-lg rounded-pill text-bg-secondary me-1" data-tpl-each="types">{{ self }}</span>
-                </column>
-                <column title="Utente">{{ username }}</column>
-                <column title="Data">{{ date }}</column>
-            </schema>
+            <template slot="schema">
+                <schema>
+                    <column title="Id" sorter="byId" order="desc">
+                        {{ id }}
+                    </column>
+                    <column title="Tipo">
+                        <span class="badge badge-lg rounded-pill text-bg-secondary me-1" data-tpl-each="types">{{ self }}</span>
+                    </column>
+                    <column title="Utente">{{ username }}</column>
+                    <column title="Data">{{ date }}</column>
+                </schema>
+            </template>
         </ful-table>
     </div>
 </body>
