@@ -29,7 +29,7 @@
         }
 
 
-        .dropzone > div {
+        .dropzone {
             margin-top: 5px;
 
             & .muted {
@@ -63,14 +63,14 @@
         <fieldset>
             <ful-input-file multiple itemlist dropzone noinput maxtotalsize="5000000" maxfiles="3" accept=".jpg,.jpeg,.pdf,.png">
                 Single with itemlist and dropzone
-                <div slot="dropzone">
+                <template slot="dropzone">
                     <section>
                         <div><i class="bi bi-upload"></i></div>
                         <div>Trascina qui o <a href="#">scegli il file</a></div>
                         <div class="muted">Aggiungi un massimo di 3 file</div>
                     </section>
                     <footer class="muted">Formati supportati: JPG, PDF, PNG non oltre i 5MB</footer>
-                </div>
+                </template>
 
             </ful-input-file>
 
@@ -94,7 +94,7 @@
 
             <ful-input-file dropzone>
                 Single with custom dropzone
-                <span slot="dropzone">Drop your file here</span>
+                <template slot="dropzone">Drop your file here</template>
             </ful-input-file>
         </fieldset>
 
@@ -114,7 +114,7 @@
             </ful-input-file>
             <ful-input-file multiple dropzone>
                 Multiple with custom dropzone
-                <span slot="dropzone">Drop your file here</span>
+                <template slot="dropzone">Drop your file here</template>
             </ful-input-file>
         </fieldset>
 

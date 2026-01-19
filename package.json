@@ -1,6 +1,6 @@
 {
     "name": "@optionfactory/ful",
-    "version": "6.0.0",
+    "version": "6.0.1-dev.0",
     "main": "dist/ful.iife.js",
     "module": "dist/ful.mjs",
     "exports": {
@@ -34,10 +34,10 @@
     },
     "devDependencies": {
         "@rollup/plugin-node-resolve": "^16.0.1",
-        "jsdom": "^27.0.0",
+        "jsdom": "^27.4.0",
         "rollup-plugin-postcss": "^4.0.2",
         "@rollup/plugin-terser": "^0.4.4",
-        "sass": "^1.93.1",
-        "terser": "^5.44.0"
+        "sass": "^1.97.2",
+        "terser": "^5.46.0"
     }
 }

@@ -117,8 +117,11 @@ class Form extends ParsedElement {
             const hel = /** @type HTMLElement */ (el);
             hel.hidden = !spin;
         })
-        this.querySelectorAll('[type=submit],[type=reset]').forEach(el => {
-            const hel = /** @type HTMLButtonElement */ (el);
+        this.querySelectorAll('input,button').forEach(el => {
+            const hel = /** @type HTMLButtonElement|HTMLInputElement */ (el);
+            if(hel.type !== 'submit' && hel.type !== 'reset'){
+                return;
+            }
             hel.disabled = spin
         })
     }
