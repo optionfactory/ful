@@ -83,10 +83,8 @@ class Bindings {
     static extractFrom(form, submitter){
         let result = {};
         for(const el of form.elements){
-            if(!el.hasAttribute("name") || el.matches(":disabled")){
-                continue;
-            }
-            if(submitter && (el.type==='submit' || el.type === 'reset') && el !== submitter){
+            // we are assuming submitters are disabled during submit.
+            if(!el.hasAttribute("name") || (el.matches(":disabled") && el !== submitter)){
                 continue;
             }
             result = Bindings.providePath(result, /** @type {string} */(el.getAttribute('name')), Bindings.extract(el))
