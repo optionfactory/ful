@@ -77,12 +77,16 @@ class Bindings {
     /**
      * 
      * @param {HTMLFormElement} form 
+     * @param {HTMLElement} [submitter]
      * @returns 
      */
-    static extractFrom(form){
+    static extractFrom(form, submitter){
         let result = {};
         for(const el of form.elements){
             if(!el.hasAttribute("name") || el.matches(":disabled")){
+                continue;
+            }
+            if(submitter && (el.type==='submit' || el.type === 'reset') && el !== submitter){
                 continue;
             }
             result = Bindings.providePath(result, /** @type {string} */(el.getAttribute('name')), Bindings.extract(el))

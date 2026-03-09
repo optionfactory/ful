@@ -71,7 +71,7 @@ class Form extends ParsedElement {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             e.stopPropagation();
-            await this.submit();
+            await this.submit(e.submitter);
         })
         if (this.hasAttribute("clear-invalid-on-change")) {
             this.addEventListener('change', (/** @type any */evt) => {
@@ -80,11 +80,16 @@ class Form extends ParsedElement {
         }
         this.replaceChildren(form);
     }
-    async submit() {
+    /**
+     * 
+     * @param {HTMLElement} [submitter]
+     * @returns 
+     */
+    async submit(submitter) {
         this.spinner(true)
         try {
             const loader = registry.component(this.getAttribute("loader") ?? 'loaders:form').create(this);
-            const values = this.values;
+            const values = Bindings.extractFrom(this.form, submitter);
             let request = await loader.prepare(values, this)
             try {
                 const se = new CustomEvent('submit', { bubbles: true, cancelable: true, detail: { values, request } });
