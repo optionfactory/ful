@@ -44,7 +44,21 @@ class Input extends ParsedElement {
             this.required = observed.required;
             this.value = observed.value;
         }
-
+        this._input.addEventListener('input', (evt) => {
+            const re = this.getAttribute('mask');
+            if (!re) {
+                return;
+            }
+            const before = evt.target.value;
+            const after = before.replace(new RegExp(re, 'g'), '');
+            if (before === after) {
+                return;
+            }
+            const start = evt.target.selectionStart;
+            const offset = before.length - after.length;
+            evt.target.value = after;
+            evt.target.setSelectionRange(start - offset, start - offset);
+        });
         this._input.addEventListener('change', (evt) => {
             evt.stopPropagation();
             this.dispatchEvent(new CustomEvent('change', {
@@ -92,7 +106,7 @@ class Input extends ParsedElement {
         this.reflect(() => {
             Attributes.toggle(this, 'required', d);
         })
-    }    
+    }
     focus(options) {
         this._input.focus(options);
     }
