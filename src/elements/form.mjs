@@ -71,7 +71,7 @@ class Form extends ParsedElement {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             e.stopPropagation();
-            await this.submit(e.submitter);
+            await this.submit(e.submitter ?? undefined);
         })
         if (this.hasAttribute("clear-invalid-on-change")) {
             this.addEventListener('change', (/** @type any */evt) => {
@@ -92,19 +92,20 @@ class Form extends ParsedElement {
             const values = Bindings.extractFrom(this.form, submitter);
             let request = await loader.prepare(values, this)
             try {
-                const se = new CustomEvent('submit', { bubbles: true, cancelable: true, detail: { values, request } });
+                const se = new CustomEvent('submit', { bubbles: true, cancelable: true, detail: { submitter, values, request } });
                 if (!this.dispatchEvent(se)) {
                     return;
                 }
-                const sre = new CustomEvent('submit:requested', { bubbles: true, cancelable: false, detail: { values: se.detail.values, request: se.detail.request} })
+                this.errors = [];
+                const sre = new CustomEvent('submit:requested', { bubbles: true, cancelable: false, detail: { submitter, values: se.detail.values, request: se.detail.request} })
                 let response = await AsyncEvents.fireAsync(this, sre);
                 request = sre.detail.request;
 
                 response = await loader.submit(request, this, response);
                 const mapped = await loader.transform(response, this);
-                this.dispatchEvent(new CustomEvent('submit:success', { bubbles: true, cancelable: false, detail: { values, request, response: mapped } }))
+                this.dispatchEvent(new CustomEvent('submit:success', { bubbles: true, cancelable: false, detail: { submitter, values, request, response: mapped } }))
             } catch (e) {
-                this.dispatchEvent(new CustomEvent('submit:failure', { bubbles: true, cancelable: false, detail: { values, request, exception: e } }));
+                this.dispatchEvent(new CustomEvent('submit:failure', { bubbles: true, cancelable: false, detail: { submitter, values, request, exception: e } }));
                 if (e instanceof Failure) {
                     this.errors = e.problems;
                 }
