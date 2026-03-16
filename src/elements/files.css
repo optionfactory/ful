@@ -13,7 +13,7 @@ ful-input-file {
         display: none;
     }
 
-
+    &:not([dropzone])>.default-dropzone,
     &:not([dropzone])>.dropzone {
         display: none;
     }
