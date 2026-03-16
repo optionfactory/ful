@@ -44,6 +44,20 @@ class Input extends ParsedElement {
             this.required = observed.required;
             this.value = observed.value;
         }
+        this._input.addEventListener('keydown', (evt) => {
+            if (evt.key !== 'Enter' || this._type() === 'textarea') {
+                return;
+            }
+            const form = this.internals.form;
+            if(!form){
+                return;
+            }
+            const candidates =  /** @type [HTMLButtonElement|HTMLInputElement] */ (Array.from(form.querySelectorAll(
+                'button:not(:disabled), input:not(:disabled)'
+            )));
+            const submitter = candidates.find(el => el.type === 'submit');
+            form.requestSubmit(submitter);
+        });
         this._input.addEventListener('input', (evt) => {
             const re = this.getAttribute('mask');
             if (!re) {
