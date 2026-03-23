@@ -371,16 +371,17 @@ class Select extends ParsedElement {
             this.#input.value = '';
         });
         this.#input.addEventListener('keydown', e => {
-            e.stopPropagation();
             if (this.disabled || this.readonly) {
                 return;
             }
             switch (e.code) {
                 case 'ArrowUp': {
+                    e.preventDefault();
                     this.#ddmenu.moveOrShow(false, () => self.#loader.load(self.#input.value));
                     break;
                 }
                 case 'ArrowDown': {
+                    e.preventDefault();
                     this.#ddmenu.moveOrShow(true, () => self.#loader.load(self.#input.value));
                     break;
                 }
@@ -389,6 +390,7 @@ class Select extends ParsedElement {
                     break;
                 }
                 case 'Enter': {
+                    e.preventDefault();
                     this.#ddmenu.acceptSelection();
                     this.#input.value = '';
                     break;
