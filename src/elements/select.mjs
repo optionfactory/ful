@@ -159,7 +159,7 @@ class Dropdown extends ParsedElement {
     static templates = {
         options: `
             <li data-tpl-each="self" data-tpl-selected="index == 0" data-tpl-value="index">
-                {{ value }}
+                {{ label }}
             </li>
         `
     };
@@ -191,7 +191,7 @@ class Dropdown extends ParsedElement {
             throw new Error("null data");
         }
         this.#options = new Map(values.map((v, i) => [String(i), v]));
-        const data = values.map(([key, value, metadata], index) => ({ index, key, value, metadata}))
+        const data = values.map(([key, label, metadata], index) => ({ index, key, label, metadata}))
         this.#optionstemplate.withOverlay(data).renderTo(this.#menu);
     }
     #change(target) {
