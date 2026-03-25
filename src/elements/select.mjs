@@ -1,4 +1,4 @@
-import { Attributes, ParsedElement, registry } from "@optionfactory/ftl"
+import { Attributes, Fragments, ParsedElement, registry, Templates } from "@optionfactory/ftl"
 import { Timing } from "../timing.mjs";
 import { VersionedLocalStorage } from "../storage.mjs";
 
@@ -156,11 +156,20 @@ class Dropdown extends ParsedElement {
         <ful-spinner class="centered" hidden></ful-spinner>
         <menu tabindex="-1" hidden></menu>
     `;
+    static templates = {
+        options: `
+            <li data-tpl-each="self" data-tpl-selected="index == 0" data-tpl-value="index">
+                {{ value }}
+            </li>
+        `
+    };
     #spinner;
     #menu;
+    #optionstemplate;
     #options = new Map();
     render({ slots }) {
         const fragment = this.template().render();
+        this.#optionstemplate = Fragments.isBlank(slots.default) ? this.template('options') : Templates.fromFragment(slots.default);
         this.#spinner = fragment.querySelector("ful-spinner");
         this.#menu = fragment.querySelector("menu");
         this.#menu.addEventListener('click', evt => {
@@ -182,21 +191,8 @@ class Dropdown extends ParsedElement {
             throw new Error("null data");
         }
         this.#options = new Map(values.map((v, i) => [String(i), v]));
-        if (values.length === 0) {
-            const el = document.createElement('div');
-            el.classList.add('text-center', 'py-2', 'bi', 'bi-database-slash');
-            this.#menu.replaceChildren(el);
-            return;
-        }
-        this.#menu.replaceChildren(...values.map(([k, v, m], i) => {
-            const el = document.createElement('li');
-            if (i === 0) {
-                el.setAttribute("selected", '');
-            }
-            el.setAttribute("value", i);
-            el.innerText = v;
-            return el;
-        }));
+        const data = values.map(([key, value, metadata], index) => ({ index, key, value, metadata}))
+        this.#optionstemplate.withOverlay(data).renderTo(this.#menu);
     }
     #change(target) {
         const index = target.getAttribute('value');
@@ -257,7 +253,7 @@ class Select extends ParsedElement {
                     <badges></badges>
                     <input type="text" form="">
                 </div>
-                <ful-dropdown hidden popover="manual"></ful-dropdown>
+                <ful-dropdown hidden popover="manual">{{{{ slots.dropdown }}}}</ful-dropdown>
             </div>
             {{{{ slots.after }}}}
             <span data-tpl-if="slots.iafter" class="input-group-text">{{{{ slots.iafter }}}}</span>
@@ -396,7 +392,7 @@ class Select extends ParsedElement {
                     break;
                 }
                 case 'Backspace': {
-                    //remove last if caret a position 0
+                    //remove last if caret at position 0
                     if (this.#values.size && this.#input.selectionStart === 0 && this.#input.selectionEnd === 0) {
                         this.#values.delete(Array.from(this.#values.keys()).pop())
                         this.#changed();

@@ -62,6 +62,33 @@
                         <option value="test-key-19">test-label-19</option>
                     </select>
                 </ful-select>
+                <ful-select>
+                    <span slot="ibefore">@</span>
+                    An empty select
+                </ful-select>
+
+                <ful-select name="test.multi.select" value="test-key-4">
+                    <span slot="ibefore">@</span>
+                    A ful select with a templated menu
+                    <select slot="options">
+                        <option value="test-key-1">test-label-1</option>
+                        <option value="test-key-2">test-label-2</option>
+                        <option value="test-key-3">test-label-3</option>
+                    </select>
+                    <template slot="dropdown">
+                        <li data-tpl-each="self" data-tpl-selected="index == 0" data-tpl-value="index" class="d-flex flex-row align-items-center gap-3">
+                            <div>
+                                <i class="bi bi-star"></i>
+                            </div>
+                            <div>
+                                <div>My custom option</div>
+                                <b>{{ value }}</b>
+                            </div>
+                        </li>
+                    </template>
+                </ful-select>
+
+
                 <ful-select multiple name="test.multi.select2">
                     <span slot="ibefore">@</span>
                     <select slot="options">
@@ -117,6 +144,7 @@
                     <span slot="ibefore">@</span>
                     A ful select with revision
                 </ful-select>
+
 
                 <ful-select multiple itemlist method="GET" src="https://jsonplaceholder.typicode.com/posts" revision="12" k-expr="id" l-expr="title">
                     <span slot="ibefore">@</span>

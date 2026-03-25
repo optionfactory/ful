@@ -179,6 +179,14 @@ ful-dropdown {
         padding: 0;
         margin: 0;
 
+        &:not(:has(*))::before {
+            font-family: bootstrap-icons;
+            display: block;
+            content: "\f8c3";
+            margin: auto;
+            width: 1rem;            
+        }        
+
         &::-webkit-scrollbar {
             width: 12px;
         }
