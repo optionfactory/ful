@@ -55,7 +55,7 @@ class InputFile extends Input {
             <ful-item data-tpl-each="files" data-tpl-var="file" data-tpl-data-name="file.name">
                 <div>{{ file.name }}</div>
                 <div>{{ #bytes:format(file.size) }}</div>
-                <button type="button" class="btn btn-sm btn-outline-danger bi bi-x-lg"></button>
+                <button type="button" class="btn btn-sm btn-outline-danger bi bi-x-lg" alt="Rimuovi"></button>
             </ful-item>
         `,
         warning: `<ful-field-warning>{{ #l10n:t(key, args) }}</ful-field-warning>`
