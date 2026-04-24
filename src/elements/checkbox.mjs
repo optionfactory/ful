@@ -52,6 +52,13 @@ class Checkbox extends ParsedElement {
                 return;
             }
             this.value = !this.value;
+            this.dispatchEvent(new CustomEvent('change', {
+                bubbles: true,
+                cancelable: false,
+                detail: {
+                    value: this.value
+                }
+            }));
         });
         this.#fieldError = fragment.querySelector('ful-field-error');
         this.#input.ariaDescribedByElements = [this.#fieldError];
