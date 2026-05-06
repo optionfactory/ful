@@ -41,7 +41,7 @@ class RemoteLoader {
         if (this.#data !== null) {
             return
         }
-        const raw = RemoteLoader.#revisionedData(this.#http, this.#method, this.#url, this.#revision);
+        const raw = await RemoteLoader.#revisionedData(this.#http, this.#method, this.#url, this.#revision);
         this.#data = this.#responseMapper(raw);
     }
     static async #revisionedData(http, method, url, revision){
