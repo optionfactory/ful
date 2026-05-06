@@ -1,6 +1,6 @@
-import { Attributes, Fragments, ParsedElement, registry, Templates } from "@optionfactory/ftl"
-import { Timing } from "../timing.mjs";
+import { Attributes, Fragments, ParsedElement, registry, Templates } from "@optionfactory/ftl";
 import { VersionedLocalStorage } from "../storage.mjs";
+import { Timing } from "../timing.mjs";
 
 class RemoteLoader {
     #http;
@@ -41,20 +41,22 @@ class RemoteLoader {
         if (this.#data !== null) {
             return
         }
-        const storageKey = `${this.#method}@${this.#url}`;
-        if (this.#revision !== null) {
-            const data = VersionedLocalStorage.load(storageKey, this.#revision);
+        const raw = RemoteLoader.#revisionedData(this.#http, this.#method, this.#url, this.#revision);
+        this.#data = this.#responseMapper(raw);
+    }
+    static async #revisionedData(http, method, url, revision){
+        const storageKey = `${method}@${url}`;
+        if (revision !== null) {
+            const data = VersionedLocalStorage.load(storageKey, revision);
             if (data !== undefined) {
-                this.#data = data;
-                return;
+                return data;
             }
         }
-        const data = await this.#http.request(this.#method, this.#url)
-            .fetchJson()
-        this.#data = this.#responseMapper(data);
-        if (this.#revision !== null) {
-            VersionedLocalStorage.save(storageKey, this.#revision, this.#data);
+        const data = await http.request(method, url).fetchJson()
+        if (revision !== null) {
+            VersionedLocalStorage.save(storageKey, revision, data);
         }
+        return data;
     }
 }
 
@@ -526,4 +528,4 @@ class Select extends ParsedElement {
     }
 }
 
-export { SelectLoader, Select, Dropdown };
+export { Dropdown, Select, SelectLoader };
