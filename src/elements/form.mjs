@@ -98,7 +98,7 @@ class Form extends ParsedElement {
                 }
                 this.errors = [];
                 const sre = new CustomEvent('submit:requested', { bubbles: true, cancelable: false, detail: { submitter, values: se.detail.values, request: se.detail.request} })
-                let response = await AsyncEvents.fireAsync(this, sre);
+                let response = await AsyncEvents.fireAsync(this, sre, {mode: "pipeline"});
                 request = sre.detail.request;
 
                 response = await loader.submit(request, this, response);
