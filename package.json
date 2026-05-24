@@ -1,14 +1,12 @@
 {
     "name": "@optionfactory/ful",
-    "version": "6.0.8",
-    "main": "dist/ful.iife.js",
+    "version": "7.0.0-dev.0",
+    "type": "module",
+    "main": "dist/ful.mjs",
     "module": "dist/ful.mjs",
-    "exports": {
-        "import": "./dist/ful.mjs",
-        "require": "./dist/ful.iife.js"
-    },
+    "exports": "./dist/ful.mjs",
     "files": [
-        "dist/**"
+        "dist"
     ],
     "repository": {
         "url": "git+https://github.com/optionfactory/ful.git"
@@ -29,15 +27,17 @@
         "test": "node --test --experimental-test-coverage --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=test/lcov.info",
         "build": "npx rollup --config rollup.conf.mjs"
     },
-    "dependencies": {
+    "dependencies": { 
         "@optionfactory/ftl": "^6.0.2"
     },
     "devDependencies": {
         "@rollup/plugin-node-resolve": "^16.0.3",
-        "jsdom": "^29.0.0",
-        "rollup-plugin-postcss": "^4.0.2",
         "@rollup/plugin-terser": "^1.0.0",
+        "rollup-plugin-postcss": "^4.0.2",
         "sass": "^1.98.0",
-        "terser": "^5.46.1"
+        "terser": "^5.46.1",
+        "jsdom": "^29.0.0",
+        "typescript": "^5.4.5",
+        "rimraf": "^5.0.5"
     }
 }
