@@ -8,6 +8,7 @@
     "noImplicitAny": false,
     "strictFunctionTypes": true,
     "strictBindCallApply": true,
+    "skipLibCheck": true,    
     "noImplicitThis": true,
     "noImplicitReturns": true,
     "alwaysStrict": true,
@@ -18,6 +19,7 @@
     "outDir": "dist"
   },
   "include": [
-    "./src/**/*.mjs"
+    "./src/**/*.mjs",
+    "./types/**/*.d.ts"    
   ]
 }

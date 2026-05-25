@@ -80,7 +80,6 @@ class Checkbox extends ParsedElement {
             Attributes.toggle(this, 'readonly', v);
         })
     }
-    //@ts-ignore
     get disabled() {
         return this.#input.hasAttribute('disabled');
     }

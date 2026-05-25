@@ -99,7 +99,6 @@ class RadioGroup extends ParsedElement {
             Attributes.toggle(this, 'readonly', v);
         })
     }
-    //@ts-ignore
     get disabled(){
         return this.#fieldset.hasAttribute('disabled');
     }

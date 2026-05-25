@@ -479,7 +479,6 @@ class Select extends ParsedElement {
         }
         return [...this.#values.entries()][0] ?? null;
     }
-    //@ts-ignore
     get disabled() {
         return this.#input.hasAttribute('disabled');
     }
