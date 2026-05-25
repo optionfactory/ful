@@ -1,6 +1,28 @@
 import resolve from '@rollup/plugin-node-resolve';
 import terser from "@rollup/plugin-terser";
 import postcss from "rollup-plugin-postcss";
+import { execSync } from 'child_process';
+import fs from 'fs';
+
+class RollupTypeGenerator {
+    name = 'rollup-plugin-type-generator';
+
+    closeBundle() {
+        console.log('Post-processing: Extracting type definitions from dist/ful.mjs...');
+        try {
+            execSync('npx tsc dist/ful.mjs --allowJs --declaration --emitDeclarationOnly --outDir dist --target ES2024 --moduleResolution bundler --lib es2024,dom,dom.iterable', { stdio: 'inherit' });
+            const declarationPath = 'dist/ful.d.mts';
+            if (fs.existsSync(declarationPath)) {
+                fs.appendFileSync(declarationPath, '\nexport as namespace ful;\n');
+                console.log('Successfully injected global namespace "ful" into declarations.');
+            } else {
+                console.error('Error: dist/ful.d.mts was not found!');
+            }
+        } catch (error) {
+            console.error('Type generation phase failed!', error);
+        }
+    }
+}
 
 export default [{
     input: 'src/client-errors.mjs',
@@ -63,5 +85,6 @@ export default [{
             minimize: true,
             sourceMap: true
         }),
+        new RollupTypeGenerator()
     ]
 }];
