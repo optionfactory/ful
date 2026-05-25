@@ -28,7 +28,7 @@
         "build": "npx rollup --config rollup.conf.mjs"
     },
     "dependencies": { 
-        "@optionfactory/ftl": "^6.0.2"
+        "@optionfactory/ftl": "^7.0.0"
     },
     "devDependencies": {
         "@rollup/plugin-node-resolve": "^16.0.3",
