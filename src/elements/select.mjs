@@ -176,11 +176,12 @@ class Dropdown extends ParsedElement {
         this.#menu = fragment.querySelector("menu");
         this.#menu.addEventListener('click', evt => {
             evt.stopPropagation();
-            if (!evt.target.matches('li')) {
+            const li = evt.target.closest('li');
+            if (!li) {
                 this.hide();
                 return;
             }
-            this.#change(evt.target);
+            this.#change(li);
         });
         this.replaceChildren(fragment);
     }
