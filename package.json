@@ -1,6 +1,6 @@
 {
     "name": "@optionfactory/ful",
-    "version": "7.0.2-dev.0",
+    "version": "7.0.2",
     "type": "module",
     "main": "./dist/ful.mjs",
     "module": "./dist/ful.mjs",
