@@ -96,16 +96,17 @@ class InputLocalDate extends Input {
         const sign = match[1] === "-" ? -1 : 1;
         const offset = +match[2];
         const r = new Date();
+        r.setHours(0, 0, 0, 0);
         switch (match[3]) {
             case 'd':
-                const originalDay = r.getDate();
                 r.setDate(r.getDate() + offset * sign);
+                break;
+            case 'm':
+                const originalDay = r.getDate();
+                r.setMonth(r.getMonth() + offset * sign);
                 if (r.getDate() !== originalDay) {
                     r.setDate(0);
                 }
-                break;
-            case 'm':
-                r.setMonth(r.getMonth() + offset * sign);
                 break;
             case 'y':
                 r.setFullYear(r.getFullYear() + offset * sign);
