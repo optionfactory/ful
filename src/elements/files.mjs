@@ -18,6 +18,20 @@ class InputFile extends Input {
             'maxfilesizeexceeded': "La dimensione massima di un file è di {0}",
             'maxtotalsizeexceeded': "La dimensione massima complessiva dei file è di {0}",
             'maxfilesexceeded': "Numero massimo di file superato",
+        },
+        es: {
+            'dropzonelabel': 'Haz clic o arrastra tus archivos aquí',
+            'unaccepptablefiletype': "Solo se admiten archivos de tipo {0}",
+            'maxfilesizeexceeded': "El tamaño máximo de archivo admitido es {0}",
+            'maxtotalsizeexceeded': "El tamaño total máximo admitido es {0}",
+            'maxfilesexceeded': "Se ha superado el número máximo de archivos"
+        },
+        fr: {
+            'dropzonelabel': 'Cliquez ou déposez vos fichiers ici',
+            'unaccepptablefiletype': "Seuls les fichiers de type {0} sont pris en charge",
+            'maxfilesizeexceeded': "La taille maximale de fichier prise en charge est {0}",
+            'maxtotalsizeexceeded': "La taille totale maximale prise en charge est {0}",
+            'maxfilesexceeded': "Nombre maximal de fichiers dépassé"
         }
     }
     static observed = ['value', 'readonly:presence', 'required:presence', "accept:csv", 'multiple:presence', "itemlist:presence", "dropzone:presence", "maxfiles:number", "maxfilesize:number", "maxtotalsize:number"];

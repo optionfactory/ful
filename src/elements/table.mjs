@@ -48,6 +48,18 @@ class Pagination extends ParsedElement {
             'navigation': "Navigazione pagine",
             'previous': "Precedente",
             'next': "Successivo",
+        },
+        es: {
+            'showing': 'Página {0} de {1}',
+            'navigation': "Navegación de páginas",
+            'previous': "Anterior",
+            'next': "Siguiente",
+        },
+        fr: {
+            'showing': 'Page {0} sur {1}',
+            'navigation': "Navigation des pages",
+            'previous': "Précédent",
+            'next': "Suivant",
         }
     }
     static config = {
@@ -206,9 +218,9 @@ class InMemoryTableLoader {
         this.#data = data;
     }
     async load(pageRequest, sortRequest, filterRequest) {
-        return { 
-            page: this.#data, 
-            size: this.#data.length 
+        return {
+            page: this.#data,
+            size: this.#data.length
         };
     }
     update(data) {
@@ -261,6 +273,16 @@ class Table extends ParsedElement {
             'initial': 'Avvia la ricerca per visualizzare i risultati.',
             'error': 'Errore nel caricamento dei dati:',
             'nodata': 'Nessun elemento trovato.',
+        },
+        es: {
+            'initial': 'Inicia la búsqueda para ver los resultados.',
+            'error': 'Error al cargar los datos:',
+            'nodata': 'No se encontraron elementos.',
+        },
+        fr: {
+            'initial': 'Lancez la recherche pour voir les résultats.',
+            'error': 'Erreur lors du chargement des données :',
+            'nodata': 'Aucun élément trouvé.',
         }
     }
     static config = {
