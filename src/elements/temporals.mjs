@@ -98,7 +98,11 @@ class InputLocalDate extends Input {
         const r = new Date();
         switch (match[3]) {
             case 'd':
+                const originalDay = r.getDate();
                 r.setDate(r.getDate() + offset * sign);
+                if (r.getDate() !== originalDay) {
+                    r.setDate(0);
+                }
                 break;
             case 'm':
                 r.setMonth(r.getMonth() + offset * sign);
