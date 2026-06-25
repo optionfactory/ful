@@ -91,7 +91,12 @@ class Input extends ParsedElement {
         this.replaceChildren(fragment);
     }
     get value() {
-        return this._input.value === '' ? null : this._input.value;
+        const uppercase = this.hasAttribute('uppercase');
+        const trim = this.hasAttribute('trim');
+        const v = this._input.value;
+        const uppercased = uppercase ? v.toUpperCase(): v;
+        const trimmed = trim ? uppercased.trim(): uppercased;
+        return trimmed === '' ? null : trimmed;
     }
     set value(value) {
         this._input.value = value === '' ? null : value;

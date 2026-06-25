@@ -6,7 +6,10 @@ ful-input-local-time,
 ful-input-instant {
     display: block;
 
-
+    &[uppercase] input,
+    &[uppercase] textarea {
+        text-transform: uppercase;
+    }
 
     &:not(:defined) {
         visibility: hidden;
