@@ -85,8 +85,10 @@ class InputLocalDate extends Input {
         if (!v) {
             return '';
         }
+        //this could be date.toLocaleDateString('en-CA')
+        const formatLocalDate = (date) => new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString().split("T")[0];
         if (v === 'now') {
-            return new Date().toISOString().split("T")[0];
+            return formatLocalDate(new Date());
         }
         const re = /^([+-])(\d+)([dmy])$/;
         const match = re.exec(v);
@@ -112,7 +114,7 @@ class InputLocalDate extends Input {
                 r.setFullYear(r.getFullYear() + offset * sign);
                 break;
         }
-        return r.toISOString().split("T")[0];
+        return formatLocalDate(r);
     }
 }
 
